@@ -1,0 +1,29 @@
+layout: post
+title: "Single Founder SEO: Building Your Personal Brand"
+date: 2012-02-29 06:10
+comments: true
+categories: seo marketing
+---
+
+As a single founder, I realize I am at a tremendous disadvantage when it comes to non-technical work. There are only so many hours in a day, and I have a full-time job. Work on [linkrdr](http://www.linkrdr.com), therefore, must be prioritized. With so many interesting technical challenges to solve, a number of other useful activities fall by the wayside. Marketing is a big one. So how do I focus my efforts? __By building my personal brand.__
+
+<!--more-->
+In a perfect world, I'd be part of a multi-person team working on the site full-time. A large portion of _someone's_ time would be devoted to getting the word out about linkrdr, improving the copy on our pages, and making sure we were doing everything right when it came to converting users. Since I can't devote a ton of time to those activities without sacrificing the core experience of linkrdr, I have to be smart about how I _do_ spend my time marketing.
+
+As it turns out, I do very little real "marketing" for the site.  Instead, I'm focused on a slightly different strategy which, I hope, will pay dividends in the long run regardless of whether or not linkrdr is a success. _I'm building my personal brand._ Though it may sound slimy or silly, it's really just the process by which you get your name "out there" and attached to things that people find useful.
+
+For me, one obvious way to build my brand is through this blog. Don't misunderstand: the blog was not started as a way to drive traffic anywhere. Rather, I started the blog because I felt that I had _taken_ more from the technology community than I had _given_. It was my way of giving back.  That said, it has turned out to be a rather good tool for generating traffic, though not directly. The most traffic linkrdr has received was through others finding my blog and posting about it. [Dave Winer](http://en.wikipedia.org/wiki/Dave_Winer) found the blog through a Hacker News post which with I had nothing to do. Between the Hacker News post and his Tweet of linkrdr, 700 users signed up in one day. Even though I didn't cause this directly, I had positioned myself well for something like this to happen. 
+
+When I blog about programming related topics, I'll usually post them to proggit or Hacker News, depending on the content. I'm not spamming every day with off-topic content (I hope). I'm just letting people know, "Hey, I wrote about this technical topic you might find interesting". Like all things, some posts take off and drive thousands of visitors to the site while others are merely blips on the radar. With every post, though, I'm reaching more people. The more people I reach, the more chance I have of reaching _influencers_. 
+
+A word of advice: do not start a _personal_ blog simply to drive traffic somewhere else. Most times, it will be transparent and turn people off. Remember, your name is attached to this, for better or worse. On the other hand, it's quite customary to build a blog for your site overflowing with link-bait content. I think for the most part this is accepted practice now, though I choose to reserve the blog space on linkrdr for messages to users.
+
+While blogging is a fantastic way to build your personal brand, it is certainly not the only way. Becoming active on StackOverflow serves two purposes: you get a chance to give back to the technology community at large and you begin to establish yourself as a domain expert (hopefully). I've found contributing to Stack Overflow to be rewarding even though it doesn't directly drive traffic to the site. At the very least it's another part of your personal portfolio that establishes your technical credibility.
+
+Contributing to open source projects or creating your own is similarly helpful. [Patrick McKenzie](http://www.kalzumeus.com), whom Hacker News readers probably better recognize as __patio11__, created a dialogue with other developers in creating A/Bingo, the Ruby A/B testing software grown from his BingoCardCreator site. Probably the best _recent_ example of personal brand building, Patrick went from Japanese salary-man to self-sufficient entrepreneur through a (seemingly, but not definitely) long, targeted campaign at getting his name out there. It worked, and he now consults professionally in addition to running a number of websites.  Open source software starts the conversation with others. Especially if your project is technology related, throwing it on GitHub can rarely hurt.
+
+One side note: on all the sites I contribute to, I do so under the same username, jknupp. This is done purposely. What good is building your personal brand when you're doing it as NinjaPirate14? Use your real name or some variation thereof. It will have the adding benefit of stopping you from submitting something you wouldn't want your name attached to, which probably shouldn't be posted in the first place.  
+
+linkrdr is still in its infancy, having only begun two and a half weeks ago, but it already has a good number of users. Almost all of them found the site through finding _me_. Building your brand as a single founder may be the most time effective form of SEO available. It's certainly a good thing to do regardless, as you never know where opportunities will come from.
+
+Questions or comments on _Single Founder SEO: Bulding Your Personal Brand_? Let me know below or email me at [jknupp@gmail.com](mailto:jknupp@gmail.com). Also, [follow me on Twitter](http://www.twitter.com/jeffknupp/) to see all of my blog posts and updates.
