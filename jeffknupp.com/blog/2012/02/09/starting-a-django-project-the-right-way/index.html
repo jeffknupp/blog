@@ -1,0 +1,636 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Starting a Django Project the Right Way - Hackers Gonna Hack</title>
+  <meta name="author" content="Jeff Knupp">
+
+  
+  <meta name="description" content="One of the things I wish I had known when starting my Django project for
+IllestRhyme was &#8220;How do I start a real
+Django project&#8221;. As in, &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.jeffknupp.com/blog/2012/02/09/starting-a-django-project-the-right-way">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="http://feeds.feedburner.com/hackersgonnahack" rel="alternate" title="Hackers Gonna Hack" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-12615441-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Hackers Gonna Hack</a></h1>
+  
+    <h2>On Hacking and Hustling</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="http://feeds.feedburner.com/hackersgonnahack" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.jeffknupp.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about-me/">About Me</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Starting a Django Project the Right Way</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-09T09:13:00-05:00" pubdate data-updated="true">Feb 9<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>One of the things I wish I had known when starting my Django project for
+<a href="http://www.illestrhyme.com">IllestRhyme</a> was &#8220;How do I start a <em>real</em>
+Django project&#8221;. As in, one that&#8217;s actually going to be used and
+developed more, not the toy project from the (admittedly execellent)
+Django documentation.</p>
+
+<p>Having just gone through this process again for my new site, I wanted to
+share the knowledge I&#8217;ve gained about how to properly start a project in
+Django. By the end of this post, you will have</p>
+
+<pre><code>1. A fully functional Django project
+2. All resources under source control (with git)
+3. An environment independet install of your project (using virtualenv)
+4. Automated deployment and testing (using Fabric)
+5. Automatic database migrations (using South)
+6. A solid start to your new site
+</code></pre>
+
+<p>None of these steps, except for perhaps the first, are covered in the
+official tutorial. They should be. If you&#8217;re looking to start a new,
+production ready Django project, look no further.</p>
+
+<!--more-->
+
+
+<h2>Prerequisites</h2>
+
+<p>A working knowledge of Python is assumed. Also, some prior experience
+with Django would be incredibly helpful, but not strictly necessary.
+You&#8217;ll need <a href="http://www.git-scm.com">git</a> for version control. That&#8217;s
+it!</p>
+
+<h2>Preparing To Install</h2>
+
+<p>I&#8217;m assuming you have Python installed. If you don&#8217;t head over to
+<a href="http://www.python.org">python.org</a> and find the install instructions
+for your architecture/os. I&#8217;ll be running on a 64-bit Ubuntu server installation hosted by <a href="http://www.linode.com/?r=ae1808f234f8e219de24842336fada09ef81d52f">Linode</a>, with whom I&#8217;m very happy.</p>
+
+<p>So, what&#8217;s the first step? Install Django, right? Not quite. One common
+problem with installing packages directly to your current site-packages
+area is that, if you have more than one project or use Python on your
+machine for things other than Django, you may run into dependency
+issues between your applications and the installed packages. For this
+reason, we&#8217;ll be using
+<a href="http://pypi.python.org/pypi/virtualenv">virtualenv</a> to manage our
+Django installation. This is common, and recommended, practice among
+Python and Django users.</p>
+
+<p>After installing virtualenv in whatever way you want, create a new
+virtualenv, which we&#8217;ll call &#8216;env&#8217;, using the following:</p>
+
+<pre><code>$ virtualenv env
+</code></pre>
+
+<p>or, if virtualenv isn&#8217;t in your $PATH (though it should be):</p>
+
+<pre><code>$ python virtualenv.py --distribute env
+</code></pre>
+
+<p>Now that we have a virtualenv environment, we need to <em>activate</em> it.
+This sets up various envrionment variables to effectively bypass the
+system&#8217;s Python install and uses our <code>env</code> one instead. Activate like
+so:</p>
+
+<pre><code>$ source ./env/bin/activate
+</code></pre>
+
+<p>You should see <code>(env) $</code> at your prompt, letting you know that you&#8217;re
+running under the &#8216;env&#8217; virtualenv install. At any time, just type:</p>
+
+<pre><code>$ deactivate
+</code></pre>
+
+<p>to stop using virtualenv.</p>
+
+<h2>Installing Django</h2>
+
+<p>&#8220;Wait, &#8216;Installing Django&#8217;? I already have Django installed!&#8221; Fantastic.
+You aren&#8217;t going to use it. Instead, we&#8217;ll use one managed by virtualenv
+that can&#8217;t be messed up by other users (or yourself) working elsewhere
+on the machine. To install Django under virtual env, just type:</p>
+
+<pre><code>$ pip install django
+</code></pre>
+
+<p>This should give you the latest version of Django which will be installed in your
+virtualenv area. You can confirm this by doing:</p>
+
+<pre><code>$ which django-admin.py
+</code></pre>
+
+<p>Which should report an area under our <code>env</code> directory. If it doesn&#8217;t,
+make sure you see <code>(env)</code> at your prompt. If you don&#8217;t, you didn&#8217;t
+<code>$ source ./env/bin/activate</code>.</p>
+
+<h2>Setting Up The Project</h2>
+
+<p>Before we actually start the project, make sure you have git installed.
+It&#8217;s available via package installation on most systems. If it isn&#8217;t for
+yours, follow the directions on <a href="http://www.git-scm.com">git-scm</a> to
+install via source (not that difficult).</p>
+
+<p>Let&#8217;s start the project via django-admin:</p>
+
+<pre><code>$ django-admin.py startproject myproject
+</code></pre>
+
+<p>This creates the <code>myproject</code> directory. Don&#8217;t go there yet.</p>
+
+<h2>Source Control Using Git</h2>
+
+<p>Even though we haven&#8217;t actually done anything besides starting a
+project, we know we&#8217;re going to want everything under source
+control. We have two sets of &#8216;things&#8217; we&#8217;re going to be commiting: our
+Django project files <em>and our virtualenv install</em>. I can already hear
+the comments pouring in, but committing your virtualenv install means
+you have a <strong>totally reproducible environment</strong> under source control.
+This can be critical if you lose your machine or accidentally wipe the
+directory.</p>
+
+<p>Our current directory should show two directories: <code>env</code> and
+<code>myproject</code>. Since we&#8217;ll be tracking both of these in git, we&#8217;ll
+initialize our repository here using:</p>
+
+<pre><code>$ git init
+</code></pre>
+
+<p>This creates a git repository in the current directory. Lets stage all of
+our files to git to be committed.</p>
+
+<pre><code>$ git add .
+</code></pre>
+
+<p>Now we actually commit them to our new repo:</p>
+
+<pre><code>$ git commit -a -m 'Initial commit of myproject'
+</code></pre>
+
+<p>If you plan on using a service like Github or Bitbucket, now would be a
+good time to push to them.</p>
+
+<h2>Using South for Database Migrations</h2>
+
+<p>One of the most frustrating things in a vanilla Django install is
+managing changes to models and the associated changes to the database.
+With the help of <a href="http://south.aeracode.org">South</a>, you can realistically create an entire
+application without ever writing database specific code. Changes to your
+models are detected and automatically made in the database through a
+<em>migration file</em> that South creates. This lets you both migrate the
+database forward for your new change and <strong>backwards</strong> to undo a change
+or series of changes. It makes your life so much easier, it&#8217;s a wonder
+it&#8217;s not included in the Django distribution (there has been some talk
+of including a database migration tool in Django, but it hasn&#8217;t happened
+yet).</p>
+
+<p>Still under our <code>(env)</code> virtualenv environment, install South like so:</p>
+
+<pre><code>$ pip install south
+</code></pre>
+
+<p>We setup South by adding it to our INSTALLED_APS in the <code>settings.py</code>
+file for the project. Add that now, as well as your database settings
+for the project, then run <code>python manage.py syncdb</code>.
+You&#8217;ll be prompted for a superuser name and password (which you can go
+ahead and enter). More importantly, South has setup the database with
+the tables it needs.</p>
+
+<p>You may have noticed that we just ran <code>syncdb</code> without having adding an app to the project. We do this first so that South is installed from the beginning. All migrations to our own apps will be done using South, including the initial migration.</p>
+
+<p>Since we&#8217;ve just made some pretty big changes, now would be a good time
+to commit to git. You should get used to committing frequently, as the
+more granular the commit, the more freedom you have in choosing
+something to revert to if things go wrong.</p>
+
+<p>To commit, first add any untracked files:</p>
+
+<pre><code>$ git add .
+</code></pre>
+
+<p>Git users may notice I&#8217;m not adding specific files but rather everything
+under our main directory. That&#8217;s becuase, to this point, <em>there isn&#8217;t
+anything we don&#8217;t want to commit</em>. Let&#8217;s commit our changes using:</p>
+
+<pre><code>$ git commit -a -m 'Added South for database migrations'
+</code></pre>
+
+<h2>Creating Our App</h2>
+
+<p>Use <code>manage.py</code> to create an app in the normal way (<code>python manage.py
+startapp myapp</code>) and add it as an INSTALLED_APP. The first thing we&#8217;ll do, before adding models, is
+tell South we want to use it for migrations:</p>
+
+<pre><code>$ python manage.py schemamigration myapp --initial
+</code></pre>
+
+<p>This creates a migration file that can be used to apply our changes (if
+we had any) and also <em>revert</em> them. We use the migration file to  <em>migrate</em> the database changes (even though there are none)
+using :</p>
+
+<pre><code>$ python manage.py migrate myapp
+</code></pre>
+
+<p>South is smart enough to know where to look for migration files, as well
+as remember what was the last migration we did. You can specify
+individual migration files, but it&#8217;s usually not necessary.</p>
+
+<p>When we eventually make changes to our model, we ask South to create a
+migration using:</p>
+
+<pre><code>$ python manage.py schemamigration myapp --auto
+</code></pre>
+
+<p>This will inspect the models in <code>myapp</code> and automatically add, delete,
+or modify the database tables accordingly.</p>
+
+<h2>Our Development Area</h2>
+
+<p>One of the things you should get used to is doing development in a
+separate area, not where you&#8217;re serving your files from, for obvious
+reasons. Git makes this simple and also helps with deployments.
+Create a directory somewhere other than where <code>myproject</code> is installed
+for your development area (I just call it <code>dev</code>).</p>
+
+<p>In your development directory, clone the current project using git:</p>
+
+<pre><code>$ git clone /path/to/my/project/
+</code></pre>
+
+<p>Git will create an exact copy of the <strong>entire</strong> repository. All changes,
+branches, and history will be available here. From here on out, you
+should be working from your development directory.</p>
+
+<p>Since branching with git is so easy and cheap, create branches
+as you work on new, orthogonal changes to your site. Do so by typing:</p>
+
+<pre><code>$ git checkout -b &lt;branchname&gt;
+</code></pre>
+
+<p>Which will both create a new branch named <branchname> and check it out.
+Almost all of your development should be done on a branch, so that
+master mimics the current production master and can be used for recovery at
+any time.</p>
+
+<h2>Using Fabric for Deployment</h2>
+
+<p>So we have the makings of a Django application. How do we deploy it?
+Thanks to readers of the blog, I&#8217;m a recent convert to <a href="http://www.fabfile.org">Fabric</a>, a fantastic tool perfectly suited to our deployment needs. Install Fabric to our virtualenv like so:</p>
+
+<pre><code>$ pip install fabric
+</code></pre>
+
+<p>Fabric expects a file , <em>fabfile.py</em>, to define all of the actions we
+can take. Let&#8217;s create that now. Put the following in your <code>fabfile.py</code>
+in the <code>myproject</code> directory:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'>    <span class="kn">from</span> <span class="nn">fabric.api</span> <span class="kn">import</span> <span class="n">local</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">prepare_deployment</span><span class="p">(</span><span class="n">branch_name</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">local</span><span class="p">(</span><span class="s">&#39;python manage.py test myapp&#39;</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">local</span><span class="p">(</span><span class="s">&#39;git add -p &amp;&amp; git commit&#39;</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">local</span><span class="p">(</span><span class="s">&#39;git checkout master &amp;&amp; git merge &#39;</span> <span class="o">+</span> <span class="n">branchname</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This will run the tests, commit your branch change, and merge them into
+master. At this point, a simple &#8220;git pull&#8221; in your production area
+becomes your deployment. Lets add a bit more to actually deploy. Add
+this to your fabfile.py:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'>    <span class="kn">from</span> <span class="nn">fabric.api</span> <span class="kn">import</span> <span class="n">lcd</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">deploy</span><span class="p">():</span>
+</span><span class='line'>        <span class="k">with</span> <span class="n">lcd</span><span class="p">(</span><span class="s">&#39;/path/to/my/prod/area/&#39;</span><span class="p">):</span>
+</span><span class='line'>            <span class="n">local</span><span class="p">(</span><span class="s">&#39;git pull /my/path/to/dev/area/&#39;</span><span class="p">)</span>
+</span><span class='line'>            <span class="n">local</span><span class="p">(</span><span class="s">&#39;python manage.py migrate myapp&#39;</span><span class="p">)</span>
+</span><span class='line'>            <span class="n">local</span><span class="p">(</span><span class="s">&#39;python manage.py test myapp&#39;</span><span class="p">)</span>
+</span><span class='line'>            <span class="n">local</span><span class="p">(</span><span class="s">&#39;/my/command/to/restart/webserver&#39;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This will pull your changes from the development master branch, run any
+migrations you&#8217;ve made, run your tests, and restart your webserver.
+All in one simple command from the command line. If one of those steps
+fails, the script stops and reports what happened. Once you fix the
+issue, there is no need to run the steps manually. Simply rerun the
+deploy command and all will be well.</p>
+
+<p>So now that we have our <code>fabfile.py</code> created, how do we actually deploy?
+Simple. Just run:</p>
+
+<pre><code> $ fab prepare_deployment
+ $ fab deploy
+</code></pre>
+
+<p>Technically, these could be combined into a single command, but I find
+it&#8217;s better to explicitly prepare your deployment and then deploy as it
+makes you focus a bit more on what you&#8217;re doign.</p>
+
+<h2>Enjoy Your New Django Application</h2>
+
+<p>That&#8217;s it! You&#8217;re ready to start your actual development. If you do a
+lot of Django development, just dump all of the commands above into a
+fabfile and make creating a proper Django app a one step process. I have
+one which I&#8217;ll upload to my github account later today. If you have any
+questions or corrections, or think there&#8217;s a tool/step I missed, feel
+free to email me at <a href="mailto:jknupp@gmail.com">jknupp@gmail.com</a> or leave
+a comment below. <a href="http://www.twitter.com/jeffknupp">Follow me on Twitter</a> to get all of the latest blog updates!</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Jeff Knupp</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-09T09:13:00-05:00" pubdate data-updated="true">Feb 9<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/deployment/'>deployment</a>, <a class='category' href='/blog/categories/django/'>django</a>, <a class='category' href='/blog/categories/fabric/'>fabric</a>, <a class='category' href='/blog/categories/pip/'>pip</a>, <a class='category' href='/blog/categories/python/'>python</a>, <a class='category' href='/blog/categories/south/'>south</a>, <a class='category' href='/blog/categories/virtualenv/'>virtualenv</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.jeffknupp.com/blog/2012/02/09/starting-a-django-project-the-right-way/" data-via="jeffknupp" data-counturl="http://www.jeffknupp.com/blog/2012/02/09/starting-a-django-project-the-right-way/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/02/08/building-your-second-django-site/" title="Previous Post: Building Your Second Django Site">&laquo; Building Your Second Django Site</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/02/10/introducing-linkrdr/" title="next Post: Introducing linkrdr">Introducing linkrdr &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/07/10/software-optimization-a-systematic-approach/">Software Optimization: A Systematic Approach</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/31/pythons-hardest-problem/">Python's Hardest Problem</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/05/from-redis-to-memcached-to-surpdb/">From Memcached to Redis to Surpdb</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/02/29/single-founder-seo-building-your-personal-brand/">Single Founder SEO: Building Your Personal Brand</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/02/24/django-memcached-optimizing-django-through-caching/">Django Memcached: Optimizing Django Through Caching</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Github Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/jeffknupp">@jeffknupp</a> on Github
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'jeffknupp',
+            count: 4,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("jeffknupp", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/jeffknupp" class="twitter-follow-button" data-show-count="false">Follow @jeffknupp</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Jeff Knupp -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+<a title="Real Time Web Analytics" href="http://getclicky.com/66528953"><img alt="Real Time Web Analytics" src="//static.getclicky.com/media/links/badge.gif" border="0" /></a>
+<script src="//static.getclicky.com/js" type="text/javascript"></script>
+<script type="text/javascript">try{ clicky.init(66535137); }catch(e){}</script>
+<noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/66535137ns.gif" /></p></noscript>
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'hackersgonnahack';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.jeffknupp.com/blog/2012/02/09/starting-a-django-project-the-right-way/';
+        var disqus_url = 'http://www.jeffknupp.com/blog/2012/02/09/starting-a-django-project-the-right-way/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

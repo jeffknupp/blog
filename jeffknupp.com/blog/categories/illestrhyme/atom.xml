@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: illestrhyme | Hackers Gonna Hack]]></title>
+  <link href="http://www.jeffknupp.com/blog/categories/illestrhyme/atom.xml" rel="self"/>
+  <link href="http://www.jeffknupp.com/"/>
+  <updated>2012-07-10T06:02:38-04:00</updated>
+  <id>http://www.jeffknupp.com/</id>
+  <author>
+    <name><![CDATA[Jeff Knupp]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Analytics for Django Sites]]></title>
+    <link href="http://www.jeffknupp.com/blog/2012/02/07/analytics-for-django-sites/"/>
+    <updated>2012-02-07T22:44:00-05:00</updated>
+    <id>http://www.jeffknupp.com/blog/2012/02/07/analytics-for-django-sites</id>
+    <content type="html"><![CDATA[<p>This is the first in a series of posts I plan to do over the next month about Analytics and Django. In this post I'll walk through how I began to use a number of analytics tools to
+drive decisions about my site, <a href="http://www.illestrhyme.com">IllestRhyme</a>.</p>
+
+<p>One of the first things I did when writing
+<a href="http://www.illestrhyme.com">IllestRhyme</a> was to sign up for Google
+Analytics. I had never run a web site before, but I was aware of
+Google's analytics offering. I admit, for the first few weeks after the
+site went live I would start at the Google Analytics page and <strong>hope</strong> to
+see users in the Live View. I wasn't really using the data for anything.
+I was using Google Analytics as a virtual scoreboard.</p>
+
+<p>It wasn't until I signed up for <a href="http://getclicky.com/66528953">Clicky</a>
+that I started to take analytics seriously. In fact, more specifically,
+it was when I combined Clicky and
+<a href="https://github.com/jcassee/django-analytical">django-analytical</a> that I
+really took my first deep-dive into using analytical data for decision
+making. Since django-analytical already integrates with a number of
+analytics services, including Clicky, setup was a breeze. Sure, I could
+have inserted the raw code into my Django templates, but
+django-analytical gave me a single point at which to configure all my
+analytics services.</p>
+
+<p>More importantly, and I can not stress this enough,
+<strong>django-analytical's Clicky integration let me see my users in Clicky via
+their contrib.auth usernames</strong>. This was <strong>huge</strong>. Now, instead of
+staring at IP addresses, I could follow users on their visit to the site (using
+<a href="http://getclicky.com/66528953">Clicky's</a> awesome Spy feature) in
+real-time by username. Believe me, nothing will teach you more about you
+users than recognizing usernames and their associated behavior patterns.
+I could tell which users were hitting the site to check quickly for
+updates, which users hung around for a while, and which users <em>used the
+site like it was crack</em>. It was this last group that I was initially
+interested in.</p>
+
+<!--more-->
+
+
+<p>I discovered I had about four or five <em>hardcore</em> users, that were on the
+site for hours a day. Now, part of that is just personality, but in
+addition, <em>something on the site clicked for them</em>. Since I want all my
+users on the site for hours a day, I decided to determine what they were
+doing in a more rigorous fashion. Naturally, I started coding...</p>
+
+<p>I ended up writing a middleware that tracked a configurable set of users as
+they browsed the site and stored this information in the database. I
+then processed this information and organized it into "activities". If a
+user was going through all the new rhymes submitted and voting on them,
+this was 'updating'. If the user was submitting a bunch of new rhymes,
+this was 'bulk submitting', etc. After analyzing this information for my
+power users and a random sampling of other users, I noticed they were doing one thing more than any other,
+which I didn't even have a category for: they were following each other.</p>
+
+<p>This was strange to me, as I didn't think of IllestRhyme as a community.
+To me it was more like a tool to get better at rapping. To some of my users, at least, it
+was a destination; a way to interact with like-minded people. I quickly
+realized the value of this and set to work adding tools that would
+encourage this interaction.</p>
+
+<p>Using
+<a href="https://bitbucket.org/psam/django-postman/wiki/Home">django-postman</a> I
+gave them the ability to send Private Messages. I encouraged commenting
+by increasing the amount of Rep (virtual points representing a user's
+'reputation' on the site, sort of like StackOverflow) adding comments
+was worth. Voting on other users' verses also received a boost.</p>
+
+<p>That's just one example of the ways I use the analytics data I collect
+from <a href="http://getclicky.com/66528953">Clicky</a>, Google Analytics, HubSpot,
+and the rest to make decisions about my site. In my next Analytics post,
+I'll take a look at A/B testing in Django. Stay tuned!</p>
+
+<p>Questions or comments on <em>Analytics for Django Sites</em>? Let me know in the comments below. Also, <a href="http://www.twitter.com/jeffknupp">follow me on Twitter</a> to see all of my blog posts and updates.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[On Responding Quickly To Customers]]></title>
+    <link href="http://www.jeffknupp.com/blog/2012/02/06/on-responding-quickly-to-customers/"/>
+    <updated>2012-02-06T03:18:00-05:00</updated>
+    <id>http://www.jeffknupp.com/blog/2012/02/06/on-responding-quickly-to-customers</id>
+    <content type="html"><![CDATA[<p>When I wrote my last post, which hit the frontpage of HackerNews, I
+wanted to see what the HNers would see. So I cleared my cookies, logged
+out, and navigated over to <a href="http://www.illestrhyme.com">IllestRhyme</a>.
+When I got there, something caught my eye:</p>
+
+<p><img src="http://www.illestrhyme.com:8080/images/chat.jpg"></p>
+
+<p>It's normal for me to be talking to users, and normal for me to be
+responding to requests from users. <strong>If this isn't normal for you, it should be</strong>.
+Part of the reason IllestRhyme has a community feel is that the users
+get the sense that their requests don't go off into the ether. I'm
+hanging around, reading their emails, forum posts, and chat transcripts.
+If they suggest something, I almost always implement it. What's more,
+they are rewarded for their suggestion through Rep points, which tracks
+reputation on the site.</p>
+
+<p>I love the size of the site as it is right now. Sure, I want the number
+of users to explode, but with about 150 users, I know all of them, talk
+to them frequently, and have a general idea of the type of user they are
+(power, casual, etc).</p>
+
+<p><strong>The number of users on the site may go up, but my interaction with them
+won't end.</strong> My first hire would ideally be a community rep. I can take
+care of the programming and marketing, but I never want my users to feel
+like they don't have my ear.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Advertising: Reddit versus Facebook]]></title>
+    <link href="http://www.jeffknupp.com/blog/2012/02/02/advertising-reddit-versus-facebook/"/>
+    <updated>2012-02-02T05:07:00-05:00</updated>
+    <id>http://www.jeffknupp.com/blog/2012/02/02/advertising-reddit-versus-facebook</id>
+    <content type="html"><![CDATA[<p>To acquire users for <a href="http://www.illestrhyme.com">IllestRhyme</a>, a user content driven rap site I started, I ran two ads: one on Reddit and one on Facebook. The results were startling.</p>
+
+<p>According to the data from <a href="http://getclicky.com/66528953">Clicky</a>, the analytics engine I use most, Reddit sent me roughly 170 visitors for a 3 day ad, purchased at $30 per day. Of those visitors, only 5 registered for the site. That gives me a conversion rate of 2.8%, at a cost of $18. I'm happy to eat the cost up front for new users as they're the lifeblood of the site, but $18 is pretty extreme.</p>
+
+<p>After the Reddit ad ran its course, I created a Facebook ad with the same parameters: $30 a day, however many visitors that buys me. In the first 12 hours of the Facebook ad, I received 33 visitors, <em>9 of whom signed up</em>. Now I realize it's still a bit early to call the race, but even if I get no more visitors from the Facebook ad, my cost of acquisition was $10, 55% cheaper than for the Reddit ad. If my <em>27% conversion rate</em> keeps up, 170 visitors would net me 46 users, at a cost of only $1.96.</p>
+
+<p>I realize this data isn't comprehensive, but it's still eye opening. Part of this can be attributed to the more focused targeting I was able to do through Facebook. Facebook let me specify that my ad only be shown to the 7 million or so users who:
+1. Live in the US
+2. Are 18 or older
+3. like #Freestyle rap, #Hip hop music, or #Rapping</p>
+
+<p>Conversely, on Reddit I was forced to choose a subreddit to advertise on (along with a small percentage of the site at large). I chose /r/hiphopheads as it's a large (by Reddit standards) and active subreddit.</p>
+
+<p>Regardless of the targeting differences, I think it's safe to assume that Facebook users are at least more willing to sign up for websites than are Reddit users. Interestingly, I use the Facebook registration app for my registration form. It's not clear from the data (I'm running an A/B test now), but it appears that Facebook users are more willing to sign up if they are presented with a Facebook form to fill out. For Reddit users, who are more Internet savvy, this may actually be a deterrent.</p>
+
+<p>Of course this doesn't take into account what <em>kind</em> of users those who registered will turn out to be. It may be the case that Facebook users are more likely to sign up for something and never use it (although the initial data indicates this isn't the case, at least categorically). Those five Reddit users may be the five most active users on IllestRhyme for the next year. For $18 a piece, they better be.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[How Django Makes Web Programming Stupidly Easy]]></title>
+    <link href="http://www.jeffknupp.com/blog/2012/02/02/how-django-makes-web-programming-stupidly-easy/"/>
+    <updated>2012-02-02T03:59:00-05:00</updated>
+    <id>http://www.jeffknupp.com/blog/2012/02/02/how-django-makes-web-programming-stupidly-easy</id>
+    <content type="html"><![CDATA[<p>I developed <a href="http://www.illestrhyme.com">IllestRhyme</a> using Django, having never touched it before. I chose it because it's Python based, and a quick search showed there were a lot of third-party applications available. In two weeks, I had a fully functional site. The site has come a long way since it launched in the beginning of January (looking at the git commit comments is especially fun), but what let me add features so quickly was the third party apps.</p>
+
+<p>First off, some best practices. When I began intalling applications I did so using pip, which downloads packages (by default) from <a href="http://pypi.python.org">PyPi</a>, the Python Package Index. This seemed reasonable, as I wanted stable versions of packages and an easy way to reinstall everything in case of emergency. The packages on PyPi, howevery, usually trail the main branch of a project, sometimes significantly so. So I went back and removed all of the pip-installed packages and checked everything out from source.</p>
+
+<p>I can still rebuild everything in an emergency since (a) my entire site is under source control and (b) setting up a Python dependecies file to download the packages I require was a breeze. Ok, enough meta-discussion. The real question is, "what applications am I using?" Here's the current list:</p>
+
+<ul>
+<li>django.contrib.auth</li>
+<li>django.contrib.contenttypes</li>
+<li>django.contrib.sessions</li>
+<li>django.contrib.sites</li>
+<li>django.contrib.messages</li>
+<li>django.contrib.staticfiles</li>
+<li>django.contrib.sitemaps</li>
+<li>south</li>
+<li>django.contrib.admin</li>
+<li>django.contrib.admindocs</li>
+<li>voting</li>
+<li>django.contrib.comments</li>
+<li>basic.inlines</li>
+<li>basic.blog</li>
+<li>basic.groups</li>
+<li>tagging</li>
+<li>django.contrib.markup</li>
+<li>pybb</li>
+<li>pytils</li>
+<li>sorl.thumbnail</li>
+<li>pagination</li>
+<li>postman</li>
+<li>oembed</li>
+<li>analytical</li>
+<li>basic.tools</li>
+</ul>
+
+
+<p>Those applications gave me, in no particular order: forums, a blog, voting on user defined objects, database migrations, tagging, analytics integration, groups ("Crews" on the site) and group membership workflows, and oEmbeded links. Most required minimal setup. More importantly, they allowed me to quickly deliver features that users wanted while being able to focus on the site's core features, which were written from scratch.</p>
+
+<p>In addition to being well written, most are very well documented, either via an .rst file on github/bitbucket or, even better, a Sphinx generated page on <a href="http://www.readthedocs.org">ReadTheDocs</a>. And the best part about them is they're all open source, so they're eminnently moldable if you're doing something a little outside the lines. Since you have the source, it's trivial to fork the code and change it locally, merging bug fixes from the main branch. This is another reason why using the checked out code is superior to PyPi packages: you get bugfixes and features as soon as they're written.</p>
+
+<p>For all of Django's plusses, though, there are some minuses. The framework can be rigid at times, forcing you into a particular way of doing things. Often that's not an issue, but sometimes you want the framework to just "get out of your way" and code closer to the bare metal. Those who are interested in a bit less restrictive frameworks should check out web.py and Pylons. That said, working within the framework (the way it's meant to be used) can lead to a huge productivity increase, as so much is taken care of for you. In the end, it's just Python code, so you almost always have an "out".</p>
+
+<p>What's interesting with Django is how my development process has matured since starting the site, something I'll go into in a future post. For now, if you have any Django related questions, feel free to hit me up at <a href="mailto:jknupp@gmail.com">jeff@jeffknupp.com</a>... Or do what everyone else does and Google until you find a StackOverlow question that matches yours.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Setting Up Octopress/Jekyll with Apache]]></title>
+    <link href="http://www.jeffknupp.com/blog/2012/02/02/setting-up-octopress-slash-jeckyll-with-apache/"/>
+    <updated>2012-02-02T02:06:00-05:00</updated>
+    <id>http://www.jeffknupp.com/blog/2012/02/02/setting-up-octopress-slash-jeckyll-with-apache</id>
+    <content type="html"><![CDATA[<p>So now that I got my "Hello World" post out of the way, I think it would be instructive to describe the setup process for this blog. Octopress is exactly what I've been looking for: a well styled, static page based blogging engine that doesn't get in my way. The fact that Jekyll (on which Octopress is based) is so closely integrated with git is a definite plus. So how did the install go? First some background.</p>
+
+<p>I'm the founder of <a href="http://www.illestrhyme.com">IllestRhyme.com</a>, a site where users post rap verses they wrote and other users comment/vote on them. There's a ton of other features, but that's the gist of it. Anyway, I run IllestRhyme on a <a href="http://www.linode.com/?r=ae1808f234f8e219de24842336fada09ef81d52f">Linode</a> server running Ubuntu. I use Apache for dynamic content and Lighttpd for static content. Since I already have a Linux machine on the Interwebs, I followed the <a href="http://octopress.org/docs/setup/">instructions</a> on my Linode machine... which is to say I basically copy and pasted the instructions:</p>
+
+<pre><code>rvm install 1.9.2 &amp;&amp; rvm use 1.9.2
+git clone git://github.com/imathis/octopress.git octopress
+cd octopress    # If you use RVM, You'll be asked if you trust the .rvmrc file (say yes).
+gem install bundler`
+bundle install`
+</code></pre>
+
+<p>Everything went smoothly. Next I needed to make Apache serve both www.jeffknupp.com and www.illestrhyme.com. I created a new file in /etc/apache2/sites-available/ named 'jeffknupp.com' and added the normal VirtualHost settings. After running <code>sudo a2ensite jeffknupp.com</code> and reloading apache (<code>sudo service apache2 reload</code>), Apache helpfully warned me that I didn't have NameVirtualHost set and nothing was going to be listening on port 80. After quickly adding <code>NameVirtualHost 50.116.49.236:80</code> to my apache2.conf file, I reloaded again. I pointed my browser to www.jeffknupp.com and... saw a directory listing of my Octopress install. One quick edit to my jeffknupp.com site configuration and I was good to go. I successfully saw my Hello World post.</p>
+
+<p>So how long did this all take? Maybe 20 minutes, and most of that was installing Ruby. I'm quite happy with the result: I now have a blogging engine "for hackers" that suits my needs perfectly.</p>
+]]></content>
+  </entry>
+  
+</feed>

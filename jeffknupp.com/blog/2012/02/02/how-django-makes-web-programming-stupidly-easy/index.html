@@ -1,0 +1,355 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>How Django Makes Web Programming Stupidly Easy - Hackers Gonna Hack</title>
+  <meta name="author" content="Jeff Knupp">
+
+  
+  <meta name="description" content="I developed IllestRhyme using Django, having never touched it before. I chose it because it&#8217;s Python based, and a quick search showed there &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.jeffknupp.com/blog/2012/02/02/how-django-makes-web-programming-stupidly-easy">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="http://feeds.feedburner.com/hackersgonnahack" rel="alternate" title="Hackers Gonna Hack" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-12615441-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Hackers Gonna Hack</a></h1>
+  
+    <h2>On Hacking and Hustling</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="http://feeds.feedburner.com/hackersgonnahack" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.jeffknupp.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about-me/">About Me</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">How Django Makes Web Programming Stupidly Easy</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-02T03:59:00-05:00" pubdate data-updated="true">Feb 2<span>nd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>I developed <a href="http://www.illestrhyme.com">IllestRhyme</a> using Django, having never touched it before. I chose it because it&#8217;s Python based, and a quick search showed there were a lot of third-party applications available. In two weeks, I had a fully functional site. The site has come a long way since it launched in the beginning of January (looking at the git commit comments is especially fun), but what let me add features so quickly was the third party apps.</p>
+
+<p>First off, some best practices. When I began intalling applications I did so using pip, which downloads packages (by default) from <a href="http://pypi.python.org">PyPi</a>, the Python Package Index. This seemed reasonable, as I wanted stable versions of packages and an easy way to reinstall everything in case of emergency. The packages on PyPi, howevery, usually trail the main branch of a project, sometimes significantly so. So I went back and removed all of the pip-installed packages and checked everything out from source.</p>
+
+<p>I can still rebuild everything in an emergency since (a) my entire site is under source control and (b) setting up a Python dependecies file to download the packages I require was a breeze. Ok, enough meta-discussion. The real question is, &#8220;what applications am I using?&#8221; Here&#8217;s the current list:</p>
+
+<ul>
+<li>django.contrib.auth</li>
+<li>django.contrib.contenttypes</li>
+<li>django.contrib.sessions</li>
+<li>django.contrib.sites</li>
+<li>django.contrib.messages</li>
+<li>django.contrib.staticfiles</li>
+<li>django.contrib.sitemaps</li>
+<li>south</li>
+<li>django.contrib.admin</li>
+<li>django.contrib.admindocs</li>
+<li>voting</li>
+<li>django.contrib.comments</li>
+<li>basic.inlines</li>
+<li>basic.blog</li>
+<li>basic.groups</li>
+<li>tagging</li>
+<li>django.contrib.markup</li>
+<li>pybb</li>
+<li>pytils</li>
+<li>sorl.thumbnail</li>
+<li>pagination</li>
+<li>postman</li>
+<li>oembed</li>
+<li>analytical</li>
+<li>basic.tools</li>
+</ul>
+
+
+<p>Those applications gave me, in no particular order: forums, a blog, voting on user defined objects, database migrations, tagging, analytics integration, groups (&#8220;Crews&#8221; on the site) and group membership workflows, and oEmbeded links. Most required minimal setup. More importantly, they allowed me to quickly deliver features that users wanted while being able to focus on the site&#8217;s core features, which were written from scratch.</p>
+
+<p>In addition to being well written, most are very well documented, either via an .rst file on github/bitbucket or, even better, a Sphinx generated page on <a href="http://www.readthedocs.org">ReadTheDocs</a>. And the best part about them is they&#8217;re all open source, so they&#8217;re eminnently moldable if you&#8217;re doing something a little outside the lines. Since you have the source, it&#8217;s trivial to fork the code and change it locally, merging bug fixes from the main branch. This is another reason why using the checked out code is superior to PyPi packages: you get bugfixes and features as soon as they&#8217;re written.</p>
+
+<p>For all of Django&#8217;s plusses, though, there are some minuses. The framework can be rigid at times, forcing you into a particular way of doing things. Often that&#8217;s not an issue, but sometimes you want the framework to just &#8220;get out of your way&#8221; and code closer to the bare metal. Those who are interested in a bit less restrictive frameworks should check out web.py and Pylons. That said, working within the framework (the way it&#8217;s meant to be used) can lead to a huge productivity increase, as so much is taken care of for you. In the end, it&#8217;s just Python code, so you almost always have an &#8220;out&#8221;.</p>
+
+<p>What&#8217;s interesting with Django is how my development process has matured since starting the site, something I&#8217;ll go into in a future post. For now, if you have any Django related questions, feel free to hit me up at <a href="mailto:jknupp@gmail.com">jeff@jeffknupp.com</a>&#8230; Or do what everyone else does and Google until you find a StackOverlow question that matches yours.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Jeff Knupp</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-02T03:59:00-05:00" pubdate data-updated="true">Feb 2<span>nd</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/django/'>django</a>, <a class='category' href='/blog/categories/illestrhyme/'>illestrhyme</a>, <a class='category' href='/blog/categories/python/'>python</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.jeffknupp.com/blog/2012/02/02/how-django-makes-web-programming-stupidly-easy/" data-via="jeffknupp" data-counturl="http://www.jeffknupp.com/blog/2012/02/02/how-django-makes-web-programming-stupidly-easy/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/02/02/setting-up-octopress-slash-jeckyll-with-apache/" title="Previous Post: Setting Up Octopress/Jekyll with Apache">&laquo; Setting Up Octopress/Jekyll with Apache</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/02/02/advertising-reddit-versus-facebook/" title="next Post: Advertising: Reddit versus Facebook">Advertising: Reddit versus Facebook &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/07/10/software-optimization-a-systematic-approach/">Software Optimization: A Systematic Approach</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/31/pythons-hardest-problem/">Python's Hardest Problem</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/05/from-redis-to-memcached-to-surpdb/">From Memcached to Redis to Surpdb</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/02/29/single-founder-seo-building-your-personal-brand/">Single Founder SEO: Building Your Personal Brand</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/02/24/django-memcached-optimizing-django-through-caching/">Django Memcached: Optimizing Django Through Caching</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Github Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/jeffknupp">@jeffknupp</a> on Github
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'jeffknupp',
+            count: 4,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("jeffknupp", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/jeffknupp" class="twitter-follow-button" data-show-count="false">Follow @jeffknupp</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Jeff Knupp -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+<a title="Real Time Web Analytics" href="http://getclicky.com/66528953"><img alt="Real Time Web Analytics" src="//static.getclicky.com/media/links/badge.gif" border="0" /></a>
+<script src="//static.getclicky.com/js" type="text/javascript"></script>
+<script type="text/javascript">try{ clicky.init(66535137); }catch(e){}</script>
+<noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/66535137ns.gif" /></p></noscript>
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'hackersgonnahack';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.jeffknupp.com/blog/2012/02/02/how-django-makes-web-programming-stupidly-easy/';
+        var disqus_url = 'http://www.jeffknupp.com/blog/2012/02/02/how-django-makes-web-programming-stupidly-easy/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

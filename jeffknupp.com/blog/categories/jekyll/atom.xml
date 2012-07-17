@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: jekyll | Hackers Gonna Hack]]></title>
+  <link href="http://www.jeffknupp.com/blog/categories/jekyll/atom.xml" rel="self"/>
+  <link href="http://www.jeffknupp.com/"/>
+  <updated>2012-07-10T06:02:38-04:00</updated>
+  <id>http://www.jeffknupp.com/</id>
+  <author>
+    <name><![CDATA[Jeff Knupp]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Setting Up Octopress/Jekyll with Apache]]></title>
+    <link href="http://www.jeffknupp.com/blog/2012/02/02/setting-up-octopress-slash-jeckyll-with-apache/"/>
+    <updated>2012-02-02T02:06:00-05:00</updated>
+    <id>http://www.jeffknupp.com/blog/2012/02/02/setting-up-octopress-slash-jeckyll-with-apache</id>
+    <content type="html"><![CDATA[<p>So now that I got my "Hello World" post out of the way, I think it would be instructive to describe the setup process for this blog. Octopress is exactly what I've been looking for: a well styled, static page based blogging engine that doesn't get in my way. The fact that Jekyll (on which Octopress is based) is so closely integrated with git is a definite plus. So how did the install go? First some background.</p>
+
+<p>I'm the founder of <a href="http://www.illestrhyme.com">IllestRhyme.com</a>, a site where users post rap verses they wrote and other users comment/vote on them. There's a ton of other features, but that's the gist of it. Anyway, I run IllestRhyme on a <a href="http://www.linode.com/?r=ae1808f234f8e219de24842336fada09ef81d52f">Linode</a> server running Ubuntu. I use Apache for dynamic content and Lighttpd for static content. Since I already have a Linux machine on the Interwebs, I followed the <a href="http://octopress.org/docs/setup/">instructions</a> on my Linode machine... which is to say I basically copy and pasted the instructions:</p>
+
+<pre><code>rvm install 1.9.2 &amp;&amp; rvm use 1.9.2
+git clone git://github.com/imathis/octopress.git octopress
+cd octopress    # If you use RVM, You'll be asked if you trust the .rvmrc file (say yes).
+gem install bundler`
+bundle install`
+</code></pre>
+
+<p>Everything went smoothly. Next I needed to make Apache serve both www.jeffknupp.com and www.illestrhyme.com. I created a new file in /etc/apache2/sites-available/ named 'jeffknupp.com' and added the normal VirtualHost settings. After running <code>sudo a2ensite jeffknupp.com</code> and reloading apache (<code>sudo service apache2 reload</code>), Apache helpfully warned me that I didn't have NameVirtualHost set and nothing was going to be listening on port 80. After quickly adding <code>NameVirtualHost 50.116.49.236:80</code> to my apache2.conf file, I reloaded again. I pointed my browser to www.jeffknupp.com and... saw a directory listing of my Octopress install. One quick edit to my jeffknupp.com site configuration and I was good to go. I successfully saw my Hello World post.</p>
+
+<p>So how long did this all take? Maybe 20 minutes, and most of that was installing Ruby. I'm quite happy with the result: I now have a blogging engine "for hackers" that suits my needs perfectly.</p>
+]]></content>
+  </entry>
+  
+</feed>

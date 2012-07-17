@@ -1,0 +1,450 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Django Memcached: Optimizing Django Through Caching - Hackers Gonna Hack</title>
+  <meta name="author" content="Jeff Knupp">
+
+  
+  <meta name="description" content="Caching is a subject near and dear to the heart of many
+peformance-minded programmers. For those coming to web programming
+without other programming &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.jeffknupp.com/blog/2012/02/24/django-memcached-optimizing-django-through-caching">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="http://feeds.feedburner.com/hackersgonnahack" rel="alternate" title="Hackers Gonna Hack" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-12615441-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Hackers Gonna Hack</a></h1>
+  
+    <h2>On Hacking and Hustling</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="http://feeds.feedburner.com/hackersgonnahack" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.jeffknupp.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about-me/">About Me</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Django Memcached: Optimizing Django Through Caching</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-24T09:00:00-05:00" pubdate data-updated="true">Feb 24<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Caching is a subject near and dear to the heart of many
+peformance-minded programmers. For those coming to web programming
+without other programming experience, caching may be a new topic. For
+programmers new to the web, using an external cache may be an approach
+not yet considered. In this post, I&#8217;ll describe how, through the use of Django&#8217;s caching support, I was able to <strong>reduce <a href="http://www.linkrdr.com">linkrdr&#8217;s</a> page load time from over 3.5 seconds to 0.01 seconds.</strong></p>
+
+<!--more-->
+
+
+<h2>What is Caching?</h2>
+
+<p>Caching is a word that changes meaning a bit depending on the context in which it&#8217;s used, but in the general sense, <em>caching is the process by which the result of previous computation is saved and reused without re-performing the computation.</em> In the Django specific sense, there are three different types of caching:</p>
+
+<ol>
+<li><p><strong>The per-site cache</strong>: Saves the result of requests to all URLs
+for reuse when a request for the same URL is later made.</p></li>
+<li><p><strong>The per-view cache</strong>: Saves the result of requests resolving to
+specified views for reuse when a request resolving to the same
+view is made.</p></li>
+<li><p><strong>The low-level cache API</strong>: Used by the developer to set, retrieve, and maintain objects in the cache manually.</p></li>
+</ol>
+
+
+<p>While the first two methods are certainly useful for some sites, the third is the most interesting. Caching requires some backend cache (obviously), and Django ships with a few out of the box. It can keep the cache in memory (not particularly useful when new threads are spawned for HTTP requests by the HTTP server), in the database (fine but slow), or on the filesystem (ditto).</p>
+
+<p>Then there&#8217;s <a href="http://memcached.org">Memcached</a>. Memcached is pretty well known in the web development community as an extremely flexible, scalable, and resilient external caching solution. The fact that Django ships with a &#8220;low-level&#8221; API for interacting with Memcached is great, although it does require the installation of a Python/Memcached interface package, of which there are two: python-memcached and pylibmc. Let&#8217;s investigate using Memcached via a case study.</p>
+
+<h2>Case Study: linkrdr.com Page Load Time Optimization</h2>
+
+<p>I&#8217;ve talked about <a href="http://www.linkrdr.com">linkrdr&#8217;s</a> optimization
+techniques before. The main view shows links from entries in a
+user&#8217;s subscribed feeds. These links have been aggregated and sorted according to a ranking algorithm. For example, if a user subscribes to 10 RSS feeds and follows a few Twitter users and 4 of those sources mention a particular link, that link should appear higher in your list of links to read than a link from a single feed entry.</p>
+
+<p>Retrieving, analyzing, aggregating, and sorting all of the links from all of the entries from all of a user&#8217;s subscribed feeds is computationally expensive. The calculation of a link&#8217;s &#8220;importance&#8221; was optimized by <a href="http://www.jeffknupp.com/blog/2012/02/15/optimizing-django-views-with-c-plus-plus/">rewriting the calculation in C++ and calling it from the view</a>. The database query <a href="http://www.jeffknupp.com/blog/2012/02/14/profiling-django-applications/">was similarly optimized</a>. These proved not to be enough, however, in the face of a flood of new users (and new data) to linkrdr.</p>
+
+<p>3.5 seconds. That was how long it took to generate the data within the
+main view function. Previously, it had been under a second, but after a
+sudden flood of users and data, things had gotten out of control. I knew that I needed to implement caching to cut down page load time, but there were a few wrinkles. First, the datasets linkrdr returns are rather large, even with pagingation reducing the items shown to 100 per page. Second, a link had two real scores: one that could be calculated just by inspecting the link&#8217;s properties in isolation and one that could only be calculated with respect to <strong>all</strong> the other links in a user&#8217;s feed. These issues combined led to an interesting optimization problem.</p>
+
+<p>The first goal was to cache all the user&#8217;s sorted links whenver a
+request came in, to be used in subsequent requests. I originally tried
+to cache the entire result set like so:</p>
+
+<figure class='code'><figcaption><span>Caching the results  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">results</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">if</span> <span class="ow">not</span> <span class="n">results</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">results</span> <span class="o">=</span> <span class="n">do_a_ton_of_work</span><span class="p">()</span>
+</span><span class='line'>        <span class="n">cache</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">results</span><span class="p">)</span>
+</span><span class='line'>    <span class="c"># ...</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Each time I tried this the results weren&#8217;t added to the cache. After about 15 minutes of digging, I realized that the dataset was larger than memcached&#8217;s limit for record sizes. When that happens, the call to <code>cache.set()</code> (maddeningly) fails silently.</p>
+
+<p>So I couldn&#8217;t cache the whole thing, but this turned out to be a useful
+exercise. I realized I didn&#8217;t need to cache the entire set as one big value. I could chunk the dataset in the same size chunks as were being paginated (currently 100 links). So now, the code looks like this:</p>
+
+<figure class='code'><figcaption><span>Caching chunks  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">page</span> <span class="o">=</span> <span class="n">get_page</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="c"># for pagination</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">results</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">page</span><span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="mi">100</span><span class="p">))</span>
+</span><span class='line'>    <span class="k">if</span> <span class="ow">not</span> <span class="n">results</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">results</span> <span class="o">=</span> <span class="n">do_a_ton_of_work</span><span class="p">()</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="mi">100</span><span class="p">)</span>
+</span><span class='line'>            <span class="n">cache</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">),</span> <span class="n">results</span><span class="p">[</span><span class="n">index</span><span class="p">:</span><span class="n">index</span><span class="o">+</span><span class="mi">99</span><span class="p">])</span>
+</span><span class='line'>    <span class="c"># ...</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Cache Eviction</h2>
+
+<p>One thing to remember is that caches are not some magical never-ending source of storage. Memcached stores items in memory, of which it has a limited supply (limited by you, that is). When a cache is using the full amount of memory allotted and gets a request to add something new, a choice has to be made. This choice is known as the cache&#8217;s <em>eviction policy</em>, since a record is about to be &#8216;evicted&#8217; from the cache. Memached uses a variant of LRU, or Least Recently Used, eviction. Glossing over the topic of page allocation and sizing, which you can read about on Memcached&#8217;s wiki, the cache looks for the least recently used item and overwrites it with the new value. This approach has good <em>temporal locality</em>, since something that was used recently (especially in web programming), is likely to be used again soon. Things not used for a while are less likely to be used again soon, and thus are good candidates to remove from the cache. For linkrdr, this has a few useful side effects. The view&#8217;s cached items are likely to be used soon after they are created (as a user browses their links) and then not used at all (when they leave the site), which perfectly matches the cache eviction policy. Also, using small chunks instead of the whole dataset allows eviction with more granularity, so a user&#8217;s entire cache isn&#8217;t lost all at once.</p>
+
+<h2>Which is Nice, Except&#8230;</h2>
+
+<p>But there are some problems with this approach. For one, the first (uncached) request still takes the full 3.5 seconds. The first request being the most important one, this is not ideal. Second, we have to deal with updates to the dataset that would require a recalculating of the scores of each of the links (for example, when a user adds a new feed or linkrdr is updating feed items). Using some additional features of Memcached, we can overcome these obstacles as well.</p>
+
+<p>Let&#8217;s deal with updates to the dataset first. Django supports &#8220;versioning&#8221; of cache records. If you specify a version number in your <code>cache.set(key, value, version=my_version)</code> call, then a corresponding <code>cache.get(key, version=some_other_version)</code> call will not return any data. Using versioning, we can change things around and store the user&#8217;s current &#8216;version&#8217; in the cache. When we want to get the cached dataset, we specify the user&#8217;s cached version number. In this way, we are able to <em>invalidate</em> old cache entries without searching through the cache for all of a user&#8217;s cached items. An example will help clarify:</p>
+
+<figure class='code'><figcaption><span>Memcached with versioning  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">version</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">if</span> <span class="ow">not</span> <span class="n">version</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">version</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span class='line'>        <span class="n">cache</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">page</span> <span class="o">=</span> <span class="n">get_page</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="c"># for pagination</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">results</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">page</span><span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="mi">100</span><span class="p">),</span> <span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">if</span> <span class="ow">not</span> <span class="n">results</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">results</span> <span class="o">=</span> <span class="n">do_a_ton_of_work</span><span class="p">()</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="mi">100</span><span class="p">)</span>
+</span><span class='line'>            <span class="n">cache</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">),</span> <span class="n">results</span><span class="p">[</span><span class="n">index</span><span class="p">:</span><span class="n">index</span><span class="o">+</span><span class="mi">99</span><span class="p">],</span> <span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">)</span>
+</span><span class='line'>    <span class="c"># ...</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now, when a user adds a feed and the link scores need to be recalculated, we can simply increment his or her version so that the next <code>cache.get()</code> will be a cache miss.</p>
+
+<p>But wait, I just said we <em>want</em> a cache miss. That can&#8217;t be right. What we&#8217;d <em>really</em> like is for the links to be recalculated <em>and cached</em> and the old values invalidated. To accomplish this without interrupting the user (remember recalculating takes a couple seconds), we fire off a Celery task to ansynchronously recalculate the results, update the cache, and update the user&#8217;s version. This way, the user can continue using the site and, if they take longer than 3-4 seconds between adding a feed and looking at their new links, we&#8217;ll have the results <em>prefetched</em>. The idea of prefetching is a powerful one, and it solves the other problem (the first visit to a page results in a cache miss) as well. When linkrdr updates the feeds, it also caches the results for frequent users of the site (which it determines using yet more cached data). This way, the people who use the site the most experience instant page loads. Infrequent users will experience at most one slow page load.</p>
+
+<p>It would be nice if we could prefetch every user&#8217;s data after every update, but linkrdr has neither the memory nor computing power to do this. In a way, this is a good thing, because throwing more hardware at a problem doesn&#8217;t require much thought. Many of the interesting technical challenges linkrdr faces come about because of the constraints on memory and CPU availability. Since I&#8217;m running on a single VPS, I have to get a bit creative with some of my solutions. If I didn&#8217;t have to consider these things, the site would likely be worse for it and would certainly be less interesting to work on. The current caching solution can scale with the site without straining resources too much.</p>
+
+<p>The preceeding is <a href="http://www.linkrdr.com">linkrdr</a>&#8217;s current approach to caching. One interesting side note: I&#8217;m currently investigating running memcached in a distributed manner using the other VPS I use to host <a href="http://www.illestrhyme.com">IllestRhyme</a>. Since the latter site has far more spare CPU cycles, computation can be partially offloaded to the second machine and the results stored in a distributed cache (which Memcached and Django helpfully support out of the box). Aditionally, sprinkling in other types of caching (like file based caching) may make it possible to prefetch all data for all users.</p>
+
+<p>Questions or comments on <em>Django Memcached: Optimizing Django Through Caching</em>? Let me know in the comments below. Also, <a href="http://www.twitter.com/jeffknupp">follow me on Twitter</a> to see all of my blog posts and updates.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Jeff Knupp</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-24T09:00:00-05:00" pubdate data-updated="true">Feb 24<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/django/'>django</a>, <a class='category' href='/blog/categories/linkrdr/'>linkrdr</a>, <a class='category' href='/blog/categories/memcached/'>memcached</a>, <a class='category' href='/blog/categories/optimization/'>optimization</a>, <a class='category' href='/blog/categories/python/'>python</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.jeffknupp.com/blog/2012/02/24/django-memcached-optimizing-django-through-caching/" data-via="jeffknupp" data-counturl="http://www.jeffknupp.com/blog/2012/02/24/django-memcached-optimizing-django-through-caching/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/02/21/how-linkrdr-went-semi-viral/" title="Previous Post: How linkrdr went semi-viral">&laquo; How linkrdr went semi-viral</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/02/29/single-founder-seo-building-your-personal-brand/" title="next Post: Single Founder SEO: Building Your Personal Brand">Single Founder SEO: Building Your Personal Brand &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/07/10/software-optimization-a-systematic-approach/">Software Optimization: A Systematic Approach</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/31/pythons-hardest-problem/">Python's Hardest Problem</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/05/from-redis-to-memcached-to-surpdb/">From Memcached to Redis to Surpdb</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/02/29/single-founder-seo-building-your-personal-brand/">Single Founder SEO: Building Your Personal Brand</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/02/24/django-memcached-optimizing-django-through-caching/">Django Memcached: Optimizing Django Through Caching</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Github Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/jeffknupp">@jeffknupp</a> on Github
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'jeffknupp',
+            count: 4,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("jeffknupp", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/jeffknupp" class="twitter-follow-button" data-show-count="false">Follow @jeffknupp</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Jeff Knupp -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+<a title="Real Time Web Analytics" href="http://getclicky.com/66528953"><img alt="Real Time Web Analytics" src="//static.getclicky.com/media/links/badge.gif" border="0" /></a>
+<script src="//static.getclicky.com/js" type="text/javascript"></script>
+<script type="text/javascript">try{ clicky.init(66535137); }catch(e){}</script>
+<noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/66535137ns.gif" /></p></noscript>
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'hackersgonnahack';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.jeffknupp.com/blog/2012/02/24/django-memcached-optimizing-django-through-caching/';
+        var disqus_url = 'http://www.jeffknupp.com/blog/2012/02/24/django-memcached-optimizing-django-through-caching/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

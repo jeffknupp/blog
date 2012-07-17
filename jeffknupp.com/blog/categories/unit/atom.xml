@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: unit | Hackers Gonna Hack]]></title>
+  <link href="http://www.jeffknupp.com/blog/categories/unit/atom.xml" rel="self"/>
+  <link href="http://www.jeffknupp.com/"/>
+  <updated>2012-07-10T06:02:38-04:00</updated>
+  <id>http://www.jeffknupp.com/</id>
+  <author>
+    <name><![CDATA[Jeff Knupp]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Unit Testing in Django]]></title>
+    <link href="http://www.jeffknupp.com/blog/2012/02/11/unit-testing-in-django/"/>
+    <updated>2012-02-11T14:17:00-05:00</updated>
+    <id>http://www.jeffknupp.com/blog/2012/02/11/unit-testing-in-django</id>
+    <content type="html"><![CDATA[<p>As a follow-up to my post <a href="http://www.jeffknupp.com/blog/2012/02/09/starting-a-django-project-the-right-way/">Starting a Django Project the Right Way</a>, I wanted to talk aboue the importance of writing tests for Django applications. I previously mentioned that my first site <a href="http://www.illestrhyme.com">IllestRhyme</a>, has no app specific tests for it. This is both embarassing and true. I've lost countless hours to fixing problems caused by new changes. I wasn't going to make the same mistake with <a href="http://www.linkrdr.com">linkrdr</a>. Having a set of unit tests that I can run in an automated fashion has made a world of difference.</p>
+
+<p>The Django <code>unittest</code> framework (really the Python <code>unittest</code> framework) is both simple and powerfull. Along with the test client (<code>django.test.client.Client</code>), there's a lot you can
+do with Django right out of the box.</p>
+
+<h2>Setup</h2>
+
+<p>To start, we'll want to create a dump of our database data to use during testing.</p>
+
+<p><code>bash Dump our data
+$ ./manage.py dumpdata --format=json &gt; my/app/directory/initial_data.json
+</code></p>
+
+<p>This will give us a json <a href="https://code.djangoproject.com/wiki/Fixtures">fixture</a> that mimics the current state of our production database. Note that since this is a fixture for <em>all</em> of the apps installed, we've put it in a non-standard directory. To let the test runner find our fixture, we'll need to set <code>FIXTURE_DIRS</code> to the directory we just dumped our data to.</p>
+
+<p>Now that we have our data copied, let's run whatever tests our installed
+apps have already:</p>
+
+<p><code>bash Run our tests
+$  python manage.py test
+</code></p>
+
+<p>This hopefully gives us output like:</p>
+
+<p>``` bash Test run output</p>
+
+<pre><code>.....................................................................................................................................................................................................................................................................................................................................................................
+</code></pre>
+
+<hr />
+
+<pre><code>Ran 357 tests in 30.025s
+
+OK
+</code></pre>
+
+<p>```</p>
+
+<p>This is also a good check of the integrity of your database, as Django
+will try to load a fixture representing all of your data. If you've been
+screwing around with the admin interface or the shell adding
+and deleting records, you may have integrity errors. If you do (like I
+did), you'll have to fix them manually and re-dump your data.</p>
+
+<!--more-->
+
+
+<p>Once we've got the tests for other apps working, it's time to write our
+own. They'll generally all follow the same pattern:</p>
+
+<ol>
+<li>Create a class deriving from django.test.TestCase</li>
+<li>If necessary, add a setUp function to prepare data for the tests</li>
+<li>Implement test functions with a name starting with 'test'</li>
+<li>Run the tests</li>
+</ol>
+
+
+<p>You should get in the habit of running the tests after each test you
+create. Sometimes, you'll write a test expecting it to pass but it will
+highlight an issue in your code. If you go off and fix the issue without
+running the tests again afterwards, you may have unwittingly made
+another test fail with your fix.</p>
+
+<p>We'll be using <code>django.test.TestCase</code> as the base class for our tests
+instead of Python's <code>unittest.TestCase</code> because the Django version adds
+(from the documentation):</p>
+
+<ol>
+<li>Automatic loading of fixtures</li>
+<li>Wrap each test in a transaction</li>
+<li>Create a TestClient instance</li>
+<li>Django-specific assertions for testing for things like redirection and form errors</li>
+</ol>
+
+
+<p>One quick thing to note: <em>all of your test functions names must begin with
+'test'</em>. If you've never used Python or Django's unittest before, you
+will be <strong>extremely</strong> frustrated when you define your test classes and
+functions, then run the tests only to have nothing happen. There's a
+practical reason for this decision (so you can create regular functions in your
+TestCase derived class), but it drives new users insane.</p>
+
+<h2>Adding a Test</h2>
+
+<p>Time for an example. <a href="http://www.linkrdr.com">linkrdr</a> needs to be able to look-up a URL and
+determine if it's actually a feed. Here's a simplified version of the
+code I wrote to do that:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Simple feed checker  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">link_types</span><span class="o">=</span> <span class="p">[</span><span class="s">&#39;application/atom+xml&#39;</span><span class="p">,</span> <span class="s">&#39;application/rss+xml&#39;</span><span class="p">,</span>
+</span><span class='line'><span class="s">&#39;application/rdf+xml&#39;</span><span class="p">,</span> <span class="s">&#39;application/xml&#39;</span><span class="p">]</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">def</span> <span class="nf">is_feed</span><span class="p">(</span><span class="n">url</span><span class="p">):</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">link_type</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span><span class="o">.</span><span class="n">info</span><span class="p">()</span><span class="o">.</span><span class="n">gettype</span><span class="p">()</span>
+</span><span class='line'><span class="k">return</span> <span class="n">link_type</span> <span class="ow">in</span> <span class="n">link_types</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Simple, right? Let's add a test for it. First we'll remove anything
+hanging around in tests.py (like the initial contents) and start with a
+clean file. We're going to create a class that derives from
+<code>unittest.TestCase</code>. I'll call mine <code>IsFeed</code> so I know from the name
+what functionality it's testing.</p>
+
+<p>So far we have (with the required imports)</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Our tests so far  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">django.utils</span> <span class="kn">import</span> <span class="n">unittest</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">class</span> <span class="nc">IsFeed</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Now, we'd like to actually add some tests to our test case. Let's check
+to make sure my blog's atom feed is recognized as a valid feed:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Adding a test  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">django.utils</span> <span class="kn">import</span> <span class="n">unittest</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">class</span> <span class="nc">IsFeed</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="s">&quot;&quot;&quot;Tests the functionality of utility.is_feed</span>
+</span><span class='line'><span class="s">by getting various well-known good feeds and</span>
+</span><span class='line'><span class="s">making sure they validate&quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">test_is_feed_atom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'><span class="sd">&quot;&quot;&quot;Is the url a valid feed?&quot;&quot;&quot;</span>
+</span><span class='line'>    <span class="n">url</span> <span class="o">=</span> <span class="s">&#39;http://www.jeffknupp.com/atom.xml&#39;</span>
+</span><span class='line'>    <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">True</span><span class="p">,</span> <span class="n">utility</span><span class="o">.</span><span class="n">is_feed</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>You'll notice that I documented the test case, and you may be wondering
+why, since I'm a lone developer. Two reasons. First, documentation is
+just as useful for yourself as it is for others. Invariably, you'll come
+back to code you wrote a while ago and decide you were drunk while you
+wrote it. It just makes no sense. Having documentation helps in that
+respect.</p>
+
+<p>The second reason is more subtle: to prepare to open-source the project.
+My goal is to eventually open-source almost all linkrdr that isn't
+essential to the site. Anyone can write a function to check if a URL is
+an RSS or atom feed. It would be nice to have one, though, that's been
+through a lot of use and checks for odd corner-cases. To that end, I'm
+attempting to keep all of linkrdr PEP8 and PEP257 compliant. It's a bit
+more to write, but I'll be glad I did once I release it into the wild.</p>
+
+<p>Anyway, back to our tests. We should now be able to run the tests using:</p>
+
+<p><code>bash
+$  python manage.py test &lt;appname&gt;
+</code></p>
+
+<p>and get output similar to when we ran the testcases before.</p>
+
+<h2>Code Coverage</h2>
+
+<p>Tests are all well and good, but if you aren't testing a vast majority
+of your code, they're just a false sense of security. Code coverage
+tools are designed to intrument your test runs and determine what parts
+of your tested code were actually exercised. With code coverage tools,
+saying your code is 100% tested is not matter of opinion but rather a provable fact.</p>
+
+<p>I use coverage.py for my code coverage. You can install it using pip via
+<code>pip install coverage</code>. Once it's installed, rerun your tests like so:</p>
+
+<p><code>bash Running coverage.py with unit tests
+$  coverage run manage.py test
+</code></p>
+
+<p>This will produce an instrumentation file that you can convert to HTML
+or LaTex, or view from the command line. Run</p>
+
+<p><code>bash Viewing coverage reports
+$  coverage report
+</code></p>
+
+<p>to get a snapshot of how much of your code is actually being tested by
+your unit tests.</p>
+
+<h2>More to Come</h2>
+
+<p>I plan on continuing describing best practices for professional Django
+development, started in <a href="http://www.jeffknupp.com/blog/2012/02/09/starting-a-django-project-the-right-way/">Starting a Django Project the Right Way</a> in future posts. Next time I'll discuss the TestClient and integrating tests into your deployment system.</p>
+
+<p>Questions or comments on <em>Unit Testing in Django</em>? Let me know in the comments below. Also, <a href="http://www.twitter.com/jeffknupp">follow me on Twitter</a> to see all of my blog posts and updates.</p>
+]]></content>
+  </entry>
+  
+</feed>

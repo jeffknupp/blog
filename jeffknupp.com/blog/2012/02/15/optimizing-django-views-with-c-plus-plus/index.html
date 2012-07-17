@@ -1,0 +1,513 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Optimizing Django Views With C++ - Hackers Gonna Hack</title>
+  <meta name="author" content="Jeff Knupp">
+
+  
+  <meta name="description" content="In my previous post I outlined the method by which one goes about profiling a Django application. I used a view from linkrdr as an example. That view &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.jeffknupp.com/blog/2012/02/15/optimizing-django-views-with-c-plus-plus">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="http://feeds.feedburner.com/hackersgonnahack" rel="alternate" title="Hackers Gonna Hack" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-12615441-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Hackers Gonna Hack</a></h1>
+  
+    <h2>On Hacking and Hustling</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="http://feeds.feedburner.com/hackersgonnahack" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.jeffknupp.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about-me/">About Me</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Optimizing Django Views With C++</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-15T09:55:00-05:00" pubdate data-updated="true">Feb 15<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>In my <a href="http://www.jeffknupp.com/blog/2012/02/14/profiling-django-applications/">previous post</a> I outlined the method by which one goes about profiling a Django application. I used a view from <a href="http://www.linkrdr.com">linkrdr</a> as an example. That view is responsible of aggregating, ranking, and sorting all of the links in a user&#8217;s feeds (RSS, atom, Twitter, etc). The code from the post was an early, simplistic implementation of the view. I have, however, a much more robust scoring algorithm, written in Python, which I planned to used on the site.</p>
+
+<p>You may have caught the word &#8216;planned&#8217; in there. The algorithm turned out to be too slow. Rather, my Python implementation of the algorithm
+was slower than what I deemed acceptable. After thinking of various architectural changes that could be made to solve the problem, I settled on a somewhat radical solution for a Django developer: <strong>I implemented the view in C++</strong>.</p>
+
+<p>I realize that not every Django developer knows C++, nor should they, but those that do should realize it&#8217;s a viable tool available when Python is just too slow. Eventually, you may get to a point where you can&#8217;t really optimize your Python code any more. In this case, profiling will show that most of your time is spent in Python library calls. Once you hit that point, you&#8217;ve either written a horribly inefficient algorithm or you&#8217;ve got a problem not suited for Python.</p>
+
+<p>When I realized I had hit that point with my view code, I panicked.
+<em>&#8216;What more is there to do?&#8217;</em> I wondered. Then I rememberd a work
+project where I had written some C++ code that interfaced with Python.
+From a technical perspective, there was nothing stopping me from
+implementing some aspects of my Django app in C++ (besides the fact
+that it&#8217;s <em>excruciating</em> to write in coming from Python). Since linkrdr
+is a single-person project, there are no teammates who need to grok the
+code. I&#8217;m free to implement it as I wish.</p>
+
+<!--more-->
+
+
+<h2>Setting Up</h2>
+
+<p>Having written &#8220;pure&#8221; C++/Python interoperability code before, and not
+wanting to see <code>Py_XDecRef</code> again, I decided I would use boost::python. To begin, I made sure I had the latest <a href="http://www.boost.org">Boost</a>
+libraries and a recent version of gcc installed so I could use C++11
+features, which really are rather nice. After building the newest
+version of the boost::python library, I set out to learn how to actually
+use the thing. It turned out to be incredibly easy.</p>
+
+<p>boost::python wraps a number of Python datatypes for you: <code>object</code>
+represents a generic Python object, <code>list</code> is a list, and so on. Since
+Python is dynamically typed, there really aren&#8217;t a whole lot of these.
+&#8216;Everything is an Object&#8217; means that everything is a
+boost::python::object and can be accessed in that way.</p>
+
+<p>In addition to primitive and container type wrappers, boost provides a
+clear and concise mechanism to make C++ classes and functions visible to Python. I had
+a simple class in the code of my previous entry name <code>LinkScore</code>. It
+was basically a C struct with a list of objects and an integer. The C++
+code for it is:</p>
+
+<figure class='code'><figcaption><span>A simple C++ class  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">using</span> <span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">python</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">LinkScore</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span><span class="o">:</span>
+</span><span class='line'>        <span class="n">LinkScore</span><span class="p">()</span> <span class="p">{}</span>
+</span><span class='line'>        <span class="n">LinkScore</span><span class="p">(</span><span class="k">const</span> <span class="n">object</span><span class="o">&amp;</span> <span class="n">link</span><span class="p">,</span> <span class="kt">int</span> <span class="n">score</span><span class="p">)</span> <span class="o">:</span> <span class="n">score_</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="n">links_</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">link</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="n">list</span> <span class="n">links_</span><span class="p">;</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">score_</span><span class="p">;</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you&#8217;re thinking my data members should be private, guess what: I
+don&#8217;t care. That&#8217;s part of the joy of working on code that only you will
+use. You get to write it and use it however you want.</p>
+
+<h2>The Details</h2>
+
+<p>Anyway, the boost::python code to make this callable from Python is:</p>
+
+<figure class='code'><figcaption><span>boost::python code for Python interoperability  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'>    <span class="n">class_</span><span class="o">&lt;</span><span class="n">LinkScore</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;LinkScore&quot;</span><span class="p">,</span> <span class="n">init</span><span class="o">&lt;</span><span class="n">object</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;</span><span class="p">())</span>
+</span><span class='line'>        <span class="p">.</span><span class="n">def_readwrite</span><span class="p">(</span><span class="s">&quot;links&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">LinkScore</span><span class="o">::</span><span class="n">links_</span><span class="p">)</span>
+</span><span class='line'>        <span class="p">.</span><span class="n">def_readwrite</span><span class="p">(</span><span class="s">&quot;score&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">LinkScore</span><span class="o">::</span><span class="n">score_</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Really, it couldn&#8217;t be more simple. The <code>&lt;Python.h&gt;</code> way of
+accomplishing this involves setting a struct with like 40 values to
+declare each class. I was happy to not have to bother with that.</p>
+
+<p>The actual code for my view is a free function called <code>get_scores</code>.
+Here&#8217;s a brief snippet:</p>
+
+<figure class='code'><figcaption><span>C++ code to be called by my Django view  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">using</span> <span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">python</span><span class="p">;</span>
+</span><span class='line'><span class="k">using</span> <span class="n">namspace</span> <span class="n">std</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">CompareObject</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span><span class="o">:</span>
+</span><span class='line'>      <span class="kt">bool</span>  <span class="k">operator</span><span class="p">()(</span><span class="k">const</span> <span class="n">LinkScore</span><span class="o">&amp;</span> <span class="n">l</span><span class="p">,</span> <span class="k">const</span> <span class="n">LinkScore</span><span class="o">&amp;</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">l</span><span class="p">.</span><span class="n">score_</span> <span class="o">&gt;</span> <span class="n">r</span><span class="p">.</span><span class="n">score_</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">list</span> <span class="n">get_scores</span><span class="p">(</span><span class="n">object</span> <span class="n">links</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">object</span> <span class="n">utility</span> <span class="o">=</span> <span class="n">import</span><span class="p">(</span><span class="s">&quot;links.utility&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">set</span><span class="o">&lt;</span><span class="n">LinkScore</span><span class="p">,</span> <span class="n">CompareObject</span><span class="o">&gt;</span> <span class="n">seen_links</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">list</span> <span class="n">python_seen_links</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">len</span><span class="p">(</span><span class="n">links</span><span class="p">);</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="k">const</span> <span class="n">object</span><span class="o">&amp;</span> <span class="n">link</span> <span class="o">=</span> <span class="n">links</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span><span class='line'>        <span class="n">LinkScore</span> <span class="n">score</span> <span class="o">=</span> <span class="n">LinkScore</span><span class="p">(</span><span class="n">link</span><span class="p">,</span> <span class="n">score_link</span> <span class="p">(</span><span class="n">link</span><span class="p">,</span> <span class="n">links</span><span class="p">));</span>
+</span><span class='line'>        <span class="k">auto</span> <span class="n">iter</span> <span class="o">=</span> <span class="n">seen_links</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">score</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="n">iter</span> <span class="o">!=</span> <span class="n">seen_links</span><span class="p">.</span><span class="n">end</span><span class="p">())</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="c1">// Do stuff</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="k">else</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="c1">// Do other stuff</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="c1">// TODO: Optimize this</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">i</span> <span class="o">=</span> <span class="n">seen_links</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">seen_links</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="n">python_seen_links</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="o">*</span><span class="n">i</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">python_seen_links</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you know C++ and Python, it&#8217;s almost like reading a mix of the two.
+The above, however, is valid C++ code and is the interface that Python
+uses to call into my scoring library. To expose this function to Python,
+all that&#8217;s needed is <code>def ("get_score", get_score);</code> within a
+<code>BOOST_PYTHON_MODULE</code> block, which names the module to be imported.</p>
+
+<p>When I was done writing the C++ code, I compiled it using gcc and Boost&#8217;s bjam build tool,
+set my LD_LIBRARY_PATH to pickup libboost_python.so, and fired up a
+shell from manage.py (well, a &#8216;shell_plus&#8217; really). I used the cProfile
+module to compare the C++ version of the view with the Python version of
+the view. The results were satisfying: an 8x speedup with the C++
+version.</p>
+
+<p>To call the C++ code, I just needed to make sure the .so generated was
+on my PYTHON_PATH. I could then <code>import</code> it like a normal Python
+library. I added it to my views.py and ran my unit tests. After they
+passed, I committed everything and put the new code through it&#8217;s paces
+on the development web server. The reponse time was noticably improved,
+with the view being served seemingly instantaneously.</p>
+
+<h2>Wrap Up</h2>
+
+<p>I realize this is not an optimization option avaiable to everyone, but
+it <em>is</em> an option. Python is a fantastic language and Django is a nice
+framework. When you need raw speed for computationally expensive
+procedures, though, nothing beats getting closer to the metal. Overall,
+I&#8217;m quite happy with the results and how easy it was to implement. I
+will refrain from writing any more C++ code for linkrdr unless
+absolutely necessary. It&#8217;s nice to know, however, that the option is there.</p>
+
+<p>Questions or comments on <em>Optimizing Django Views With C++</em> ? Let me know in the comments below. Also, <a href="http://www.twitter.com/jeffknupp/">follow me on Twitter</a> to see all of my blog posts and updates.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Jeff Knupp</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-15T09:55:00-05:00" pubdate data-updated="true">Feb 15<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/c-/'>c++</a>, <a class='category' href='/blog/categories/django/'>django</a>, <a class='category' href='/blog/categories/optimization/'>optimization</a>, <a class='category' href='/blog/categories/profiling/'>profiling</a>, <a class='category' href='/blog/categories/python/'>python</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.jeffknupp.com/blog/2012/02/15/optimizing-django-views-with-c-plus-plus/" data-via="jeffknupp" data-counturl="http://www.jeffknupp.com/blog/2012/02/15/optimizing-django-views-with-c-plus-plus/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/02/14/profiling-django-applications/" title="Previous Post: Profiling Django Applications: A Journey From 1300 to 2 queries">&laquo; Profiling Django Applications: A Journey From 1300 to 2 queries</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/02/21/how-linkrdr-went-semi-viral/" title="next Post: How linkrdr went semi-viral">How linkrdr went semi-viral &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/07/10/software-optimization-a-systematic-approach/">Software Optimization: A Systematic Approach</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/31/pythons-hardest-problem/">Python's Hardest Problem</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/05/from-redis-to-memcached-to-surpdb/">From Memcached to Redis to Surpdb</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/02/29/single-founder-seo-building-your-personal-brand/">Single Founder SEO: Building Your Personal Brand</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/02/24/django-memcached-optimizing-django-through-caching/">Django Memcached: Optimizing Django Through Caching</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Github Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/jeffknupp">@jeffknupp</a> on Github
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'jeffknupp',
+            count: 4,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("jeffknupp", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/jeffknupp" class="twitter-follow-button" data-show-count="false">Follow @jeffknupp</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Jeff Knupp -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+<a title="Real Time Web Analytics" href="http://getclicky.com/66528953"><img alt="Real Time Web Analytics" src="//static.getclicky.com/media/links/badge.gif" border="0" /></a>
+<script src="//static.getclicky.com/js" type="text/javascript"></script>
+<script type="text/javascript">try{ clicky.init(66535137); }catch(e){}</script>
+<noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/66535137ns.gif" /></p></noscript>
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'hackersgonnahack';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.jeffknupp.com/blog/2012/02/15/optimizing-django-views-with-c-plus-plus/';
+        var disqus_url = 'http://www.jeffknupp.com/blog/2012/02/15/optimizing-django-views-with-c-plus-plus/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

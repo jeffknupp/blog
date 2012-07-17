@@ -1,0 +1,568 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: profiling | Hackers Gonna Hack]]></title>
+  <link href="http://www.jeffknupp.com/blog/categories/profiling/atom.xml" rel="self"/>
+  <link href="http://www.jeffknupp.com/"/>
+  <updated>2012-07-10T06:02:38-04:00</updated>
+  <id>http://www.jeffknupp.com/</id>
+  <author>
+    <name><![CDATA[Jeff Knupp]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Optimizing Django Views With C++]]></title>
+    <link href="http://www.jeffknupp.com/blog/2012/02/15/optimizing-django-views-with-c-plus-plus/"/>
+    <updated>2012-02-15T09:55:00-05:00</updated>
+    <id>http://www.jeffknupp.com/blog/2012/02/15/optimizing-django-views-with-c-plus-plus</id>
+    <content type="html"><![CDATA[<p>In my <a href="http://www.jeffknupp.com/blog/2012/02/14/profiling-django-applications/">previous post</a> I outlined the method by which one goes about profiling a Django application. I used a view from <a href="http://www.linkrdr.com">linkrdr</a> as an example. That view is responsible of aggregating, ranking, and sorting all of the links in a user's feeds (RSS, atom, Twitter, etc). The code from the post was an early, simplistic implementation of the view. I have, however, a much more robust scoring algorithm, written in Python, which I planned to used on the site.</p>
+
+<p>You may have caught the word 'planned' in there. The algorithm turned out to be too slow. Rather, my Python implementation of the algorithm
+was slower than what I deemed acceptable. After thinking of various architectural changes that could be made to solve the problem, I settled on a somewhat radical solution for a Django developer: <strong>I implemented the view in C++</strong>.</p>
+
+<p>I realize that not every Django developer knows C++, nor should they, but those that do should realize it's a viable tool available when Python is just too slow. Eventually, you may get to a point where you can't really optimize your Python code any more. In this case, profiling will show that most of your time is spent in Python library calls. Once you hit that point, you've either written a horribly inefficient algorithm or you've got a problem not suited for Python.</p>
+
+<p>When I realized I had hit that point with my view code, I panicked.
+<em>'What more is there to do?'</em> I wondered. Then I rememberd a work
+project where I had written some C++ code that interfaced with Python.
+From a technical perspective, there was nothing stopping me from
+implementing some aspects of my Django app in C++ (besides the fact
+that it's <em>excruciating</em> to write in coming from Python). Since linkrdr
+is a single-person project, there are no teammates who need to grok the
+code. I'm free to implement it as I wish.</p>
+
+<!--more-->
+
+
+<h2>Setting Up</h2>
+
+<p>Having written "pure" C++/Python interoperability code before, and not
+wanting to see <code>Py_XDecRef</code> again, I decided I would use boost::python. To begin, I made sure I had the latest <a href="http://www.boost.org">Boost</a>
+libraries and a recent version of gcc installed so I could use C++11
+features, which really are rather nice. After building the newest
+version of the boost::python library, I set out to learn how to actually
+use the thing. It turned out to be incredibly easy.</p>
+
+<p>boost::python wraps a number of Python datatypes for you: <code>object</code>
+represents a generic Python object, <code>list</code> is a list, and so on. Since
+Python is dynamically typed, there really aren't a whole lot of these.
+'Everything is an Object' means that everything is a
+boost::python::object and can be accessed in that way.</p>
+
+<p>In addition to primitive and container type wrappers, boost provides a
+clear and concise mechanism to make C++ classes and functions visible to Python. I had
+a simple class in the code of my previous entry name <code>LinkScore</code>. It
+was basically a C struct with a list of objects and an integer. The C++
+code for it is:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>A simple C++ class  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">using</span> <span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">python</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">class</span> <span class="nc">LinkScore</span>
+</span><span class='line'><span class="p">{</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="k">public</span><span class="o">:</span>
+</span><span class='line'>    <span class="n">LinkScore</span><span class="p">()</span> <span class="p">{}</span>
+</span><span class='line'>    <span class="n">LinkScore</span><span class="p">(</span><span class="k">const</span> <span class="n">object</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span> <span class="n">link</span><span class="p">,</span> <span class="kt">int</span> <span class="n">score</span><span class="p">)</span> <span class="o">:</span> <span class="n">score_</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">links_</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">link</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="n">list</span> <span class="n">links_</span><span class="p">;</span>
+</span><span class='line'><span class="kt">int</span> <span class="n">score_</span><span class="p">;</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>If you're thinking my data members should be private, guess what: I
+don't care. That's part of the joy of working on code that only you will
+use. You get to write it and use it however you want.</p>
+
+<h2>The Details</h2>
+
+<p>Anyway, the boost::python code to make this callable from Python is:
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>boost::python code for Python interoperability  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">class_</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">LinkScore</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;(</span><span class="s">&quot;LinkScore&quot;</span><span class="p">,</span> <span class="n">init</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">object</span><span class="p">,</span> <span class="kt">int</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;())</span>
+</span><span class='line'>    <span class="p">.</span><span class="n">def_readwrite</span><span class="p">(</span><span class="s">&quot;links&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">LinkScore</span><span class="o">::</span><span class="n">links_</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">.</span><span class="n">def_readwrite</span><span class="p">(</span><span class="s">&quot;score&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">LinkScore</span><span class="o">::</span><span class="n">score_</span><span class="p">);</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Really, it couldn't be more simple. The <code>&lt;Python.h&gt;</code> way of
+accomplishing this involves setting a struct with like 40 values to
+declare each class. I was happy to not have to bother with that.</p>
+
+<p>The actual code for my view is a free function called <code>get_scores</code>.
+Here's a brief snippet:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>C++ code to be called by my Django view  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">using</span> <span class="k">namespace</span> <span class="n">boost</span><span class="o">::</span><span class="n">python</span><span class="p">;</span>
+</span><span class='line'><span class="k">using</span> <span class="n">namspace</span> <span class="n">std</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">class</span> <span class="nc">CompareObject</span> <span class="p">{</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="k">public</span><span class="o">:</span>
+</span><span class='line'>  <span class="kt">bool</span>  <span class="k">operator</span><span class="p">()(</span><span class="k">const</span> <span class="n">LinkScore</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span> <span class="n">l</span><span class="p">,</span> <span class="k">const</span> <span class="n">LinkScore</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">l</span><span class="p">.</span><span class="n">score_</span> <span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">r</span><span class="p">.</span><span class="n">score_</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">};</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">list</span> <span class="n">get_scores</span><span class="p">(</span><span class="n">object</span> <span class="n">links</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">object</span> <span class="n">utility</span> <span class="o">=</span> <span class="n">import</span><span class="p">(</span><span class="s">&quot;links.utility&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="n">set</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">LinkScore</span><span class="p">,</span> <span class="n">CompareObject</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">seen_links</span><span class="p">;</span>
+</span><span class='line'><span class="n">list</span> <span class="n">python_seen_links</span><span class="p">;</span>
+</span><span class='line'><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="n">len</span><span class="p">(</span><span class="n">links</span><span class="p">);</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">const</span> <span class="n">object</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span> <span class="n">link</span> <span class="o">=</span> <span class="n">links</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span><span class='line'>    <span class="n">LinkScore</span> <span class="n">score</span> <span class="o">=</span> <span class="n">LinkScore</span><span class="p">(</span><span class="n">link</span><span class="p">,</span> <span class="n">score_link</span> <span class="p">(</span><span class="n">link</span><span class="p">,</span> <span class="n">links</span><span class="p">));</span>
+</span><span class='line'>    <span class="k">auto</span> <span class="n">iter</span> <span class="o">=</span> <span class="n">seen_links</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">score</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">iter</span> <span class="o">!=</span> <span class="n">seen_links</span><span class="p">.</span><span class="n">end</span><span class="p">())</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// Do stuff</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="c1">// Do other stuff</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="c1">// TODO: Optimize this</span>
+</span><span class='line'><span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="n">i</span> <span class="o">=</span> <span class="n">seen_links</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">seen_links</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">python_seen_links</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="o">*</span><span class="n">i</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="k">return</span> <span class="n">python_seen_links</span><span class="p">;</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>If you know C++ and Python, it's almost like reading a mix of the two.
+The above, however, is valid C++ code and is the interface that Python
+uses to call into my scoring library. To expose this function to Python,
+all that's needed is <code>def ("get_score", get_score);</code> within a
+<code>BOOST_PYTHON_MODULE</code> block, which names the module to be imported.</p>
+
+<p>When I was done writing the C++ code, I compiled it using gcc and Boost's bjam build tool,
+set my LD_LIBRARY_PATH to pickup libboost_python.so, and fired up a
+shell from manage.py (well, a 'shell_plus' really). I used the cProfile
+module to compare the C++ version of the view with the Python version of
+the view. The results were satisfying: an 8x speedup with the C++
+version.</p>
+
+<p>To call the C++ code, I just needed to make sure the .so generated was
+on my PYTHON_PATH. I could then <code>import</code> it like a normal Python
+library. I added it to my views.py and ran my unit tests. After they
+passed, I committed everything and put the new code through it's paces
+on the development web server. The reponse time was noticably improved,
+with the view being served seemingly instantaneously.</p>
+
+<h2>Wrap Up</h2>
+
+<p>I realize this is not an optimization option avaiable to everyone, but
+it <em>is</em> an option. Python is a fantastic language and Django is a nice
+framework. When you need raw speed for computationally expensive
+procedures, though, nothing beats getting closer to the metal. Overall,
+I'm quite happy with the results and how easy it was to implement. I
+will refrain from writing any more C++ code for linkrdr unless
+absolutely necessary. It's nice to know, however, that the option is there.</p>
+
+<p>Questions or comments on <em>Optimizing Django Views With C++</em> ? Let me know in the comments below. Also, <a href="http://www.twitter.com/jeffknupp/">follow me on Twitter</a> to see all of my blog posts and updates.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Profiling Django Applications: A Journey From 1300 to 2 queries]]></title>
+    <link href="http://www.jeffknupp.com/blog/2012/02/14/profiling-django-applications/"/>
+    <updated>2012-02-14T09:33:00-05:00</updated>
+    <id>http://www.jeffknupp.com/blog/2012/02/14/profiling-django-applications</id>
+    <content type="html"><![CDATA[<p>In this post, I'll discuss profiling Django applications through a case
+study in <a href="http://www.linkrdr.com">linkrdr's</a> code. Through the use of
+profiling tools, I was able to reduce the number of database queries a
+view was using from <strong>1300</strong> to 2.</p>
+
+<h2>Introduction To Profiling</h2>
+
+<p>At some point in most Django projects, some part of the application
+becomes 'slow'. This doesn't have to be the case (more on that later),
+but it's often the result of changes made without performance
+in mind.</p>
+
+<p>In the begining, this is actually a good thing: <strong>focus on
+making it work first, then focus on making it fast</strong>. Of course, you
+don't want to code yourself into a corner by writing code that "works"
+but does so in a way that it will <em>never</em> be fast. Instead, you want to
+keep performance in the back of your mind while implementing a solution
+that makes sense.</p>
+
+<p>Once you've proven your solution works through your automated tests
+(<a href="http://www.jeffknupp.com/blog/2012/02/11/unit-testing-in-django/">You are using automated tests, right?</a>),
+the next step is to make sure its performance is acceptable. Note that
+I didn't say 'optimal'. <strong>Don't waste time making something faster than
+it needs to be</strong>. This should be common sense but, once the optimization
+bug bites, it's common for developers to go a bit off the deep end and
+keep trying to find optimizations long after it's necessary.</p>
+
+<!--more-->
+
+
+<p>So you're solution works, but it's slower than what you've deemed
+acceptable. What's the first step? For far too many developers, it's</p>
+
+<ol>
+<li>Fire up my editor</li>
+<li>Take a look around</li>
+<li>Guess what I think is causing slowness</li>
+<li>Make a bunch of changes</li>
+<li>Hope it got faster</li>
+</ol>
+
+
+<p>Wrong, wrong, wrong. If you take away one thing from the post, let this
+be it: <strong>developers are notoriously bad at predicting performance
+bottlenecks</strong>. People think, 'Well, I wrote it, so I should know what
+could be causing slowness.' Instead of relying on faulty intuition, we should be relying on <em>data</em>.</p>
+
+<p>Profiling is the process by which we accumulate data on the performance
+of an application. This data can come in many forms, but usually is some
+variation on reporting two things: the number of times a function or
+line of code was executed and how much time it took to do so. For every modern
+language there exist some form of profiling tools. Use them.</p>
+
+<h2>A Case Study</h2>
+
+<p><a href="http://www.linkrdr.com">linkrdr</a> allows, among other things, a user to
+import their RSS/Atom/Twitter/Anything Else feeds and get an
+inteligently laid out view of the <em>links</em> contained in their feeds. The
+<code>show_items</code> view for linkrdr is responsible for retrieving the user's
+current feeds, gathering the links from those feeds' entries, and
+scoring, sorting, and aggregating the links for presentation.</p>
+
+<p>When I first began work on the view, I did so with a unit test prewritten.
+I needed to get that test working, so I did so in the simplest way possible. Here's what
+the code looked like:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Intial show_items implementation  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">show_items</span><span class="p">(</span><span class="n">request</span><span class="p">):</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">feeds</span> <span class="o">=</span> <span class="n">Feed</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">users__id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+</span><span class='line'><span class="n">seen_links</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">LinkScore</span><span class="p">():</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">link</span><span class="p">,</span> <span class="n">score</span><span class="p">):</span>
+</span><span class='line'>    <span class="bp">self</span><span class="o">.</span><span class="n">links</span> <span class="o">=</span> <span class="p">[</span><span class="n">link</span><span class="p">]</span>
+</span><span class='line'>    <span class="bp">self</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">score</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">for</span> <span class="n">feed</span> <span class="ow">in</span> <span class="n">feeds</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">feed</span><span class="o">.</span><span class="n">entry_set</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">entry</span><span class="o">.</span><span class="n">link_set</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+</span><span class='line'>            <span class="c"># determine score for link</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">sorted_links</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">seen_links</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">score</span><span class="p">,</span>
+</span><span class='line'>        <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">return</span> <span class="n">render_to_response</span><span class="p">(</span><span class="s">&#39;links/entries.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;links&#39;</span><span class="p">:</span> <span class="n">sorted_links</span><span class="p">,</span> <span class="p">},</span> <span class="n">context_instance</span><span class="o">=</span><span class="n">RequestContext</span><span class="p">(</span><span class="n">request</span><span class="p">))</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Simple, right? If someone asked you to write psuedo-code to perform this
+task, I'm guessing it would look largely similar to this. Remember,
+that's a good thing in the begining. We're focusing on correctness more
+than performance.</p>
+
+<p>This code turned out to be 'all right' in the performance department.
+It eventually got on my nerves, though, becuase I knew it has a problem that experienced Django developers probably
+spotted right away. Even though I was %99.99 percent sure I knew what
+was slowing down this view, I approached optimizing this code the same
+way I approach any optimization task. I began with profiling.</p>
+
+<p>Profiling in Django is a little all over the map. There isn't really a
+universally accepted solution, as you can tell by reading the
+<a href="https://code.djangoproject.com/wiki/ProfilingDjango">Django wiki</a>. I've
+been using
+<a href="https://github.com/django-extensions/django-extensions">django-extensions</a>
+for a while now, and it has a very nice profiling feature: <code>manage.py runprofileserver</code>. It starts the Django webserver with the (now unmaintained but still useful) <em>hotshot</em> profiler and writes a .prof profiling results file on every request.</p>
+
+<p>So I fired up the profile server and navigated to my view. A .prof file
+was added to my /tmp directory. To interpret it, I entered the Django
+shell and did the following:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Reading the profiling stats  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">hotshot.stats</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">stats</span> <span class="o">=</span> <span class="n">hotshot</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&#39;/path/to/file.prof&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">stats</span><span class="o">.</span><span class="n">sort_stats</span><span class="p">(</span><span class="s">&#39;time&#39;</span><span class="p">,</span> <span class="s">&#39;calls&#39;</span><span class="p">)</span> <span class="c"># sort the output based on time spent</span>
+</span><span class='line'><span class="ow">in</span> <span class="n">the</span> <span class="n">function</span>
+</span><span class='line'><span class="n">stats</span><span class="o">.</span><span class="n">print_stats</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span> <span class="c"># print the top 20 culprits</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>The result of this was as I expected:
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Profiling output  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>In <span class="o">[</span>6<span class="o">]</span>: stats.print_stats<span class="o">(</span>20<span class="o">)</span>
+</span><span class='line'>   557944 <span class="k">function </span>calls <span class="o">(</span>485997 primitive calls<span class="o">)</span> in 3.959 seconds&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;   Ordered by: internal <span class="nb">time</span>, call count
+</span><span class='line'>   List reduced from 457 to 20 due to restriction &lt;20&gt;&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;   ncalls  tottime  percall  cumtime  percall filename:lineno<span class="o">(</span><span class="k">function</span><span class="o">)</span>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt; 1310    0.763    0.001    0.783    0.001 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/backends/postgresql_psycopg2/base.py:42<span class="o">(</span>execute<span class="o">)</span>
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;68656/15272    0.485    0.000    1.099    0.000 /usr/lib/python2.7/copy.py:145<span class="o">(</span>deepcopy<span class="o">)</span>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt;67792    0.173    0.000    0.173    0.000 /usr/lib/python2.7/copy.py:267<span class="o">(</span>_keep_alive<span class="o">)</span>
+</span><span class='line'> 1310    0.152    0.000    0.155    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/backends/postgresql_psycopg2/base.py:116<span class="o">(</span>_cursor<span class="o">)</span>
+</span><span class='line'> 3818    0.136    0.000    1.294    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/sql/query.py:223<span class="o">(</span>clone<span class="o">)</span>
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;10041/5020    0.109    0.000    0.544    0.000 /usr/lib/python2.7/copy.py:234<span class="o">(</span>_deepcopy_tuple<span class="o">)</span>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt; 2344    0.089    0.000    0.106    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/base.py:275<span class="o">(</span>__init__<span class="o">)</span>
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;8838/7636    0.076    0.000    0.575    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/utils/tree.py:55<span class="o">(</span>&lt;strong&gt;deepcopy&lt;/strong&gt;<span class="o">)</span>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt;10258    0.067    0.000    0.072    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/utils/datastructures.py:110<span class="o">(</span>__init__<span class="o">)</span>
+</span><span class='line'> 1310    0.057    0.000    0.111    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/sql/compiler.py:218<span class="o">(</span>get_default_columns<span class="o">)</span>
+</span><span class='line'> 3654    0.053    0.000    1.816    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/query.py:214<span class="o">(</span>iterator<span class="o">)</span>
+</span><span class='line'> 3280    0.050    0.000    2.209    0.001 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/fields/related.py:288<span class="o">(</span>__get__<span class="o">)</span>
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;21494/19090    0.046    0.000    0.356    0.000 /usr/lib/python2.7/copy.py:226<span class="o">(</span>_deepcopy_list<span class="o">)</span>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt; 5021    0.045    0.000    0.326    0.000 /usr/lib/python2.7/copy.py:306<span class="o">(</span>_reconstruct<span class="o">)</span>
+</span><span class='line'> 1310    0.044    0.000    0.420    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/sql/compiler.py:47<span class="o">(</span>as_sql<span class="o">)</span>
+</span><span class='line'> 1310    0.040    0.000    0.069    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/sql/query.py:99<span class="o">(</span>__init__<span class="o">)</span>
+</span><span class='line'> 2620    0.037    0.000    0.099    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/sql/compiler.py:749<span class="o">(</span>&amp;lt;lambda&amp;gt;<span class="o">)</span>
+</span><span class='line'> 1310    0.037    0.000    0.846    0.001 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/backends/util.py:31<span class="o">(</span>execute<span class="o">)</span>
+</span><span class='line'> 3818    0.037    0.000    1.345    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/query.py:751<span class="o">(</span>_clone<span class="o">)</span>
+</span><span class='line'>10258    0.037    0.000    0.037    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/utils/datastructures.py:105<span class="o">(</span>__new__<span class="o">)</span>
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>As you can see, psycopg2 is calling <code>execute</code> 1310 times, which is
+causing all sorts of slowness. Execute, in case you didn't guess, is the
+function that executes an SQL query against the database. My view was
+making <strong>1310 database queries for a user with 4 feeds</strong>.</p>
+
+<p>Well, now we know what the cause of the slowness is. The question is: how do we fix it? I began by activating the django-debug-toolbar,
+which lets you view the number of SQL queries a page generates, among
+many other useful things. I confirmed that the number of queries
+reported was the same in the debug-toolbar and went about optimizing the
+code.</p>
+
+<p>The first approach to optmization in Django should always be to modify the
+problematic function without changing anything else. Sometimes, you won't be
+able to optimize without making changes to your models or other parts
+of your application, but this kind of change shouldn't be your first
+inclination.</p>
+
+<p>So I went back to my view and asked: is there a better way to get the same
+data I'm currently getting? It turns out there is: using <code>select_related</code> in my query.
+<a href="https://docs.djangoproject.com/en/1.1/ref/models/querysets/#select-related">select_related</a> populates your QuerySet with the records you requested
+plus related records based on ForeignKeys in your model. If I could
+change my query to use select related, I could drastically reduce the
+number of queries the view required.</p>
+
+<p>There was an issue, though. My models were set up so that a Link
+belonged to an Entry, which belonged to a Feed, which had a set of
+Users associated. I had gone from the top down: a query filtering feeds
+that belonged to the current user. What I needed to do to realize the
+benefit of <code>select_related</code> was to get all of the objects I needed in
+one query. Since what I really needed was <code>Link</code> objects, I changed the
+query to:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Changing the query  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">links</span> <span class="o">=</span> <span class="n">Link</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span><span class="s">&#39;entry&#39;</span><span class="p">,</span> <span class="s">&#39;entry&lt;strong&gt;feed&#39;</span><span class="p">,</span> <span class="s">&#39;url&#39;</span><span class="p">,</span> <span class="s">&#39;entry&lt;/strong&gt;url&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">entry</span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">feed</span><span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">users__id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>This would give me all of the links that I was interested in, plus all
+of the related objects that I'd be using. I reran the view profiling and
+saw something unexpected: I was still performing over 600 queries. Using
+the debug-toolbar to determine the lines of code generating these
+queries quickly revealed my error. When using <code>select_related</code>, you must
+make sure to <em>reuse the QuerySet in subsequent code</em>. If you
+accidentally use a new QuerySet (even if the objects would have been in
+the original QuerySet) it will result in a new database query. This
+cascades down to any other objects using the new QuerySet, and now you've
+got the same issue again.</p>
+
+<p>After making sure I reused the QuerySet throughout my view and the
+functions it called, I reran the view using the debug-toolbar. Finally I
+had the results I wanted: all of the data generated in just 2 queries
+(the other query was the User's Session query, which can't really be
+avoided). One thing you need to be aware of when using <code>select_related</code>
+is that the query can get so large as to be slower than the iterative
+approach. That's something I'll definitely need to keep an eye on in the
+future.</p>
+
+<h2>Cleaning Up</h2>
+
+<p>After re-running the tests to confirm my new code worked as expected and
+committing the code to git, I had one more task left: update my unit
+tests to reflect my new changes. While I didn't make any functional
+changes, I did make performance changes, and <strong>performance changes
+should be unit tested just like functionality changes</strong>.</p>
+
+<p>Helpfully, Django's <code>TestCase</code> class has an assertion <code>TestCase.assertNumQueries()</code>
+that checks the number of queries performed during a test. I simply
+added this assertion the my view test and I was done. This prevents me
+from adding code in the future that increases the number of database
+queries without forcing myself to decide if that's acceptable.</p>
+
+<p>Questions or comments on <em>Profiling Django Applications</em>? Let me know in the comments below. Also, <a href="http://www.twitter.com/jeffknupp">follow me on Twitter</a> to see all of my blog posts and updates.</p>
+]]></content>
+  </entry>
+  
+</feed>
