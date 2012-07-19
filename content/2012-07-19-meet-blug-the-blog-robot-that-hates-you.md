@@ -3,9 +3,7 @@ date: 2012-07-19 14:35
 categories: blug python programming static-blog-generator
 ---
 
-[![Blug ANGRY!][1]]
-
-[1]: http://www.jeffknupp.com/images/untitled.png (Blug ANGRY!)
+<img src="http://www.jeffknupp.com/images/untitled.png" alt="Blug ANGRY" height="68" width="68" />
 
 Meet **Blug**. He would like a word with you. You see, he's very sad, insomuch as he is the anthropomorphized representation of a Python script and has no real emotions. Blug has been generating blogs since his assembly. Today, he can frequently be found staring wistfully into the distance, recalling the halcyon days of dynamic blogging engines. *Those* were good days. Days when he felt useful. Days when he would be instructed to calculate something, give the result, **then throw that result on the floor and do it again from scratch.** The *cycles* he used! Blug was gorging on the Internet's bottomless appetite for needlessly repeated calculation. 
 
