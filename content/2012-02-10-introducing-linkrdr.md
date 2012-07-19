@@ -1,8 +1,8 @@
-layout: post
+
 title: "Introducing linkrdr"
 date: 2012-02-10 00:49
-comments: true
-categories: linkrdr django python development
+
+
 ---
 I started work on a new site on Monday:
 [linkrdr](http://www.linkrdr.com). It's the next

@@ -1,8 +1,8 @@
-layout: post
+
 title: "Software Optimization: A Systematic Approach"
 date: 2012-07-10 05:25
-comments: true
-categories: software optimization linux c++
+
+
 ---
 
 ## Introduction ##

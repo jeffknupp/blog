@@ -1,8 +1,8 @@
-layout: post
+
 title: "Unit Testing in Django"
 date: 2012-02-11 14:17
-comments: true
-categories: django python unit testing
+
+
 ---
 
 As a follow-up to my post [Starting a Django Project the Right Way](http://www.jeffknupp.com/blog/2012/02/09/starting-a-django-project-the-right-way/), I wanted to talk aboue the importance of writing tests for Django applications. I previously mentioned that my first site [IllestRhyme](http://www.illestrhyme.com), has no app specific tests for it. This is both embarassing and true. I've lost countless hours to fixing problems caused by new changes. I wasn't going to make the same mistake with [linkrdr](http://www.linkrdr.com). Having a set of unit tests that I can run in an automated fashion has made a world of difference.

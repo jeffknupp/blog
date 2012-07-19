@@ -1,7 +1,7 @@
 title: "Advertising: Reddit versus Facebook"
 date: 2012-02-02 05:07
-comments: true
-categories: seo illestrhyme reddit facebook advertising
+
+
 ---
 To acquire users for [IllestRhyme](http://www.illestrhyme.com), a user content driven rap site I started, I ran two ads: one on Reddit and one on Facebook. The results were startling. 
 

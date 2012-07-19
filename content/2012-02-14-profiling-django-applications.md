@@ -1,8 +1,8 @@
-layout: post
+
 title: "Profiling Django Applications: A Journey From 1300 to 2 queries"
 date: 2012-02-14 09:33
-comments: true
-categories: python django profiling query
+
+
 ---
 
 In this post, I'll discuss profiling Django applications through a case

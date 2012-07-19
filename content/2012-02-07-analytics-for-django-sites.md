@@ -1,8 +1,8 @@
-layout: post
+
 title: "Analytics for Django Sites"
 date: 2012-02-07 22:44
-comments: true
-categories: seo analytics clicky google illestrhyme
+
+
 ---
 This is the first in a series of posts I plan to do over the next month about Analytics and Django. In this post I'll walk through how I began to use a number of analytics tools to
 drive decisions about my site, [IllestRhyme](http://www.illestrhyme.com).
