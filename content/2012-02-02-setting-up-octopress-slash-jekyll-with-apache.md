@@ -1,8 +1,6 @@
-
 title: "Setting Up Octopress/Jekyll with Apache"
 date: 2012-02-02 02:06
-
-
+categories: apache octopress jekyll git linode illestrhyme
 ---
 So now that I got my "Hello World" post out of the way, I think it would be instructive to describe the setup process for this blog. Octopress is exactly what I've been looking for: a well styled, static page based blogging engine that doesn't get in my way. The fact that Jekyll (on which Octopress is based) is so closely integrated with git is a definite plus. So how did the install go? First some background.
 

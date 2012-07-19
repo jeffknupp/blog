@@ -1,8 +1,6 @@
-
 title: "Single Founder SEO: Building Your Personal Brand"
 date: 2012-02-29 06:10
-
-
+categories: seo marketing
 ---
 
 As a single founder, I realize I am at a tremendous disadvantage when it comes to non-technical work. There are only so many hours in a day, and I have a full-time job. Work on [linkrdr](http://www.linkrdr.com), therefore, must be prioritized. With so many interesting technical challenges to solve, a number of other useful activities fall by the wayside. Marketing is a big one. So how do I focus my efforts? __By building my personal brand.__

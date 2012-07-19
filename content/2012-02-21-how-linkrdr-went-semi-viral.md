@@ -1,8 +1,6 @@
-
 title: "How linkrdr went semi-viral"
 date: 2012-02-21 04:34
-
-
+categories: linkrdr seo viral blog
 ---
 
 I was a bit under the weather this past weekend, but it turns out I

@@ -1,8 +1,6 @@
-
 title: "From Memcached to Redis to Surpdb"
 date: 2012-03-05 02:21
-
-
+categories: django python redis surpdb optimization
 ---
 
 In this post, I'll describe my journey to find the perfect caching solution for my Django-based site [linkrdr](http://www.linkrdr.com).  After trying Memcached and Redis, I settled on __surpdb__. I guarantee you haven't heard of surpdb before, because I just finished writing it.

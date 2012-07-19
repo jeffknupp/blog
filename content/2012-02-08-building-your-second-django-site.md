@@ -1,8 +1,6 @@
-
 title: "Building Your Second Django Site"
 date: 2012-02-08 05:03
-
-
+categories: django python virtualenv fabric git
 ---
 
 I started work on my second Django powered site today. It's not 

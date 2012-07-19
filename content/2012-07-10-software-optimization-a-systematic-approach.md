@@ -1,8 +1,6 @@
-
 title: "Software Optimization: A Systematic Approach"
 date: 2012-07-10 05:25
-
-
+categories: software optimization linux c++
 ---
 
 ## Introduction ##

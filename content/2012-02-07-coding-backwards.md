@@ -1,8 +1,6 @@
-
 title: "Coding Backwards"
 date: 2012-02-07 09:55
-
-
+categories: python interface testing
 ---
 At my real job I've been working in my spare time on a large-scale Python testing framework. When I decided our current framework didn't meet our needs, I took a new approach (for me) to developing software: _coding backwards_. Since doing so, I've learned that coding backwards can, _but not will_, lead to the creation of some fabulous APIs.
 

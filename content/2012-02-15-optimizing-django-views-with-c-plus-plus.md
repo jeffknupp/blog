@@ -1,8 +1,6 @@
-
 title: "Optimizing Django Views With C++"
 date: 2012-02-15 09:55
-
-
+categories: python django profiling optimization c++
 ---
 
 In my [previous post](http://www.jeffknupp.com/blog/2012/02/14/profiling-django-applications/) I outlined the method by which one goes about profiling a Django application. I used a view from [linkrdr](http://www.linkrdr.com) as an example. That view is responsible of aggregating, ranking, and sorting all of the links in a user's feeds (RSS, atom, Twitter, etc). The code from the post was an early, simplistic implementation of the view. I have, however, a much more robust scoring algorithm, written in Python, which I planned to used on the site.
