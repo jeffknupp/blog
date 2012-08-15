@@ -13,7 +13,7 @@ Setup
 
 To start, we'll want to create a dump of our database data to use during testing. 
 
-``` bash Dump our data
+```bash 
 $ ./manage.py dumpdata --format=json > my/app/directory/initial_data.json
 ```
 
@@ -22,13 +22,13 @@ This will give us a json [fixture](https://code.djangoproject.com/wiki/Fixtures)
 Now that we have our data copied, let's run whatever tests our installed
 apps have already:
 
-``` bash Run our tests
+```bash
 $  python manage.py test
 ``` 
 
 This hopefully gives us output like:
 
-``` bash Test run output
+```bash
     .....................................................................................................................................................................................................................................................................................................................................................................
 ----------------------------------------------------------------------
     Ran 357 tests in 30.025s
@@ -81,7 +81,7 @@ Time for an example. [linkrdr](http://www.linkrdr.com) needs to be able to look-
 determine if it's actually a feed. Here's a simplified version of the
 code I wrote to do that:
 
-{% codeblock Simple feed checker lang:python %}
+```python
 link_types= ['application/atom+xml', 'application/rss+xml',
 'application/rdf+xml', 'application/xml']
 
@@ -98,7 +98,7 @@ what functionality it's testing.
 
 So far we have (with the required imports)
 
-{% codeblock Our tests so far lang:python %}
+```python
 from django.utils import unittest
 
 class IsFeed(unittest.TestCase):
@@ -107,7 +107,8 @@ class IsFeed(unittest.TestCase):
 Now, we'd like to actually add some tests to our test case. Let's check
 to make sure my blog's atom feed is recognized as a valid feed:
 
-{% codeblock Adding a test lang:python %}
+
+```python
 from django.utils import unittest
 
 class IsFeed(unittest.TestCase):
@@ -139,7 +140,7 @@ more to write, but I'll be glad I did once I release it into the wild.
 
 Anyway, back to our tests. We should now be able to run the tests using:
 
-``` bash 
+```bash 
 $  python manage.py test <appname>
 ```
 
@@ -157,14 +158,14 @@ saying your code is 100% tested is not matter of opinion but rather a provable f
 I use coverage.py for my code coverage. You can install it using pip via
 `pip install coverage`. Once it's installed, rerun your tests like so:
 
-``` bash Running coverage.py with unit tests
+```bash
 $  coverage run manage.py test
 ```
 
 This will produce an instrumentation file that you can convert to HTML
 or LaTex, or view from the command line. Run
 
-``` bash Viewing coverage reports
+```bash
 $  coverage report
 ```
 

@@ -45,7 +45,7 @@ The first goal was to cache all the user's sorted links whenver a
 request came in, to be used in subsequent requests. I originally tried
 to cache the entire result set like so:
 
-{% codeblock Caching the results lang:python %}
+```python
 def view(request):
     results = cache.get(request.user.id)
     if not results:
@@ -59,7 +59,7 @@ Each time I tried this the results weren't added to the cache. After about 15 mi
 So I couldn't cache the whole thing, but this turned out to be a useful
 exercise. I realized I didn't need to cache the entire set as one big value. I could chunk the dataset in the same size chunks as were being paginated (currently 100 links). So now, the code looks like this:
 
-{% codeblock Caching chunks lang:python %}
+```python
 def view(request):
     page = get_page(request) # for pagination
 
@@ -83,7 +83,7 @@ But there are some problems with this approach. For one, the first (uncached) re
 
 Let's deal with updates to the dataset first. Django supports "versioning" of cache records. If you specify a version number in your `cache.set(key, value, version=my_version)` call, then a corresponding `cache.get(key, version=some_other_version)` call will not return any data. Using versioning, we can change things around and store the user's current 'version' in the cache. When we want to get the cached dataset, we specify the user's cached version number. In this way, we are able to _invalidate_ old cache entries without searching through the cache for all of a user's cached items. An example will help clarify:
 
-{% codeblock Memcached with versioning lang:python %}
+```python
 def view(request):
     version = cache.get(request.user.id)
     if not version:

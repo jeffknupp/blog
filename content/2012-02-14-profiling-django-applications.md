@@ -63,7 +63,9 @@ When I first began work on the view, I did so with a unit test prewritten.
 I needed to get that test working, so I did so in the simplest way possible. Here's what
 the code looked like:
 
-{% codeblock Intial show_items implementation lang:python %}
+<figure class="code">
+<figcaption><span>Intial show_items implementation</span> 
+```.python
 def show_items(request):
     feeds = Feed.objects.filter(users__id=request.user.id)
     seen_links = {}
@@ -106,7 +108,9 @@ So I fired up the profile server and navigated to my view. A .prof file
 was added to my /tmp directory. To interpret it, I entered the Django
 shell and did the following:
 
-{% codeblock Reading the profiling stats lang:python %}
+<figure class="code">
+<figcaption><span>Reading the profiling stats</span> 
+```.python
 import hotshot.stats
 
 stats = hotshot.stats.load('/path/to/file.prof')
@@ -116,7 +120,10 @@ stats.print_stats(20) # print the top 20 culprits
 ```
 
 The result of this was as I expected:
-{% codeblock Profiling output lang:bash %}
+
+<figure class="code">
+<figcaption><span>Profiling output</span> 
+```.bash
 In [6]: stats.print_stats(20)
    557944 function calls (485997 primitive calls) in 3.959 seconds
 
@@ -178,7 +185,10 @@ benefit of `select_related` was to get all of the objects I needed in
 one query. Since what I really needed was `Link` objects, I changed the
 query to:
 
-{% codeblock Changing the query lang:python %}
+
+<figure class="code">
+<figcaption><span>Changing the query</span> 
+```.python
 links = Link.objects.select_related('entry', 'entry__feed', 'url', 'entry__url').filter(entry__feed__users__id=request.user.id)
 ```
 

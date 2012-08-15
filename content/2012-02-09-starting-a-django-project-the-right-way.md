@@ -36,7 +36,7 @@ Preparing To Install
 -------------------
 
 I'm assuming you have Python installed. If you don't head over to
-[python.org](http://www.python.org) and find the install instructions
+`python.org](http://www.python.org) and find the install instructions
 for your architecture/os. I'll be running on a 64-bit Ubuntu server installation hosted by [Linode](http://www.linode.com/?r=ae1808f234f8e219de24842336fada09ef81d52f), with whom I'm very happy.
 
 So, what's the first step? Install Django, right? Not quite. One common
