@@ -42,7 +42,7 @@ a simple class in the code of my previous entry name `LinkScore`. It
 was basically a C struct with a list of objects and an integer. The C++
 code for it is:
 
-```cplusplus
+```cpp
 using namespace boost::python;
 
 class LinkScore
@@ -66,7 +66,7 @@ The Details
 ----------------
 
 Anyway, the boost::python code to make this callable from Python is:
-```cplusplus
+```cpp
     class_<LinkScore>("LinkScore", init<object, int>())
         .def_readwrite("links", &LinkScore::links_)
         .def_readwrite("score", &LinkScore::score_);
@@ -79,7 +79,7 @@ declare each class. I was happy to not have to bother with that.
 The actual code for my view is a free function called `get_scores`.
 Here's a brief snippet:
 
-```cplusplus
+```cpp
 using namespace boost::python;
 using namspace std;
 
