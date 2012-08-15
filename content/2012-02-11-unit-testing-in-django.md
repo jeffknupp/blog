@@ -88,7 +88,7 @@ link_types= ['application/atom+xml', 'application/rss+xml',
 def is_feed(url):
     link_type = urllib2.urlopen(url).info().gettype()
     return link_type in link_types
-{% endcodeblock %}
+```
 
 Simple, right? Let's add a test for it. First we'll remove anything
 hanging around in tests.py (like the initial contents) and start with a
@@ -102,7 +102,7 @@ So far we have (with the required imports)
 from django.utils import unittest
 
 class IsFeed(unittest.TestCase):
-{% endcodeblock %}
+```
 
 Now, we'd like to actually add some tests to our test case. Let's check
 to make sure my blog's atom feed is recognized as a valid feed:
@@ -120,7 +120,7 @@ class IsFeed(unittest.TestCase):
         url = 'http://www.jeffknupp.com/atom.xml'
         self.assertEqual(True, utility.is_feed(url))
 
-{% endcodeblock %}
+```
 
 You'll notice that I documented the test case, and you may be wondering
 why, since I'm a lone developer. Two reasons. First, documentation is

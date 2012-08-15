@@ -82,7 +82,7 @@ def show_items(request):
             reverse=True)
 
     return render_to_response('links/entries.html', {'links': sorted_links, }, context_instance=RequestContext(request))
-{% endcodeblock %}
+```
 
 Simple, right? If someone asked you to write psuedo-code to perform this
 task, I'm guessing it would look largely similar to this. Remember,
@@ -113,7 +113,7 @@ stats = hotshot.stats.load('/path/to/file.prof')
 stats.sort_stats('time', 'calls') # sort the output based on time spent
 in the function
 stats.print_stats(20) # print the top 20 culprits
-{% endcodeblock %}
+```
 
 The result of this was as I expected:
 {% codeblock Profiling output lang:bash %}
@@ -144,7 +144,7 @@ In [6]: stats.print_stats(20)
      1310    0.037    0.000    0.846    0.001 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/backends/util.py:31(execute)
      3818    0.037    0.000    1.345    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/query.py:751(_clone)
     10258    0.037    0.000    0.037    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/utils/datastructures.py:105(__new__)
-{% endcodeblock %}
+```
 
 As you can see, psycopg2 is calling `execute` 1310 times, which is
 causing all sorts of slowness. Execute, in case you didn't guess, is the
@@ -180,7 +180,7 @@ query to:
 
 {% codeblock Changing the query lang:python %}
 links = Link.objects.select_related('entry', 'entry__feed', 'url', 'entry__url').filter(entry__feed__users__id=request.user.id)
-{% endcodeblock %}
+```
 
 This would give me all of the links that I was interested in, plus all
 of the related objects that I'd be using. I reran the view profiling and

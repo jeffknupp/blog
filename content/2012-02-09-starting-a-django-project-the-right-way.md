@@ -245,21 +245,21 @@ can take. Let's create that now. Put the following in your `fabfile.py`
 in the `myproject` directory:
 
 
-{% codeblock lang:python %}
+```.python
     from fabric.api import local
 
     def prepare_deployment(branch_name):
         local('python manage.py test myapp')
         local('git add -p && git commit')
         local('git checkout master && git merge ' + branchname)
-{% endcodeblock %}
+```
 
 This will run the tests, commit your branch change, and merge them into
 master. At this point, a simple "git pull" in your production area
 becomes your deployment. Lets add a bit more to actually deploy. Add
 this to your fabfile.py:
 
-{% codeblock lang:python %}
+```.python
     from fabric.api import lcd
 
     def deploy():
@@ -268,7 +268,7 @@ this to your fabfile.py:
             local('python manage.py migrate myapp')
             local('python manage.py test myapp')
             local('/my/command/to/restart/webserver')
-{% endcodeblock %}
+```
 This will pull your changes from the development master branch, run any
 migrations you've made, run your tests, and restart your webserver.
 All in one simple command from the command line. If one of those steps

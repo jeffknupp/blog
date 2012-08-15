@@ -56,7 +56,7 @@ class LinkScore
     list links_;
     int score_;
 };
-{% endcodeblock %}
+```
 
 If you're thinking my data members should be private, guess what: I
 don't care. That's part of the joy of working on code that only you will
@@ -70,7 +70,7 @@ Anyway, the boost::python code to make this callable from Python is:
     class_<LinkScore>("LinkScore", init<object, int>())
         .def_readwrite("links", &LinkScore::links_)
         .def_readwrite("score", &LinkScore::score_);
-{% endcodeblock %}
+```
 
 Really, it couldn't be more simple. The `<Python.h>` way of
 accomplishing this involves setting a struct with like 40 values to
@@ -115,7 +115,7 @@ list get_scores(object links)
     }
     return python_seen_links;
 }
-{% endcodeblock %}
+```
 
 If you know C++ and Python, it's almost like reading a mix of the two.
 The above, however, is valid C++ code and is the interface that Python

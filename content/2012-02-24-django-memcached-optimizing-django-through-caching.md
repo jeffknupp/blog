@@ -52,7 +52,7 @@ def view(request):
         results = do_a_ton_of_work()
         cache.set(request.user.id, results)
     # ...
-{% endcodeblock %}
+```
 
 Each time I tried this the results weren't added to the cache. After about 15 minutes of digging, I realized that the dataset was larger than memcached's limit for record sizes. When that happens, the call to `cache.set()` (maddeningly) fails silently. 
  
@@ -69,7 +69,7 @@ def view(request):
         for index in range(0, len(results), 100)
             cache.set(request.user.id+str(index), results[index:index+99])
     # ...
-{% endcodeblock %}
+```
 
 Cache Eviction
 -------------------
@@ -97,7 +97,7 @@ def view(request):
         for index in range(0, len(results), 100)
             cache.set(request.user.id+str(index), results[index:index+99], version=version)
     # ...
-{% endcodeblock %}
+```
 
 Now, when a user adds a feed and the link scores need to be recalculated, we can simply increment his or her version so that the next `cache.get()` will be a cache miss.
 
