@@ -14,6 +14,7 @@ the author as appropriate. Regardless, hope you enjoy this installment.*
 -**Jeff**
 
 #Part Two: Introducing the S.M.A.R.T Methodology
+*In case you missed it, [Part One is available here](http://www.jeffknupp.com/blog/2012/07/10/software-optimization-a-systematic-approach/).*
 
 To optimize software without guesswork and wasted effort, one has to be 
 **SMART**. In keeping with this, I've named the methodology used for the 
