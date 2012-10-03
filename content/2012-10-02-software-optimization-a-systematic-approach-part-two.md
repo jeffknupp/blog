@@ -13,8 +13,27 @@ the author as appropriate. Regardless, hope you enjoy this installment.*
 
 -**Jeff**
 
-#Part Two: Introducing the S.M.A.R.T Methodology
+#Part Two
 *In case you missed it, [Part One is available here](http://www.jeffknupp.com/blog/2012/07/10/software-optimization-a-systematic-approach/).*
+
+##The Case of the Idiot Detective##
+
+Our end goal in optimization is not to merely increase performance. Rather, it is to do increase performance *with proof that our changes were responsible*. When you finish your optimization task, you'll likely face the same two questions from whomever you show the new code to: 
+
+1. How much faster is it?
+2. Why?
+
+Your goal is to have hard data that answers those questions for you, and this forms the cornerstone of our approach. 
+
+A natural analogy for optimization is detective work. Imagine yourself investigating a robbery at the mansion of your least-favorite wealthy celebrity: You arrive on the scene and are told that, among other things, a priceless piece of art was stolen. Without having even surveyed the scene or collected evidence, you shout out "Professional art theif!" and run back to the station to research every art theif you've ever heard of.
+
+Hopefully, this sounds like a ridiculous way to investigate a crime. Unfortunately, it's the exact method employed by a large number of programmers when tasked with optimization. Instead of doing the appropriate investigation, they make an initial guess based on little more than gut-feeling and programming myths and rush off to fix a portion of the process that is quite likely not the culprit.
+
+Instead, we'll be the dogged investigator who carefully analyzes the crime scene, collects potential evidence, and lets that evidence drive the investigation. When the case has been solved and we present our findings to the jury, the evidence will be damning and overwhelming. Remember, solving the case is not enough. *We need to be able to convince the jury that we actually caught the guilty party*.
+
+##Introducing the S.M.A.R.T Methodology
+
+In our approach to optimization, every step is motivated by data produced from the previous step. All of this data is saved, both to aid in our analysis and to help build the final report proving our changes improved performance.
 
 To optimize software without guesswork and wasted effort, one has to be 
 **SMART**. In keeping with this, I've named the methodology used for the 
@@ -22,6 +41,8 @@ rest of this paper is the **S.M.A.R.T** method. The goal is to never encounter a
 situtation where you do some work and then think, "OK, now what?". Data
 tells us what to work on. The **S.M.A.R.T** method tells us *how* to work 
 on it.
+
+<!--more-->
 
 ###Components of the S.M.A.R.T Methodology
 
@@ -34,8 +55,6 @@ on it.
 In the sections below, I'll introduce each component in the **S.M.A.R.T**
 methodology and explain its usefulness. In **Part Three**, I'll describe in detail 
 the work to be done in each step.
-
-<!--more-->
 
 ##Sandbox
 *Sandboxing*, in software development, refers to the creation of an environment
