@@ -65,26 +65,26 @@ the code looked like:
 
 <figure class="code">
 <figcaption><span>Intial show_items implementation</span> 
-```.python
-def show_items(request):
-    feeds = Feed.objects.filter(users__id=request.user.id)
-    seen_links = {}
 
-    class LinkScore():
-        def __init__(self, link, score):
-        self.links = [link]
-        self.score = score
+    #!py
+    def show_items(request):
+        feeds = Feed.objects.filter(users__id=request.user.id)
+        seen_links = {}
 
-    for feed in feeds:
-        for entry in feed.entry_set.all():
-            for link in entry.link_set.all():
-                # determine score for link
+        class LinkScore():
+            def __init__(self, link, score):
+            self.links = [link]
+            self.score = score
 
-    sorted_links = sorted(seen_links.values(), key=lambda v: v.score,
-            reverse=True)
+        for feed in feeds:
+            for entry in feed.entry_set.all():
+                for link in entry.link_set.all():
+                    # determine score for link
 
-    return render_to_response('links/entries.html', {'links': sorted_links, }, context_instance=RequestContext(request))
-```
+        sorted_links = sorted(seen_links.values(), key=lambda v: v.score,
+                reverse=True)
+
+        return render_to_response('links/entries.html', {'links': sorted_links, }, context_instance=RequestContext(request))
 
 Simple, right? If someone asked you to write psuedo-code to perform this
 task, I'm guessing it would look largely similar to this. Remember,
@@ -110,48 +110,48 @@ shell and did the following:
 
 <figure class="code">
 <figcaption><span>Reading the profiling stats</span> 
-```.python
-import hotshot.stats
 
-stats = hotshot.stats.load('/path/to/file.prof')
-stats.sort_stats('time', 'calls') # sort the output based on time spent
-in the function
-stats.print_stats(20) # print the top 20 culprits
-```
+    #!py
+    import hotshot.stats
+
+    stats = hotshot.stats.load('/path/to/file.prof')
+    stats.sort_stats('time', 'calls') # sort the output based on time spent
+    in the function
+    stats.print_stats(20) # print the top 20 culprits
 
 The result of this was as I expected:
 
 <figure class="code">
 <figcaption><span>Profiling output</span> 
-```.bash
-In [6]: stats.print_stats(20)
-   557944 function calls (485997 primitive calls) in 3.959 seconds
 
-   Ordered by: internal time, call count
-   List reduced from 457 to 20 due to restriction <20>
+    #!bash
+    In [6]: stats.print_stats(20)
+    557944 function calls (485997 primitive calls) in 3.959 seconds
 
-   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
-     1310    0.763    0.001    0.783    0.001 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/backends/postgresql_psycopg2/base.py:42(execute)
-68656/15272    0.485    0.000    1.099    0.000 /usr/lib/python2.7/copy.py:145(deepcopy)
-    67792    0.173    0.000    0.173    0.000 /usr/lib/python2.7/copy.py:267(_keep_alive)
-     1310    0.152    0.000    0.155    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/backends/postgresql_psycopg2/base.py:116(_cursor)
-     3818    0.136    0.000    1.294    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/sql/query.py:223(clone)
-10041/5020    0.109    0.000    0.544    0.000 /usr/lib/python2.7/copy.py:234(_deepcopy_tuple)
-     2344    0.089    0.000    0.106    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/base.py:275(__init__)
-8838/7636    0.076    0.000    0.575    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/utils/tree.py:55(__deepcopy__)
-    10258    0.067    0.000    0.072    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/utils/datastructures.py:110(__init__)
-     1310    0.057    0.000    0.111    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/sql/compiler.py:218(get_default_columns)
-     3654    0.053    0.000    1.816    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/query.py:214(iterator)
-     3280    0.050    0.000    2.209    0.001 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/fields/related.py:288(__get__)
-21494/19090    0.046    0.000    0.356    0.000 /usr/lib/python2.7/copy.py:226(_deepcopy_list)
-     5021    0.045    0.000    0.326    0.000 /usr/lib/python2.7/copy.py:306(_reconstruct)
-     1310    0.044    0.000    0.420    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/sql/compiler.py:47(as_sql)
-     1310    0.040    0.000    0.069    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/sql/query.py:99(__init__)
-     2620    0.037    0.000    0.099    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/sql/compiler.py:749(<lambda>)
-     1310    0.037    0.000    0.846    0.001 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/backends/util.py:31(execute)
-     3818    0.037    0.000    1.345    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/query.py:751(_clone)
-    10258    0.037    0.000    0.037    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/utils/datastructures.py:105(__new__)
-```
+    Ordered by: internal time, call count
+    List reduced from 457 to 20 due to restriction <20>
+
+    ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1310    0.763    0.001    0.783    0.001 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/backends/postgresql_psycopg2/base.py:42(execute)
+    68656/15272    0.485    0.000    1.099    0.000 /usr/lib/python2.7/copy.py:145(deepcopy)
+        67792    0.173    0.000    0.173    0.000 /usr/lib/python2.7/copy.py:267(_keep_alive)
+        1310    0.152    0.000    0.155    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/backends/postgresql_psycopg2/base.py:116(_cursor)
+        3818    0.136    0.000    1.294    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/sql/query.py:223(clone)
+    10041/5020    0.109    0.000    0.544    0.000 /usr/lib/python2.7/copy.py:234(_deepcopy_tuple)
+        2344    0.089    0.000    0.106    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/base.py:275(__init__)
+    8838/7636    0.076    0.000    0.575    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/utils/tree.py:55(__deepcopy__)
+        10258    0.067    0.000    0.072    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/utils/datastructures.py:110(__init__)
+        1310    0.057    0.000    0.111    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/sql/compiler.py:218(get_default_columns)
+        3654    0.053    0.000    1.816    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/query.py:214(iterator)
+        3280    0.050    0.000    2.209    0.001 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/fields/related.py:288(__get__)
+    21494/19090    0.046    0.000    0.356    0.000 /usr/lib/python2.7/copy.py:226(_deepcopy_list)
+        5021    0.045    0.000    0.326    0.000 /usr/lib/python2.7/copy.py:306(_reconstruct)
+        1310    0.044    0.000    0.420    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/sql/compiler.py:47(as_sql)
+        1310    0.040    0.000    0.069    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/sql/query.py:99(__init__)
+        2620    0.037    0.000    0.099    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/sql/compiler.py:749(<lambda>)
+        1310    0.037    0.000    0.846    0.001 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/backends/util.py:31(execute)
+        3818    0.037    0.000    1.345    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/db/models/query.py:751(_clone)
+        10258    0.037    0.000    0.037    0.000 /home/illest/linkrdr/virtualenv/local/lib/python2.7/site-packages/django/utils/datastructures.py:105(__new__)
 
 As you can see, psycopg2 is calling `execute` 1310 times, which is
 causing all sorts of slowness. Execute, in case you didn't guess, is the
@@ -188,9 +188,9 @@ query to:
 
 <figure class="code">
 <figcaption><span>Changing the query</span> 
-```.python
-links = Link.objects.select_related('entry', 'entry__feed', 'url', 'entry__url').filter(entry__feed__users__id=request.user.id)
-```
+
+    #!py
+    links = Link.objects.select_related('entry', 'entry__feed', 'url', 'entry__url').filter(entry__feed__users__id=request.user.id)
 
 This would give me all of the links that I was interested in, plus all
 of the related objects that I'd be using. I reran the view profiling and
