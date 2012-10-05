@@ -27,7 +27,8 @@ add it with attribution to the name you use in your comment.
 This list will temporarily live here as a blog post, but I have an interesting
 idea for its final home. More on that next week.
 
-*Update 10/05/12: Add context managers, PEP8
+*Update 10/05/12: Add context managers, PEP8, itertools, string join(), dict.get()
+default values*
 
 #Idioms
 
@@ -78,6 +79,47 @@ In Python, it is possible to 'unpack' data for multiple assignment. Those famili
     list_from_comma_seperated_value_file = ['dog', 'Fido', 10] 
     (animal, name, age) = list_from_comma_seperated_value_file
 
+####Use ''.join when creating a single string for list elements
+It's faster, uses less memory, and you'll see it everywhere anyway. Note that
+the two quotes represent the delimiter between list elements in the string we're
+creating. '' just means we mean to concatenate the elements with no characters
+between them.
+
+######Harmful
+
+    #!py
+    result_list = ['True', 'False', 'File not found']
+    result_string = ''
+    for result in result_list:
+        result_string += result
+
+######Idiomatic
+    
+    #!py
+    result_list = ['True', 'False', 'File not found']
+    result_string = ''.join(result_list)
+
+####Use the 'default' parameter of dict.get() to provide default values
+Often overlooked in the ```get()``` definition is the default parameter. Without
+using ```default``` (or the collections.defaultdict class), your code will be
+littered with confusing if statements. Remember, strive for clarity.
+
+######Harmful
+
+    #!py
+    
+    log_severity = None
+    if 'severity' in configuration:
+        log_severity = configuration['severity']
+    else:
+        log_severity - log.Info
+    
+
+######Idiomatic
+    
+    #!py
+    log_severity = configuration.get('severity', log.Info)
+
 ####Use Context Managers to ensure resources are properly cleaned up
 Similar to the RAII principle in languages like C++ and D, context managers
 (objects meant to be used with the *with* statement) can make resource
@@ -101,10 +143,11 @@ management both safer and more explicit. The canonical example is file IO.
                 # do something
     # No need to explicitly call 'close'. Handled by the context manager
 
-In the Harmful code above, what happens if 'some_function_that_throws_exceptions' does, in fact, throw an exception? Since we haven't caught it in the code listed, it will propogate up the stack. We've hit an exit point in our code that might have been overlooked, and we now have no way to close the opened file. In addition to those in the standard libraries (for working with things like file IO, synchronoization, managing mutable state) developers are free to create their own.
+In the Harmful code above, what happens if 'some_function_that_throws_exceptions' does, in fact, throw an exception? Since we haven't caught it in the code listed, it will propagate up the stack. We've hit an exit point in our code that might have been overlooked, and we now have no way to close the opened file. In addition to those in the standard libraries (for working with things like file IO, synchronization, managing mutable state) developers are free to create their own.
 
 ####Learn the contents of the itertools module
-If you 
+If you frequent sites like StackOverflow, you may notice that the answer to questions of the form "Why doesn't Python have the following obviously useful library function?" almost always references the itertools module. The functional programming stalwarts that itertools provides should be seen as fundamental building blocks. What's more, the documentation for itertools [has a 'Recipes' section] (http://docs.python.org/library/itertools.html#recipes) that provides idiomatic implementations of common functional programming constructs, all created using the itertools module.  For some reason, a vanishingly small number of Python developers seem to be aware of the 'Recipes' section and, indeed, the itertools module in general (hidden gems in the Python documentation is actually a recurring theme). Part of writing idiomatic code is knowing when you're reinventing the wheel.
+
 ##Control Structures
 
 ###If Statement
