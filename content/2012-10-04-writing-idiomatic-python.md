@@ -27,9 +27,13 @@ add it with attribution to the name you use in your comment.
 This list will temporarily live here as a blog post, but I have an interesting
 idea for its final home. More on that next week.
 
+*Update 10/05/12: Add context managers, PEP8
+
 #Idioms
 
 ##Formatting
+Python has a language-defined standard set of formatting rules known as [PEP8](http://www.python.org/dev/peps/pep-0008/). If you're browsing commit messages on Python projects, you'll likely find them littered with references to PEP8 cleanup. The reason is simple: if we all agree on a common set of naming and formatting conventions, Python code as a whole becomes instantly more accessible to both novice and experienced developers.  PEP8 is perhaps the most explicit example of idioms within the Python community.  Read the PEP, install a PEP8 style-checking plugin for your editor (they all have one), and start writing your code in a way that other Python developers will appreciate. Listed below are a few examples.
+
 **Identifier Type**|**Format**|**Example**
 ----|------|-------|----
 Class|Camel case|class StringManipulator:
@@ -74,6 +78,33 @@ In Python, it is possible to 'unpack' data for multiple assignment. Those famili
     list_from_comma_seperated_value_file = ['dog', 'Fido', 10] 
     (animal, name, age) = list_from_comma_seperated_value_file
 
+####Use Context Managers to ensure resources are properly cleaned up
+Similar to the RAII principle in languages like C++ and D, context managers
+(objects meant to be used with the *with* statement) can make resource
+management both safer and more explicit. The canonical example is file IO.
+
+######Harmful
+
+    #!py
+    file_handle = open(path_to_file, 'r')
+    for line in file_handle.readlines():
+        if some_function_that_throws_exceptions(line):
+            # do something
+    file_handle.close()
+
+######Idiomatic
+
+    #!py
+    with open(path_to_file, 'r') as file_handle:
+        for line in file_handle:
+            if some_function_that_throws_exceptions(line):
+                # do something
+    # No need to explicitly call 'close'. Handled by the context manager
+
+In the Harmful code above, what happens if 'some_function_that_throws_exceptions' does, in fact, throw an exception? Since we haven't caught it in the code listed, it will propogate up the stack. We've hit an exit point in our code that might have been overlooked, and we now have no way to close the opened file. In addition to those in the standard libraries (for working with things like file IO, synchronoization, managing mutable state) developers are free to create their own.
+
+####Learn the contents of the itertools module
+If you 
 ##Control Structures
 
 ###If Statement
