@@ -100,8 +100,8 @@ between them.
     result_string = ''.join(result_list)
 
 ####Use the 'default' parameter of dict.get() to provide default values
-Often overlooked in the ```get()``` definition is the default parameter. Without
-using ```default``` (or the collections.defaultdict class), your code will be
+Often overlooked in the ```get()``` definition is the ```default``` parameter. Without
+using ```default``` (or the ```collections.defaultdict``` class), your code will be
 littered with confusing if statements. Remember, strive for clarity.
 
 ######Harmful
@@ -120,7 +120,7 @@ littered with confusing if statements. Remember, strive for clarity.
     #!py
     log_severity = configuration.get('severity', log.Info)
 
-####Use Context Managers to ensure resources are properly cleaned up
+####Use Context Managers to ensure resources are properly managed
 Similar to the RAII principle in languages like C++ and D, context managers
 (objects meant to be used with the ```with``` statement) can make resource
 management both safer and more explicit. The canonical example is file IO.
@@ -141,7 +141,7 @@ management both safer and more explicit. The canonical example is file IO.
         for line in file_handle:
             if some_function_that_throws_exceptions(line):
                 # do something
-    # No need to explicitly call 'close'. Handled by the context manager
+    # No need to explicitly call 'close'. Handled by the File context manager
 
 In the Harmful code above, what happens if ```some_function_that_throws_exceptions``` does, in fact, throw an exception? Since we haven't caught it in the code listed, it will propagate up the stack. We've hit an exit point in our code that might have been overlooked, and we now have no way to close the opened file. In addition to those in the standard libraries (for working with things like file IO, synchronization, managing mutable state) developers are free to create their own.
 
@@ -230,9 +230,9 @@ cPython interpreter.
 
 ###Loops
 
-####Use the 'in' keyword to iterate over an Iterable
+####Use the *in* keyword to iterate over an Iterable
 Programmers coming languages lacking a for_each style construct are used to
-iterating over a container by accessing elements via index. Python's **in**
+iterating over a container by accessing elements via index. Python's ```in```
 keyword handles this gracefully.
 
 ######Harmful
@@ -251,7 +251,7 @@ keyword handles this gracefully.
     for element in my_list:
         print element
 
-####Use the **enumerate** function in loops instead of creating an 'index' variable
+####Use the *enumerate* function in loops instead of creating an 'index' variable
 Programmers coming from other languages are used to explicitly declaring a
 variable to track the index of a container in a loop. For example, in C++:
 
@@ -261,7 +261,7 @@ variable to track the index of a container in a loop. For example, in C++:
         // Do stuff
     }
 
-In Python, the **enumerate** built-in function handles this role.
+In Python, the ```enumerate``` built-in function handles this role.
 
 ######Harmful
 
