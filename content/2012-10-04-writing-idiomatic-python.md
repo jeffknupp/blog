@@ -112,7 +112,7 @@ littered with confusing if statements. Remember, strive for clarity.
     if 'severity' in configuration:
         log_severity = configuration['severity']
     else:
-        log_severity - log.Info
+        log_severity = log.Info
     
 
 ######Idiomatic
