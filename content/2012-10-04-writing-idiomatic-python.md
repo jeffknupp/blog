@@ -219,7 +219,7 @@ cPython interpreter.
     my_weird_list_of_numbers = list()
     for element in some_other_list:
         if is_prime(element):
-            my_list_of_primes.append(element+5)
+            my_weird_list_of_numbers.append(element+5)
 
 
 ######Idiomatic
