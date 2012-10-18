@@ -5,7 +5,8 @@ categories: python book software
 
 After a surprisingly positive reception to my post [Writing Idiomatic
 Python](www.jeffknupp.com/blog/2012/10/04/writing-idiomatic-python/) I decided
-to [write an e-book](http://www.jeffknupp.com/blog/2012/10/11/idiomatic-python-ebook-coming/). Having never done so before,
+to [write an e-book](http://www.jeffknupp.com/blog/2012/10/11/idiomatic-python-ebook-coming/) (if you'd like updates on the book's
+progress, a signup widget is available below). Having never done so before,
 I had no prior experience to guide me in how one should go about doing this.
 While I could have spent a week researching the topic, I decided *writing* was
 actually more important and I could figure the rest out as I go. Throughout this
@@ -15,6 +16,12 @@ number of interesting parallels to general project development in Python, hence
 this post.
 
 <!--more-->
+
+##Intermezzo: Get updates on the progress of 'Writing Idiomatic Python'
+If you'd like to receive updates on the progress of 'Writing Idiomatic Python',
+sign up with your email address using the widget below. No spam. Promise.
+
+##A book you can run from the command line...
 
 The book follows the format of my [original blog post](www.jeffknupp.com/blog/2012/10/04/writing-idiomatic-python/).
 It is devided into sections loosely based on the situation in which you would
@@ -73,6 +80,8 @@ will need to be updated. There's some Markdown in there, too. Just like on this
 blog, I'm using Markdown to structure the text, mostly because I'm a)
 comfortable with it and b) I know it can be translated to a variety of formats.
 
+##This book has a build process...
+
 After the initial text, you'll notice some imports from the ```nose``` package.
 [Nose](http://pypi.python.org/pypi/nose/1.2.1) is a package that extends
 unittest while at the same adding a number of other useful features (including
@@ -87,7 +96,52 @@ in all of the idioms are correct.
 You may have noticed the function ```run_asserts``` in the code above, taking
 two dictionaries as arguments. It's purpose is to ensure that
 ```test_idiomatic``` and ```test_harmful``` not only work as intended, but that
-they test the same thing. If I had simply listed the asserts at the end of each
+they test the same thing. It is called with the ```locals``` and ```globals```
+of the test function, which represent the current scope's local and global
+variables respectively. This gives me a consistent interface to call the
+```run_asserts``` function. Each idiom contains a ```run_asserts``` that differ
+only in the values they check. If I had simply listed the asserts at the end of each
 function, it wouldn't take long before I accidentally updated one set and not
 the other. This way, I can be sure both functions work and produce the same
 results.
+
+When I actually want to run the tests, I simply type ```make``` to invoke my
+Makefile. Its contents are straightforward:
+
+    ```Makefile
+    all:
+        PYTHONWARNINGS=all nosetests-3.4 -s --with-doctest --with-coverage --cover-erase --all-modules --doctest-options=+ELLIPSIS
+
+There are some nose-specific options there, as well as setting the environment
+variable ```PYTHONWARNINGS``` to "all", turning on warnings which alert
+about unclosed files and the use of deprecated functions, among other things.
+The ouput of ```make``` gives me a good deal of information:
+
+    ```bash
+    ...
+    idiom.working_with_data.dictionaries                                                  0      0   100%   
+    idiom.working_with_data.dictionaries.dict_get_default                                11      1    91%   19
+    idiom.working_with_data.lists                                                         0      0   100%   
+    idiom.working_with_data.lists.list_comprehensions                                    14      0   100%   
+    idiom.working_with_data.lists.unpacking_rest                                          8      0   100%   
+    idiom.working_with_data.strings                                                       0      0   100%   
+    idiom.working_with_data.strings.chain_string_functions                               10      5    50%   21-25
+    idiom.working_with_data.strings.string_join                                          11      0   100%   
+    idiom.working_with_data.tuples                                                        0      0   100%   
+    idiom.working_with_data.tuples.tuple_underscore                                      13      0   100%   
+    idiom.working_with_data.tuples.tuples                                                10      0   100%   
+    idiom.working_with_data.variables                                                     0      0   100%   
+    idiom.working_with_data.variables.temporary_variables                                12      0   100%   
+    ---------------------------------------------------------------------------------------------------------------
+    TOTAL                                                                               317     16    95%   
+    ----------------------------------------------------------------------
+    Ran 70 tests in 0.306s
+
+    OK
+
+Here I can see both the status of my tests as well as the code coverage for each
+idiom (looks like I have a bit of work to do...). 
+
+This post has already become quite long, so I'll break here for now. Tomorrow,
+I'll show how I process the idiom Python files to produce the actual book in 
+a variety of formats.
