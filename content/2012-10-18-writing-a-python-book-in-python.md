@@ -4,7 +4,7 @@ categories: python book software
 ---
 
 After a surprisingly positive reception to my post [Writing Idiomatic
-Python](www.jeffknupp.com/blog/2012/10/04/writing-idiomatic-python/) I decided
+Python](http://www.jeffknupp.com/blog/2012/10/04/writing-idiomatic-python/) I decided
 to [write an e-book](http://www.jeffknupp.com/blog/2012/10/11/idiomatic-python-ebook-coming/) (if you'd like updates on the book's
 progress, a signup widget is available below). Having never done so before,
 I had no prior experience to guide me in how one should go about doing this.
@@ -31,6 +31,7 @@ use the idiom (e.g. 'Managing Resources', 'Control Structures', etc.). Each of
 these sections is a Python module (possibly containing other modules). The top
 level directory looks like this:
 
+~~~~{.bash}
     jeff:~/code/idiom/|master -> l
     total 8
     drwxr-xr-x 9 jeff users 1024 Oct 17 12:47 working_with_data
@@ -41,12 +42,13 @@ level directory looks like this:
     drwxr-xr-x 5 jeff users 1024 Oct 17 17:44 control_structures
     drwxr-xr-x 3 jeff users 1024 Oct 17 17:48 formatting
     -rw-r--r-- 1 jeff users  129 Oct 17 17:48 Makefile
+~~~~
 
 Within each module are Python individual idioms, each written as a Python
 script. For example, here is the complete file representing the idiom "Avoid 
 repeatedly checking a variable's value in a compound if statement":
 
-    ```py
+~~~~{.python}
     """
     ####Avoid repeatedly checking a variable's value in a compound if statement
     When one wants to check against a number of values, repeatedly listing the variable whose value is being checked is unnecessarily verbose. Using a temporary collection makes the intention clear.
@@ -71,6 +73,7 @@ repeatedly checking a variable's value in a compound if statement":
             is_generic_name = True
 
         run_asserts(locals(), globals())
+~~~~
 
 Obviously, simply concatenating these scripts and calling it a book would make 
 for a very unreadable "book". Instead, the book proper is generated using a 
@@ -110,16 +113,17 @@ results.
 When I actually want to run the tests, I simply type ```make``` to invoke my
 Makefile. Its contents are straightforward:
 
-    ```Makefile
+~~~~{.Makefile}
     all:
         PYTHONWARNINGS=all nosetests-3.4 -s --with-doctest --with-coverage --cover-erase --all-modules --doctest-options=+ELLIPSIS
+~~~~
 
 There are some nose-specific options there, as well as setting the environment
 variable ```PYTHONWARNINGS``` to "all", turning on warnings which alert
 about unclosed files and the use of deprecated functions, among other things.
 The ouput of ```make``` gives me a good deal of information:
 
-    ```bash
+~~~~{.bash}
     ...
     idiom.working_with_data.dictionaries                                                  0      0   100%   
     idiom.working_with_data.dictionaries.dict_get_default                                11      1    91%   19
@@ -140,6 +144,7 @@ The ouput of ```make``` gives me a good deal of information:
     Ran 70 tests in 0.306s
 
     OK
+~~~~
 
 Here I can see both the status of my tests as well as the code coverage for each
 idiom (looks like I have a bit of work to do...). 
