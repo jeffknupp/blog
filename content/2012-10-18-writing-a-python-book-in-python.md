@@ -21,6 +21,8 @@ this post.
 If you'd like to receive updates on the progress of 'Writing Idiomatic Python',
 sign up with your email address using the widget below. No spam. Promise.
 
+<div rel="FUG7A5IM" class="lrdiscoverwidget" data-logo="on" data-background="off" data-share-url="jeffknupp.com/blog/2012/10/18/writing-a-python-book-in-python/" data-css=""></div><script type="text/javascript" src="http://launchrock-ignition.s3.amazonaws.com/ignition.1.1.js"></script>
+
 ##A book you can run from the command line...
 
 The book follows the format of my [original blog post](www.jeffknupp.com/blog/2012/10/04/writing-idiomatic-python/).
