@@ -25,7 +25,7 @@ sign up with your email address using the widget below. No spam. Promise.
 
 ##A book you can run from the command line...
 
-The book follows the format of my [original blog post](www.jeffknupp.com/blog/2012/10/04/writing-idiomatic-python/).
+The book follows the format of my [original blog post](http://www.jeffknupp.com/blog/2012/10/04/writing-idiomatic-python/).
 It is devided into sections loosely based on the situation in which you would
 use the idiom (e.g. 'Managing Resources', 'Control Structures', etc.). Each of
 these sections is a Python module (possibly containing other modules). The top
