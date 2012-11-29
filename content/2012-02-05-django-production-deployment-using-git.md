@@ -1,7 +1,7 @@
 title: "Django Production Deployment and Development Using Git"
 date: 2012-02-05 21:11
 categories: django git python programming deployment branching
----
+
 
 When I started [IllestRhyme](http://www.illestrhyme.com), I had never before managed a web application. Much was similar to enterprise development. Much wasn't. One of the things I had no idea about was how to manage production deployment of a web app. I settled on some common Django trickery and Git, and it has worked like a charm.
 

@@ -1,7 +1,6 @@
 title: "Writing Idiomatic Python"
 date: 2012-10-04 14:00
 categories: python software
----
 
 As someone who evangelizes Python at work, I read a lot of code written by
 professional programmers new to Python. I've written a good amount of Python

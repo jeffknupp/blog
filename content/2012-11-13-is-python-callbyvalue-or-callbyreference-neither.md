@@ -1,7 +1,7 @@
 title: "Is Python call-by-value or call-by-reference? Neither."
 date: 2012-11-13 14:23
 categories: python interpreter object reference
----
+
 
 One aspect of Python programming that trips up those coming from languages like C or Java is how arguments are passed to functions in Python. At a more fundamental level, the confusion arises from a misunderstanding about Python object-centric data model and its treatment of assignment. When asked whether Python function calling model is "call-by-value" or "call-by-reference", the correct answer is: **neither**. Indeed, to try to shoe-horn those terms into a conversation about Python's model is misguided. "call-by-object," or "call-by-object-reference" is a more accurate way of describing it. But what does "call-by-object" even mean?
 <!--more-->

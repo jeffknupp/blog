@@ -1,7 +1,7 @@
 title: "How Django Makes Web Programming Stupidly Easy"
 date: 2012-02-02 03:59
 categories: django python illestrhyme
----
+
 I developed [IllestRhyme](http://www.illestrhyme.com) using Django, having never touched it before. I chose it because it's Python based, and a quick search showed there were a lot of third-party applications available. In two weeks, I had a fully functional site. The site has come a long way since it launched in the beginning of January (looking at the git commit comments is especially fun), but what let me add features so quickly was the third party apps.
 
 First off, some best practices. When I began intalling applications I did so using pip, which downloads packages (by default) from [PyPi](http://pypi.python.org), the Python Package Index. This seemed reasonable, as I wanted stable versions of packages and an easy way to reinstall everything in case of emergency. The packages on PyPi, howevery, usually trail the main branch of a project, sometimes significantly so. So I went back and removed all of the pip-installed packages and checked everything out from source. 

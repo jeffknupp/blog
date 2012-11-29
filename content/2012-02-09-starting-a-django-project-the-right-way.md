@@ -1,7 +1,7 @@
 title: "Starting a Django Project the Right Way"
 date: 2012-02-09 09:13
 categories: django pip virtualenv fabric python deployment south
----
+
 
 One of the things I wish I had known when starting my Django project for
 [IllestRhyme](http://www.illestrhyme.com) was "How do I start a _real_

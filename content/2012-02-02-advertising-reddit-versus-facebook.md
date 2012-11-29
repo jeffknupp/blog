@@ -1,7 +1,7 @@
 title: "Advertising: Reddit versus Facebook"
 date: 2012-02-02 05:07
 categories: seo illestrhyme reddit facebook advertising
----
+
 To acquire users for [IllestRhyme](http://www.illestrhyme.com), a user content driven rap site I started, I ran two ads: one on Reddit and one on Facebook. The results were startling. 
 
 According to the data from [Clicky](http://getclicky.com/66528953), the analytics engine I use most, Reddit sent me roughly 170 visitors for a 3 day ad, purchased at $30 per day. Of those visitors, only 5 registered for the site. That gives me a conversion rate of 2.8%, at a cost of $18. I'm happy to eat the cost up front for new users as they're the lifeblood of the site, but $18 is pretty extreme.

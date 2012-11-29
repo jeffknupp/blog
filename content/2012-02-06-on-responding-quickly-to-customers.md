@@ -1,7 +1,7 @@
 title: "On Responding Quickly To Customers"
 date: 2012-02-06 03:18
 categories: customers seo illestrhyme
----
+
 When I wrote my last post, which hit the frontpage of HackerNews, I
 wanted to see what the HNers would see. So I cleared my cookies, logged
 out, and navigated over to [IllestRhyme](http://www.illestrhyme.com).

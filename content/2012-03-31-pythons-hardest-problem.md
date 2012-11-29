@@ -1,7 +1,7 @@
 title: "Python's Hardest Problem"
 date: 2012-03-31 08:03
 categories: python GIL interpreter research
----
+
 _For more than a decade, no single issue has caused more frustration or
 curiousity for Python novices and experts alike than the Global
 Interpreter Lock._

@@ -1,7 +1,7 @@
 title: "Software Optimization: A Systematic Approach, Part Two"
 date: 2012-10-02 12:42
 categories: software optimization linux c++
----
+
 
 *Note: I apologize for the radio silence over the past 3 months. I got married at
 the end of July and between wedding related stuff and one other reasonably large

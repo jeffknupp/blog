@@ -1,7 +1,7 @@
 title: "Writing a Python Book... in Python"
 date: 2012-10-18 07:03
 categories: python book software
----
+
 
 After a surprisingly positive reception to my post [Writing Idiomatic
 Python](http://www.jeffknupp.com/blog/2012/10/04/writing-idiomatic-python/) I decided

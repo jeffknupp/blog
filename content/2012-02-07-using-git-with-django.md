@@ -1,7 +1,7 @@
 title: "Using Git with Django"
 date: 2012-02-07 07:57
 categories: git django python 
----
+
 When I started [IllestRhyme](http://www.illestrhyme.com), I had never used git . Git gives me distributed version
 control and the ease (and speed!) of the git workflow for a slight learning
 curve. Below is how I set up my Django project to use git, from start to
