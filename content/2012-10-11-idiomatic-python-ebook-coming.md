@@ -1,4 +1,4 @@
-title: "Idiomatic Python e-book Coming"
+title: Idiomatic Python e-book Coming
 date: 2012-10-11 11:59
 categories: python book software
 

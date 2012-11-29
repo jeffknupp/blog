@@ -1,4 +1,4 @@
-title: "From Memcached to Redis to Surpdb"
+title: From Memcached to Redis to Surpdb
 date: 2012-03-05 02:21
 categories: django python redis surpdb optimization
 

@@ -1,4 +1,4 @@
-title: "Profiling Django Applications: A Journey From 1300 to 2 queries"
+title: Profiling Django Applications: A Journey From 1300 to 2 queries
 date: 2012-02-14 09:33
 categories: python django profiling query
 

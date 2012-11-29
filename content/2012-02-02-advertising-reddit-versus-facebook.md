@@ -1,4 +1,4 @@
-title: "Advertising: Reddit versus Facebook"
+title: Advertising: Reddit versus Facebook
 date: 2012-02-02 05:07
 categories: seo illestrhyme reddit facebook advertising
 

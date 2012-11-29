@@ -1,4 +1,4 @@
-title: "Software Optimization: A Systematic Approach, Part Two"
+title: Software Optimization: A Systematic Approach, Part Two
 date: 2012-10-02 12:42
 categories: software optimization linux c++
 

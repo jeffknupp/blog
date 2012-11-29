@@ -1,4 +1,4 @@
-title: "Introducing linkrdr"
+title: Introducing linkrdr
 date: 2012-02-10 00:49
 categories: linkrdr django python development
 

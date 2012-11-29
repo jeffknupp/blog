@@ -1,4 +1,4 @@
-title: "Using Git with Django"
+title: Using Git with Django
 date: 2012-02-07 07:57
 categories: git django python 
 

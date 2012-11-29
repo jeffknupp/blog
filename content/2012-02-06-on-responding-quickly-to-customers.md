@@ -1,4 +1,4 @@
-title: "On Responding Quickly To Customers"
+title: On Responding Quickly To Customers
 date: 2012-02-06 03:18
 categories: customers seo illestrhyme
 

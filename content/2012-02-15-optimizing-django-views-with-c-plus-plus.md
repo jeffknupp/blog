@@ -1,4 +1,4 @@
-title: "Optimizing Django Views With C++"
+title: Optimizing Django Views With C++
 date: 2012-02-15 09:55
 categories: python django profiling optimization c++
 

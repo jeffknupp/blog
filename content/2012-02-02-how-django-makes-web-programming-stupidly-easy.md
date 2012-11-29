@@ -1,4 +1,4 @@
-title: "How Django Makes Web Programming Stupidly Easy"
+title: How Django Makes Web Programming Stupidly Easy
 date: 2012-02-02 03:59
 categories: django python illestrhyme
 

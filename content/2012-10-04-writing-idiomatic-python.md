@@ -1,4 +1,4 @@
-title: "Writing Idiomatic Python"
+title: Writing Idiomatic Python
 date: 2012-10-04 14:00
 categories: python software
 

@@ -1,4 +1,4 @@
-title: "Is Python call-by-value or call-by-reference? Neither."
+title: Is Python call-by-value or call-by-reference? Neither.
 date: 2012-11-13 14:23
 categories: python interpreter object reference
 

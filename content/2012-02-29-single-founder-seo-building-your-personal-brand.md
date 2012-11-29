@@ -1,4 +1,4 @@
-title: "Single Founder SEO: Building Your Personal Brand"
+title: Single Founder SEO: Building Your Personal Brand
 date: 2012-02-29 06:10
 categories: seo marketing
 

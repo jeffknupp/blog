@@ -1,4 +1,4 @@
-title: "Unit Testing in Django"
+title: Unit Testing in Django
 date: 2012-02-11 14:17
 categories: django python unit testing
 

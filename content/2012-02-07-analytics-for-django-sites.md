@@ -1,4 +1,4 @@
-title: "Analytics for Django Sites"
+title: Analytics for Django Sites
 date: 2012-02-07 22:44
 categories: seo analytics clicky google illestrhyme
 

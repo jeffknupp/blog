@@ -1,4 +1,4 @@
-title: "Django Production Deployment and Development Using Git"
+title: Django Production Deployment and Development Using Git
 date: 2012-02-05 21:11
 categories: django git python programming deployment branching
 
