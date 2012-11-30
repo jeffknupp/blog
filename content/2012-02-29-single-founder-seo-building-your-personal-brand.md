@@ -24,4 +24,4 @@ One side note: on all the sites I contribute to, I do so under the same username
 
 linkrdr is still in its infancy, having only begun two and a half weeks ago, but it already has a good number of users. Almost all of them found the site through finding _me_. Building your brand as a single founder may be the most time effective form of SEO available. It's certainly a good thing to do regardless, as you never know where opportunities will come from.
 
-Questions or comments on _Single Founder SEO: Bulding Your Personal Brand_? Let me know below or email me at [jknupp@gmail.com](mailto:jknupp@gmail.com). Also, [follow me on Twitter](http://www.twitter.com/jeffknupp/) to see all of my blog posts and updates.
+Questions or comments on _Single Founder SEO: Bulding Your Personal Brand_? Let me know below or email me at [jeff@jeffknupp.com](mailto:jeff@jeffknupp.com). Also, [follow me on Twitter](http://www.twitter.com/jeffknupp/) to see all of my blog posts and updates.

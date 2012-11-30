@@ -294,5 +294,5 @@ lot of Django development, just dump all of the commands above into a
 fabfile and make creating a proper Django app a one step process. I have
 one which I'll upload to my github account later today. If you have any
 questions or corrections, or think there's a tool/step I missed, feel
-free to email me at [jknupp@gmail.com](mailto:jknupp@gmail.com) or leave
+free to email me at [jeff@jeffknupp.com](mailto:jeff@jeffknupp.com) or leave
 a comment below. [Follow me on Twitter](http://www.twitter.com/jeffknupp) to get all of the latest blog updates!
