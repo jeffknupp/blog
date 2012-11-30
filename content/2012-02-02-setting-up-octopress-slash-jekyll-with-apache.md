@@ -1,4 +1,4 @@
-title: "Setting Up Octopress/Jekyll with Apache"
+title: Setting Up Octopress/Jekyll with Apache
 date: 2012-02-02 02:06
 categories: apache octopress jekyll git linode illestrhyme
 ---

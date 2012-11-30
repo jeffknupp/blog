@@ -1,4 +1,4 @@
-title: "Python's Hardest Problem"
+title: Python's Hardest Problem
 date: 2012-03-31 08:03
 categories: python GIL interpreter research
 ---

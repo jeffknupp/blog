@@ -1,4 +1,4 @@
-title: "Starting a Django Project the Right Way"
+title: Starting a Django Project the Right Way
 date: 2012-02-09 09:13
 categories: django pip virtualenv fabric python deployment south
 ---

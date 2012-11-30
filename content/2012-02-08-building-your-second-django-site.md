@@ -1,4 +1,4 @@
-title: "Building Your Second Django Site"
+title: Building Your Second Django Site
 date: 2012-02-08 05:03
 categories: django python virtualenv fabric git
 ---

@@ -1,4 +1,4 @@
-title: "Django Memcached: Optimizing Django Through Caching"
+title: Django Memcached: Optimizing Django Through Caching
 date: 2012-02-24 09:00
 categories: django optimization memcached python linkrdr
 ---

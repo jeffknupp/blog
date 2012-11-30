@@ -1,4 +1,4 @@
-title: "Meet Blug: The Blog Robot that Hates You"
+title: Meet Blug: The Blog Robot that Hates You
 date: 2012-07-19 14:35
 categories: blug python programming static-blog-generator
 ---

@@ -1,4 +1,4 @@
-title: "Hello World"
+title: Hello World
 date: 2012-02-02 01:09
 categories: blog
 ---

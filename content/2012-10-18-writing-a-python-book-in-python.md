@@ -1,4 +1,4 @@
-title: "Writing a Python Book... in Python"
+title: Writing a Python Book... in Python
 date: 2012-10-18 07:03
 categories: python book software
 ---
