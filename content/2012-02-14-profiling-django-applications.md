@@ -34,10 +34,10 @@ So you're solution works, but it's slower than what you've deemed
 acceptable. What's the first step? For far too many developers, it's
 
 1. Fire up my editor
-2. Take a look around 
-3. Guess what I think is causing slowness
-4. Make a bunch of changes
-5. Hope it got faster
+1. Take a look around 
+1. Guess what I think is causing slowness
+1. Make a bunch of changes
+1. Hope it got faster
 
 Wrong, wrong, wrong. If you take away one thing from the post, let this
 be it: __developers are notoriously bad at predicting performance
@@ -62,9 +62,6 @@ scoring, sorting, and aggregating the links for presentation.
 When I first began work on the view, I did so with a unit test prewritten.
 I needed to get that test working, so I did so in the simplest way possible. Here's what
 the code looked like:
-
-<figure class="code">
-<figcaption><span>Intial show_items implementation</span> 
 
     #!py
     def show_items(request):
@@ -108,9 +105,6 @@ So I fired up the profile server and navigated to my view. A .prof file
 was added to my /tmp directory. To interpret it, I entered the Django
 shell and did the following:
 
-<figure class="code">
-<figcaption><span>Reading the profiling stats</span> 
-
     #!py
     import hotshot.stats
 
@@ -120,9 +114,6 @@ shell and did the following:
     stats.print_stats(20) # print the top 20 culprits
 
 The result of this was as I expected:
-
-<figure class="code">
-<figcaption><span>Profiling output</span> 
 
     #!bash
     In [6]: stats.print_stats(20)
@@ -184,10 +175,6 @@ that belonged to the current user. What I needed to do to realize the
 benefit of `select_related` was to get all of the objects I needed in
 one query. Since what I really needed was `Link` objects, I changed the
 query to:
-
-
-<figure class="code">
-<figcaption><span>Changing the query</span> 
 
     #!py
     links = Link.objects.select_related('entry', 'entry__feed', 'url', 'entry__url').filter(entry__feed__users__id=request.user.id)
