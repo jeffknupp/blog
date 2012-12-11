@@ -9,7 +9,7 @@ The idea was, if I subscribe to TNW and TechCrunch and they both have a writeup 
 The system worked, but faced some scaling challenges. Users could import their feeds from other sources, and some had hundreds of feeds they followed. This meant the content retrieval and analysis process had a ton of work to do, even for a relatively small number of users.
 
 But the main issue was I was solving a problem that didn't exist for very many people. Those that understood it and had a large number of feeds found it really helpful. Most, however, didn't get it and weren't particularly unhappy with the way they consumed RSS feeds. It solved a problem they didn't have.
-
+<!--more-->
 So Linkrdr wilted due to lack of development. I could see the writing on the wall and, rather than pour even more effort into something not many people wanted, I shut it down. It wasn't a total loss, though. I learned a great deal about developing data and computation intensive web applications. More importantly, I learned how *not* to build a useful web application.
 
 Linkrdr was born from my frustration with finding good technical content to read. Each day, I read twenty or more articles, blog posts, white papers, etc. I can't help it, I genuinely love software development and technology. My current workflow is to find content using Zite, then save each interesting looking article to Pocket (aka ReadItLater) to read offline. I spend a tremendous amount of time in those two applications.
