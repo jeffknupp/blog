@@ -5,7 +5,7 @@ categories: python django idiomatic
 I learned to program in Python indirectly. I was interested in learning about web application development and heard good things about Django. I didn't know Python, but the syntax and documentation looked straightforward enough. Like any reasonable programmer, I figured the language didn't matter and I would pick it up as I went.
 
 Largely, this was true. Python proved to be quite learnable, and I was quickly productive on my Django project. It wasn't until long after the project was completed that I realized *I hadn't actually learned Python*. I had learned some odd mutant hybrid language: part Python, part Django. **Using Django to learn Python is a terrible way to actually learn Python.**
-
+<!--more-->
 In this post, we'll look at the official Django tutorial from a Pythonic perspective. By the end, you'll be convinced that programmers whose only exposure to Python is Django *do not really know Python*.
 
 ##Settings
