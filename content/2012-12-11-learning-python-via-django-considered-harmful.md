@@ -18,7 +18,7 @@ To a beginner, `settings.py` is just an oddly formatted configuration file. The 
 
 When it comes to Django models, the tutorial has this to say:
 
-    "[models] are represented by simple Python classes. Edit the polls/models.py file so it looks like this:"
+> "[models] are represented by simple Python classes. Edit the polls/models.py file so it looks like this:"
 
 And goes on to show the following code.
 
@@ -34,7 +34,7 @@ And goes on to show the following code.
         choice = models.CharField(max_length=200)
         votes = models.IntegerField()
 
-To begin with, both classes inherit from `django.db.models.Model`. Why?[^1]()  There's no explanation of why this is necessary. Your "simple Python class" must inherit from our object, end of story. 
+To begin with, both classes inherit from `django.db.models.Model`. Why?[^1]  There's no explanation of why this is necessary. Your "simple Python class" must inherit from our object, end of story. 
 
 Then there's the field declarations. Have you ever written a non-ORM based class in Python that looked anything like the example? No `__init__` function, no reference to `self`. Heck, there aren't any instance attributes declared. Just a list of class attributes assigned to a bunch of cryptic Django field objects. In short, **this class looks unlike any Python class you'll ever write outside of Django**. (Unless it's an abstract base class)
 
