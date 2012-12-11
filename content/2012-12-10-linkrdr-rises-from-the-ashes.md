@@ -38,7 +38,8 @@ But the setup is not ideal. For one, I need to use two different applications fo
 
 So I decided that Linkrdr would solve my specific problem, and no more. At a minimum, I'll need a server process to collect content and a mobile app to view it. Here's the workflow I came up with:
 
-**Server Process**
+**Server Process** 
+
 * Each hour, check for new content and save the URLs
 * Download the HTML for each new link and run it through a Readability-style processor
 * Present a single client facing view of all articles ever downloaded by the user (history)
@@ -47,7 +48,8 @@ So I decided that Linkrdr would solve my specific problem, and no more. At a min
     * Stripped HTML of an article
     * Updates of read/archived articles by user
 
-**Mobile App**
+**Mobile App** 
+
 * Choose from a small, predefined number of technical topics to get content for
 * Two basics tasks: Get updated content list and Read saved articles
     * Get updated content list
