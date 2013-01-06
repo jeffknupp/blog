@@ -13,7 +13,7 @@ Setup
 
 To start, we'll want to create a dump of our database data to use during testing. 
 
-    #!bash 
+    :::bash 
     $ ./manage.py dumpdata --format=json > my/app/directory/initial_data.json
 
 This will give us a json [fixture](https://code.djangoproject.com/wiki/Fixtures) that mimics the current state of our production database. Note that since this is a fixture for _all_ of the apps installed, we've put it in a non-standard directory. To let the test runner find our fixture, we'll need to set `FIXTURE_DIRS` to the directory we just dumped our data to.
@@ -21,12 +21,12 @@ This will give us a json [fixture](https://code.djangoproject.com/wiki/Fixtures)
 Now that we have our data copied, let's run whatever tests our installed
 apps have already:
 
-    #!bash
+    :::bash
     $  python manage.py test
 
 This hopefully gives us output like:
 
-    #!bash
+    :::bash
     .....................................................................................................................................................................................................................................................................................................................................................................
     ----------------------------------------------------------------------
     Ran 357 tests in 30.025s
@@ -134,7 +134,7 @@ more to write, but I'll be glad I did once I release it into the wild.
 
 Anyway, back to our tests. We should now be able to run the tests using:
 
-    #!bash 
+    :::bash 
     $  python manage.py test <appname>
 
 and get output similar to when we ran the testcases before.
@@ -151,13 +151,13 @@ saying your code is 100% tested is not matter of opinion but rather a provable f
 I use coverage.py for my code coverage. You can install it using pip via
 `pip install coverage`. Once it's installed, rerun your tests like so:
 
-    #!bash
+    :::bash
     $  coverage run manage.py test
 
 This will produce an instrumentation file that you can convert to HTML
 or LaTex, or view from the command line. Run
 
-    #!bash
+    :::bash
     $  coverage report
 
 to get a snapshot of how much of your code is actually being tested by

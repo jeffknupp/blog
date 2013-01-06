@@ -52,12 +52,12 @@ Python and Django users.
 After installing virtualenv in whatever way you want, create a new
 virtualenv, which we'll call 'env', using the following:
 
-    #!bash
+    :::bash
     $ virtualenv env
 
 or, if virtualenv isn't in your $PATH (though it should be):
 
-    #!bash
+    :::bash
     $ python virtualenv.py --distribute env
     
 Now that we have a virtualenv environment, we need to _activate_ it.
@@ -65,13 +65,13 @@ This sets up various envrionment variables to effectively bypass the
 system's Python install and uses our `env` one instead. Activate like
 so:
 
-    #!bash
+    :::bash
     $ source ./env/bin/activate
     
 You should see `(env) $` at your prompt, letting you know that you're
 running under the 'env' virtualenv install. At any time, just type:
 
-    #!bash
+    :::bash
     $ deactivate
     
 to stop using virtualenv.
@@ -84,13 +84,13 @@ You aren't going to use it. Instead, we'll use one managed by virtualenv
 that can't be messed up by other users (or yourself) working elsewhere
 on the machine. To install Django under virtual env, just type:
 
-    #!bash
+    :::bash
     $ pip install django
     
 This should give you the latest version of Django which will be installed in your
 virtualenv area. You can confirm this by doing:
 
-    #!bash
+    :::bash
     $ which django-admin.py
 
 Which should report an area under our `env` directory. If it doesn't,
@@ -107,7 +107,7 @@ install via source (not that difficult).
 
 Let's start the project via django-admin:
 
-    #!bash
+    :::bash
     $ django-admin.py startproject myproject
 
 This creates the `myproject` directory. Don't go there yet.
@@ -128,18 +128,18 @@ Our current directory should show two directories: `env` and
 `myproject`. Since we'll be tracking both of these in git, we'll
 initialize our repository here using:
 
-    #!bash
+    :::bash
     $ git init
 
 This creates a git repository in the current directory. Lets stage all of
 our files to git to be committed.
 
-    #!bash
+    :::bash
     $ git add .
 
 Now we actually commit them to our new repo:
 
-    #!bash
+    :::bash
     $ git commit -a -m 'Initial commit of myproject'
 
 If you plan on using a service like Github or Bitbucket, now would be a
@@ -162,7 +162,7 @@ yet).
 
 Still under our `(env)` virtualenv environment, install South like so:
 
-    #!bash
+    :::bash
     $ pip install south
 
 We setup South by adding it to our INSTALLED_APS in the `settings.py`
@@ -181,14 +181,14 @@ something to revert to if things go wrong.
 
 To commit, first add any untracked files:
 
-    #!bash
+    :::bash
     $ git add .
 
 Git users may notice I'm not adding specific files but rather everything
 under our main directory. That's becuase, to this point, _there isn't
 anything we don't want to commit_. Let's commit our changes using:
 
-    #!bash
+    :::bash
     $ git commit -a -m 'Added South for database migrations'
 
 Creating Our App
@@ -198,14 +198,14 @@ Use `manage.py` to create an app in the normal way (`python manage.py
 startapp myapp`) and add it as an INSTALLED_APP. The first thing we'll do, before adding models, is
 tell South we want to use it for migrations:
 
-    #!bash
+    :::bash
     $ python manage.py schemamigration myapp --initial
 
 This creates a migration file that can be used to apply our changes (if
 we had any) and also _revert_ them. We use the migration file to  _migrate_ the database changes (even though there are none)
 using :
 
-    #!bash
+    :::bash
     $ python manage.py migrate myapp
 
 South is smart enough to know where to look for migration files, as well
@@ -215,7 +215,7 @@ individual migration files, but it's usually not necessary.
 When we eventually make changes to our model, we ask South to create a
 migration using:
   
-    #!bash
+    :::bash
     $ python manage.py schemamigration myapp --auto
 
 This will inspect the models in `myapp` and automatically add, delete,
@@ -232,7 +232,7 @@ for your development area (I just call it `dev`).
 
 In your development directory, clone the current project using git:
 
-    #!bash
+    :::bash
     $ git clone /path/to/my/project/
 
 Git will create an exact copy of the __entire__ repository. All changes,
@@ -242,7 +242,7 @@ should be working from your development directory.
 Since branching with git is so easy and cheap, create branches
 as you work on new, orthogonal changes to your site. Do so by typing:
 
-    #!bash
+    :::bash
     $ git checkout -b <branchname>
 
 Which will both create a new branch named <branchname> and check it out.
@@ -256,7 +256,7 @@ Using Fabric for Deployment
 So we have the makings of a Django application. How do we deploy it?
 Thanks to readers of the blog, I'm a recent convert to [Fabric](http://www.fabfile.org), a fantastic tool perfectly suited to our deployment needs. Install Fabric to our virtualenv like so:
 
-    #!bash
+    :::bash
     $ pip install fabric
 
 Fabric expects a file , _fabfile.py_, to define all of the actions we
@@ -297,7 +297,7 @@ deploy command and all will be well.
 So now that we have our `fabfile.py` created, how do we actually deploy?
 Simple. Just run:
 
-    #!bash
+    :::bash
     $ fab prepare_deployment
     $ fab deploy
 

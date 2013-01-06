@@ -62,13 +62,13 @@ Python and Django users.
 If you're using pip to install packages (and I can't see why you wouldn't), you
 can get both virtualenv and virtualenvwrapper by simply installing the latter.
 
-    #!bash    
+    :::bash    
     $ pip install virtualenvwrapper
 
 After it's installed, add the following lines to your shell's startup file
 (.zshrc, .bashrc, .profile, etc).
 
-    #!bash
+    :::bash
     export WORKON_HOME=$HOME/.virtualenvs
     export PROJECT_HOME=$HOME/directory-you-do-development-in
     source /usr/local/bin/virtualenvwrapper.sh
@@ -78,7 +78,7 @@ Reload your startup file (e.g. ```source .zshrc```) and you're ready to go.
 ### Creating a new environment
 Creating a virtual environment is simple. Just type
 
-    #!bash
+    :::bash
     $ mkvirtualenv django_project
 
 where "django_project" is whatever name you give to your project.
@@ -102,13 +102,13 @@ You aren't going to use it. Instead, we'll use one managed by virtualenv
 that can't be messed up by other users (or yourself) working elsewhere
 on the machine. To install Django under virtualenv, just type:
 
-    #!bash
+    :::bash
     $ pip install django
     
 This should give you the latest version of Django which will be installed in your
 virtualenv area. You can confirm this by doing:
 
-    #!bash
+    :::bash
     $ which django-admin.py
 
 Which should point to your ```$HOME/.virtualenvs/``` directory. If it doesn't,
@@ -151,7 +151,7 @@ of the overhead.
 Let's go ahead and create our project directory. Use the new ```startproject```
 command for ```django_admin.py``` to get it set up.
 
-    #!bash
+    :::bash
     $ django_admin.py startproject django_project
 
 We'll see a single directory created: django_project. Within the
@@ -193,34 +193,34 @@ git and Mercurial.
 
 ###### git
 
-    #!bash
+    :::bash
     $ git init
 
 This creates a git repository in the current directory. Lets stage all of
 our files to git to be committed.
 
-    #!bash
+    :::bash
     $ git add django_project
 
 Now we actually commit them to our new repo:
 
-    #!bash
+    :::bash
     $ git commit -m 'Initial commit of django_project'
 
 ###### Mercurial
 
-    #!bash
+    :::bash
     $ hg init
 
 This creates a Mercurial repository in the current directory. Lets stage all of
 our files to git to be committed.
 
-    #!bash
+    :::bash
     $ hg add django_project
 
 Now we actually commit them to our new repo:
 
-    #!bash
+    :::bash
     $ hg commit -m 'Initial commit of django_project'
 
 If you plan on using a service like GitHub or Bitbucket, now would be a
@@ -243,7 +243,7 @@ yet).
 
 Still in our virtualenv, install South like so:
 
-    #!bash
+    :::bash
     $ pip install south
 
 We setup South by adding it to our INSTALLED_APS in the `settings.py`
@@ -264,7 +264,7 @@ To commit, lets see what has changed.
 
 ###### (git)
 
-    #!bash
+    :::bash
     $ git status
     # On branch master
     # Changes not staged for commit:
@@ -282,7 +282,7 @@ To commit, lets see what has changed.
 
 ###### (Mercurial)
 
-    #!bash
+    :::bash
     $ hg status
     M django_project/django_project/settings.py
     ? django_project/django_project/.settings.py.swp
@@ -303,7 +303,7 @@ Python packages. We want to track the name *and version* of the Python packages
 we're using so that we can seamlessly recreate our environment in our production
 area. Helpfully, pip has a command that does exactly what we need.
 
-    #!bash
+    :::bash
     $ pip freeze > requirements.txt
 
 I piped the output to a file called ```requirements.txt```, which we'll add to
@@ -311,7 +311,7 @@ source control so we always have an updated list of what packages are being used
 
 Let's stage and commit our settings.py and requirements.txt files to be committed by running 
 
-    #!bash
+    :::bash
     $ (git/hg) add django_project/settings.py requirements.txt
     $ (git/hg) commit -m 'Added South for database migrations'
 
@@ -322,14 +322,14 @@ Use ```manage.py``` to create an app in the normal way (```python manage.py
 startapp myapp```) and add it as an INSTALLED_APP. The first thing we'll do, before adding models, is
 tell South we want to use it for migrations:
 
-    #!bash
+    :::bash
     $ python manage.py schemamigration myapp --initial
 
 This creates a migration file that can be used to apply our changes (if
 we had any) and also *revert* them. We use the migration file to  *migrate* the database changes (even though there are none)
 using :
 
-    #!bash
+    :::bash
     $ python manage.py migrate myapp
 
 South is smart enough to know where to look for migration files, as well
@@ -339,7 +339,7 @@ individual migration files, but it's usually not necessary.
 When we eventually make changes to our model, we ask South to create a
 migration using:
   
-    #!bash
+    :::bash
     $ python manage.py schemamigration myapp --auto
 
 This will inspect the models in `myapp` and automatically add, delete,
@@ -356,7 +356,7 @@ for your development area (I just call it ```dev```).
 
 In your development directory, clone the current project using git or Mercurial:
 
-    #!bash
+    :::bash
     $ (git/hg) clone /path/to/my/project/
 
 Both tools will create an exact copy of the **entire** repository. All changes,
@@ -368,7 +368,7 @@ as you work on new, orthogonal changes to your site. Here's how to do it each to
 
 ###### (git)
 
-    #!bash
+    :::bash
     $ git checkout -b <branchname>
 
 Which will both create a new branch named <branchname> and check it out.
@@ -378,7 +378,7 @@ any time.
 
 ###### (Mercurial)
 
-    #!bash
+    :::bash
     $ hg branch <branchname>
 
 Note that branching is kind of a contentious topic within the Mercurial
@@ -394,7 +394,7 @@ So we have the makings of a Django application. How do we deploy it?
 waste of time. Fabric can be used for a number of purposes, but it really shines
 in deployments.
 
-    #!bash
+    :::bash
     $ pip install fabric
 
 Fabric expects a *fabfile* named ```fabfile.py``` which defines all of the actions we
@@ -444,7 +444,7 @@ use Fabric's ```run``` function instead of ```local```. See [the Fabric document
 So now that we have our ```fabfile.py``` created, how do we actually deploy?
 Simple. Just run:
 
-    #!bash
+    :::bash
     $ fab prepare_deployment
     $ fab deploy
 

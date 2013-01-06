@@ -31,7 +31,7 @@ use the idiom (e.g. 'Managing Resources', 'Control Structures', etc.). Each of
 these sections is a Python module (possibly containing other modules). The top
 level directory looks like this:
 
-    #!bash
+    :::bash
     jeff:~/code/idiom/|master -> l
     total 8
     drwxr-xr-x 9 jeff users 1024 Oct 17 12:47 working_with_data
@@ -120,7 +120,7 @@ variable ```PYTHONWARNINGS``` to "all", turning on warnings which alert
 about unclosed files and the use of deprecated functions, among other things.
 The ouput of ```make``` gives me a good deal of information:
 
-    #!bash
+    :::bash
     ...
     idiom.working_with_data.dictionaries                                                  0      0   100%   
     idiom.working_with_data.dictionaries.dict_get_default                                11      1    91%   19

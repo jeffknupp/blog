@@ -115,7 +115,7 @@ shell and did the following:
 
 The result of this was as I expected:
 
-    #!bash
+    :::bash
     In [6]: stats.print_stats(20)
     557944 function calls (485997 primitive calls) in 3.959 seconds
 
