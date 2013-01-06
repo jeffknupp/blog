@@ -49,7 +49,7 @@ we'll take a look at the original code:
     f.write('\n'.join(anadict))
     f.close()
 
-Straightforward enough. It creates a trie-like dictionary of words were the key
+Straightforward enough. It creates an almost suffix array-like dictionary of words where the key
 is a sorted series of letters and the value is a list of all the words that can
 be made using exactly those letters. Here's the version I ended up with:
 
