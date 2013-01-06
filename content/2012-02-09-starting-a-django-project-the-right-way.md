@@ -3,6 +3,8 @@ date: 2012-02-09 09:13
 categories: django pip virtualenv fabric python deployment south
 
 
+**Using Django 1.4? [Check out the new, updated version of this post with Django 1.4 specfic changes and updates](http://www.jeffknupp.com/blog/2012/10/24/starting-a-django-14-project-the-right-way/).**
+
 One of the things I wish I had known when starting my Django project for
 [IllestRhyme](http://www.illestrhyme.com) was "How do I start a _real_
 Django project". As in, one that's actually going to be used and
