@@ -102,6 +102,7 @@ between them.
     result_string = ''.join(result_list)
 
 ####Use the 'default' parameter of dict.get() to provide default values
+
 Often overlooked in the ```get()``` definition is the ```default``` parameter. Without
 using ```default``` (or the ```collections.defaultdict``` class), your code will be
 littered with confusing if statements. Remember, strive for clarity.
@@ -109,7 +110,6 @@ littered with confusing if statements. Remember, strive for clarity.
 ######Harmful
 
     #!py
-    
     log_severity = None
     if 'severity' in configuration:
         log_severity = configuration['severity']
@@ -148,6 +148,7 @@ management both safer and more explicit. The canonical example is file IO.
 In the Harmful code above, what happens if ```some_function_that_throws_exceptions``` does, in fact, throw an exception? Since we haven't caught it in the code listed, it will propagate up the stack. We've hit an exit point in our code that might have been overlooked, and we now have no way to close the opened file. In addition to those in the standard libraries (for working with things like file IO, synchronization, managing mutable state) developers are free to create their own.
 
 ####Learn the contents of the itertools module
+
 If you frequent sites like StackOverflow, you may notice that the answer to questions of the form "Why doesn't Python have the following obviously useful library function?" almost always references the itertools module. The functional programming stalwarts that itertools provides should be seen as fundamental building blocks. What's more, the documentation for itertools [has a 'Recipes' section](http://docs.python.org/library/itertools.html#recipes) that provides idiomatic implementations of common functional programming constructs, all created using the itertools module.  For some reason, a vanishingly small number of Python developers seem to be aware of the 'Recipes' section and, indeed, the itertools module in general (hidden gems in the Python documentation is actually a recurring theme). Part of writing idiomatic code is knowing when you're reinventing the wheel.
 
 ##Control Structures
@@ -155,6 +156,7 @@ If you frequent sites like StackOverflow, you may notice that the answer to ques
 ###If Statement
 
 ####Avoid placing conditional branch on the same line as the colon
+
 Using indentation to indicate scope (like you already do everywhere
 else in Python) makes it easy to determine what will be executed as part of a
 conditional statement.
@@ -173,6 +175,7 @@ conditional statement.
     print address
 
 ####Avoid having multiple statements on a single line
+
 Though the language definition allows one to use a semi-colon to delineate
 statements, doing so without reason makes one's code harder to read. Typically
 violated with the previous rule.
@@ -190,6 +193,7 @@ violated with the previous rule.
         make_it_more_readable()
 
 ####Avoid repeating variable name in compound if Statement
+
 When one wants to check against a number of values, repeatedly listing the
 variable whose value is being checked is unnecessarily verbose. Using a temporary
 collection makes the intention clear.
@@ -207,6 +211,7 @@ collection makes the intention clear.
         is_generic_name = True
 
 ####Use list comprehensions to create lists that are subsets of existing data
+
 List comprehensions, when used judiciously, increase clarity in code that
 builds a list from existing data. Especially when data is both checked for some
 condition *and* transformed in some way, list comprehensions make it clear
@@ -233,6 +238,7 @@ cPython interpreter.
 ###Loops
 
 ####Use the *in* keyword to iterate over an Iterable
+
 Programmers coming languages lacking a for_each style construct are used to
 iterating over a container by accessing elements via index. Python's ```in```
 keyword handles this gracefully.
@@ -254,6 +260,7 @@ keyword handles this gracefully.
         print element
 
 ####Use the *enumerate* function in loops instead of creating an 'index' variable
+
 Programmers coming from other languages are used to explicitly declaring a
 variable to track the index of a container in a loop. For example, in C++:
 
@@ -278,4 +285,3 @@ In Python, the ```enumerate``` built-in function handles this role.
     #!py
     for index, element in enumerate(my_container):
         print (index, element)
-

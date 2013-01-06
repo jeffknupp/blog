@@ -9,6 +9,7 @@ According to the data from [Clicky](http://getclicky.com/66528953), the analytic
 After the Reddit ad ran its course, I created a Facebook ad with the same parameters: $30 a day, however many visitors that buys me. In the first 12 hours of the Facebook ad, I received 33 visitors, *9 of whom signed up*. Now I realize it's still a bit early to call the race, but even if I get no more visitors from the Facebook ad, my cost of acquisition was $10, 55% cheaper than for the Reddit ad. If my *27% conversion rate* keeps up, 170 visitors would net me 46 users, at a cost of only $1.96.
 
 I realize this data isn't comprehensive, but it's still eye opening. Part of this can be attributed to the more focused targeting I was able to do through Facebook. Facebook let me specify that my ad only be shown to the 7 million or so users who:
+
 1. Live in the US 
 2. Are 18 or older 
 3. like #Freestyle rap, #Hip hop music, or #Rapping 

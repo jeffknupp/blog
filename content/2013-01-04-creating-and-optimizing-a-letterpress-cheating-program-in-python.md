@@ -130,8 +130,8 @@ the same number of words after any changes we make.)
 Now that we've gotten our stolen Internet code all set up, let's see how she
 runs:
 
-    #!bash
-    time python2.7 presser_old.py asdwti
+    :::bash
+    ~/c/presser >>> time python2.7 presser_old.py asdwti
     43
     python2.7 presser_old.py asdwti  0.03s user 0.01s system 96% cpu 0.038 total    
 
@@ -140,8 +140,8 @@ made from our dictionary. But wait. A Letterpress board has 25 letters, all of
 which can be used at any time. We'll need to test it on a 25 letter string to
 see if it's suitable for our purposes.
 
-    #!bash
-    time python2.7 presser_old.py asdwtribnowplfglewhqagnbe
+    :::bash
+    ~/c/presser >>> time python2.7 presser_old.py asdwtribnowplfglewhqagnbe
     **Jeff goes to get a cup of coffee...**
     **Jeff drinks the cup of coffee...**
     **Jeff stares impatiently at screen...**
@@ -179,7 +179,7 @@ Now that we understand the algorithm, how do we make it faster? First, we
 profile to see where time is being taken. Let's use a somewhat shorter string so
 I can finish this post before March.
 
-    #!bash
+    :::bash
     ~/c/presser >>> python2.7 -m cProfile presser_old.py asdwtribnowplf
     1115
             66453 function calls in 0.043 seconds
@@ -265,7 +265,7 @@ costly function calls. Here's the code after our changes (and a bit of cleanup):
 
 Let's see if it made a difference...
 
-    #!bash
+    :::bash
     ~/c/presser >>> time python2.7 presser_new.py asdwtribnowplfglewhqagnbe
     8594
     python2.7 presser_new.py asdwtribnowplfglewhqagnbe  15.22s user 0.04s system 99% cpu 15.282 total
@@ -275,7 +275,7 @@ Down from 52 seconds to 15. Not bad. But I think we can do better... Let's
 profile again.
 
 
-    #!bash
+    :::bash
     ~/c/presser >>> python2.7 -m cProfile presser_new.py asdwtribnowplf
     1115
          87762 function calls in 0.078 seconds
@@ -338,7 +338,7 @@ relevant functions:
 Lean and mean. Let's see what the judges say...
 
 
-    #!bash
+    :::bash
     ~/c/presser >>> python2.7 -m cProfile presser_new.py asdwtribnowplf
     time python2.7 presser_new.py asdwtribnowplfglewhqagnbe
     8594
