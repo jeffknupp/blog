@@ -270,7 +270,7 @@ in the `myproject` directory:
     def prepare_deployment(branch_name):
         local('python manage.py test myapp')
         local('git add -p && git commit')
-        local('git checkout master && git merge ' + branchname)
+        local('git checkout master && git merge ' + branch_name)
 
 This will run the tests, commit your branch change, and merge them into
 master. At this point, a simple "git pull" in your production area
@@ -298,7 +298,7 @@ So now that we have our `fabfile.py` created, how do we actually deploy?
 Simple. Just run:
 
     :::bash
-    $ fab prepare_deployment
+    $ fab prepare_deployment:<your_branch_name>
     $ fab deploy
 
 Technically, these could be combined into a single command, but I find
