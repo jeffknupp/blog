@@ -151,7 +151,9 @@ see if it's suitable for our purposes.
 OK, so it takes a bit longer for a Letterpress board. Can we make it faster than
 a minute? 
 
-No. End of blog post.
+
+**No. End of blog post.**
+
 
 Alright, fine, we'll try. Let's see if we can understand what the code is doing. `loadvars`
 just loads the dictionary file we created as one big list. Each element in the
@@ -178,7 +180,7 @@ profile to see where time is being taken. Let's use a somewhat shorter string so
 I can finish this post before March.
 
     #!bash
-    ~/c/presser ❯❯❯ python2.7 -m cProfile presser_old.py asdwtribnowplf
+    ~/c/presser >>> python2.7 -m cProfile presser_old.py asdwtribnowplf
     1115
             66453 function calls in 0.043 seconds
 
@@ -200,6 +202,7 @@ I can finish this post before March.
          1    0.000    0.000    0.000    0.000 {method 'strip' of 'str' objects}
          1    0.000    0.000    0.000    0.000 {open}
          1    0.000    0.000    0.000    0.000 {sorted}
+
 
 We see the two most costly functions are `split` and `bisect_left`. This is
 pretty intuitive. `split` has to create a bunch of new string objects, meaning
@@ -259,18 +262,21 @@ costly function calls. Here's the code after our changes (and a bit of cleanup):
         target_words = set(find_words(rack, anagrams))
         print(len(target_words)) 
 
+
 Let's see if it made a difference...
 
     #!bash
-    ~/c/presser ❮❮❮ time python2.7 presser_new.py asdwtribnowplfglewhqagnbe
+    ~/c/presser >>> time python2.7 presser_new.py asdwtribnowplfglewhqagnbe
     8594
     python2.7 presser_new.py asdwtribnowplfglewhqagnbe  15.22s user 0.04s system 99% cpu 15.282 total
+
 
 Down from 52 seconds to 15. Not bad. But I think we can do better... Let's
 profile again.
 
+
     #!bash
-    ~/c/presser ❯❯❯ python2.7 -m cProfile presser_new.py asdwtribnowplf
+    ~/c/presser >>> python2.7 -m cProfile presser_new.py asdwtribnowplf
     1115
          87762 function calls in 0.078 seconds
 
@@ -295,6 +301,7 @@ profile again.
              1    0.000    0.000    0.000    0.000 {range}
              1    0.000    0.000    0.000    0.000 {sorted}
 
+
 `join`, `split`'s sneaky cousin dominates the execution time. Note that `split` is there
 due to its use in `load_anagrams`, not the `find_words` function. I'm fine with
 that since it's a flat cost (and note that the string I used for profiling was
@@ -306,6 +313,7 @@ Stop calling `join`!
 We only need it because `combinations` returns a `tuple` and the keys for
 `anagrams` are strings. Let's change that. Here is the new version of the two
 relevant functions: 
+
 
     #!py
     def load_anagrams():
@@ -326,13 +334,16 @@ relevant functions:
                     target_words += anagrams[combination]
         return target_words
 
+
 Lean and mean. Let's see what the judges say...
 
+
     #!bash
-    ~/c/presser ❯❯❯ python2.7 -m cProfile presser_new.py asdwtribnowplf
+    ~/c/presser >>> python2.7 -m cProfile presser_new.py asdwtribnowplf
     time python2.7 presser_new.py asdwtribnowplfglewhqagnbe
     8594
     python2.7 presser_new.py asdwtribnowplfglewhqagnbe  7.13s user 0.02s system 99% cpu 7.166 total
+
 
 Down from 52 seconds to 15 to 7. I think the search portion of my Letterpress
 solver is usable now. You can find the code for *presser*, the name of this
