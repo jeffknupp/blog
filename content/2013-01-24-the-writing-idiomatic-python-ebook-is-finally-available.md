@@ -19,7 +19,7 @@ found it a bit more flexible than nose in terms of deciding which
 directories/files/functions should be searched for tests. I'm also using
 the `coverage` package to make sure all of the code samples are actually being
 tested properly.
-
+<!--more-->
 Since there are two different versions of the book (one for Python 2.7.3+ 
 and one for Python 3.3+), [tox](http://tox.readthedocs.org/en/latest/) is used 
 to test each version of Python against the non-version specific tests plus 
