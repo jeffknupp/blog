@@ -13,28 +13,25 @@ Setup
 
 To start, we'll want to create a dump of our database data to use during testing. 
 
-```bash 
-$ ./manage.py dumpdata --format=json > my/app/directory/initial_data.json
-```
+    :::bash 
+    $ ./manage.py dumpdata --format=json > my/app/directory/initial_data.json
 
 This will give us a json [fixture](https://code.djangoproject.com/wiki/Fixtures) that mimics the current state of our production database. Note that since this is a fixture for _all_ of the apps installed, we've put it in a non-standard directory. To let the test runner find our fixture, we'll need to set `FIXTURE_DIRS` to the directory we just dumped our data to.
 
 Now that we have our data copied, let's run whatever tests our installed
 apps have already:
 
-```bash
-$  python manage.py test
-``` 
+    :::bash
+    $  python manage.py test
 
 This hopefully gives us output like:
 
-```bash
+    :::bash
     .....................................................................................................................................................................................................................................................................................................................................................................
-----------------------------------------------------------------------
+    ----------------------------------------------------------------------
     Ran 357 tests in 30.025s
 
     OK
-```
 
 This is also a good check of the integrity of your database, as Django
 will try to load a fixture representing all of your data. If you've been
@@ -81,14 +78,13 @@ Time for an example. [linkrdr](http://www.linkrdr.com) needs to be able to look-
 determine if it's actually a feed. Here's a simplified version of the
 code I wrote to do that:
 
-```python
-link_types= ['application/atom+xml', 'application/rss+xml',
-'application/rdf+xml', 'application/xml']
+    #!python
+    link_types= ['application/atom+xml', 'application/rss+xml',
+    'application/rdf+xml', 'application/xml']
 
-def is_feed(url):
-    link_type = urllib2.urlopen(url).info().gettype()
-    return link_type in link_types
-```
+    def is_feed(url):
+        link_type = urllib2.urlopen(url).info().gettype()
+        return link_type in link_types
 
 Simple, right? Let's add a test for it. First we'll remove anything
 hanging around in tests.py (like the initial contents) and start with a
@@ -98,30 +94,28 @@ what functionality it's testing.
 
 So far we have (with the required imports)
 
-```python
-from django.utils import unittest
+    #!python
+    from django.utils import unittest
 
-class IsFeed(unittest.TestCase):
-```
+    class IsFeed(unittest.TestCase):
 
 Now, we'd like to actually add some tests to our test case. Let's check
 to make sure my blog's atom feed is recognized as a valid feed:
 
 
-```python
-from django.utils import unittest
+    #!python
+    from django.utils import unittest
 
-class IsFeed(unittest.TestCase):
-    """Tests the functionality of utility.is_feed
-    by getting various well-known good feeds and
-    making sure they validate"""
+    class IsFeed(unittest.TestCase):
+        """Tests the functionality of utility.is_feed
+        by getting various well-known good feeds and
+        making sure they validate"""
 
-    def test_is_feed_atom(self):
-    """Is the url a valid feed?"""
-        url = 'http://www.jeffknupp.com/atom.xml'
-        self.assertEqual(True, utility.is_feed(url))
+        def test_is_feed_atom(self):
+        """Is the url a valid feed?"""
+            url = 'http://www.jeffknupp.com/atom.xml'
+            self.assertEqual(True, utility.is_feed(url))
 
-```
 
 You'll notice that I documented the test case, and you may be wondering
 why, since I'm a lone developer. Two reasons. First, documentation is
@@ -140,9 +134,8 @@ more to write, but I'll be glad I did once I release it into the wild.
 
 Anyway, back to our tests. We should now be able to run the tests using:
 
-```bash 
-$  python manage.py test <appname>
-```
+    :::bash 
+    $  python manage.py test <appname>
 
 and get output similar to when we ran the testcases before.
 
@@ -158,16 +151,14 @@ saying your code is 100% tested is not matter of opinion but rather a provable f
 I use coverage.py for my code coverage. You can install it using pip via
 `pip install coverage`. Once it's installed, rerun your tests like so:
 
-```bash
-$  coverage run manage.py test
-```
+    :::bash
+    $  coverage run manage.py test
 
 This will produce an instrumentation file that you can convert to HTML
 or LaTex, or view from the command line. Run
 
-```bash
-$  coverage report
-```
+    :::bash
+    $  coverage report
 
 to get a snapshot of how much of your code is actually being tested by
 your unit tests.

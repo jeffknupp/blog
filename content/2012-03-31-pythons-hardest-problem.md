@@ -6,15 +6,13 @@ _For more than a decade, no single issue has caused more frustration or
 curiousity for Python novices and experts alike than the Global
 Interpreter Lock._
 
-An Open Question
-------------------
+## An Open Question
 
 Every field has one. A problem that has been written off as too difficult, too time consuming. Merely mentioning an attempt to solve it raises eyebrows. Long after the community at large has moved on, it is taken up by those on the fringe. Attempts by novices are undertaken for no other reason than the difficulty of the problem and the imagined accolades that would accompany a solution. The open question in Computer Science of whether P = NP is such a problem. An answer to the affirmitive has the possibility to literally change the world, provided a "reasonable" polynomial time algorithm is presented. Python's hardest problem is less difficult than crafting a proof of P = NP, to be sure. Nevertheless, it has not received a satisfactory solution to date, and the practical implications of a solution would be similarly transformative. Thus, it's easy to see why so many in the Python community are interested in an answer to the question: "What can be done about the Global Interpreter Lock?"
 
 <!--more-->
 
-A Low Level Look at Python
----------------
+## A Low Level Look at Python
 
 To understand the GIL and its implications, we must start at Python's foundations. Languages like C++ are compiled languages, so named because a program is fed in to a compiler where it is parsed according to the language's grammar, transformed into a language agnostic intermediate representation, and linked into an executable comprised of highly optimized machine code. The compiler is able to optimize the code so aggresively because it is seeing the whole program (or large, self-contained chunks) at once. This allows it to reason about interactions between different language constructs and make informed decisions about optimization. 
 
@@ -22,15 +20,13 @@ In contrast, Python is an interpreted language. The program is fed into an _inte
 
 This is an important point, so it bears repeating. The execution speed of a Python program, all other things being equal, is directly tied to the "speed" of the interpreter. No matter how much optimization you do within your program itself, your program's execution speed is still tied to how efficiently the interpreter can execute your code. It is clear, then, why much work has been devoted to optimizing the Python interpreter. It is the closest thing to a free lunch Python programmers can get.
 
-The Free Lunch Is Over
-------------------------
+## The Free Lunch Is Over
 
 Or is it? A generation of programmers have learned to write code while Moore's Law was delivering hardware based speedups with predictable timing. If one wrote code that was slow, simply waiting a bit for faster processors was oftentimes the easiest solution. Indeed, Moore's law still holds true and likely will for quite a bit longer, but the _way_ in which it holds has fundamentally changed. No longer are clock rates steadily increasing to dizzying speeds. Instead, _multiple cores_ are used to take advantage of tranistor density increases. Programs wishing to capitalize on new processors must be rewritten to exploit _parallelism_.
 
 When most developers hear "parallelism" the immediately think of multithreaded programs. Utilizing multiple threads of execution is by far the most common way to take advantage of multicore systems. While mulit-threaded programming is a good deal tougher than "sequential" programming, the careful programmer may nevertheless exploit parallelizable portions of his or her code to great effect. The implementation language should be an afterthought, since almost all heavily used modern languages support multithreaded programming.  
 
-A Surprising Fact
--------------------
+## A Surprising Fact
 
 Now we come to the crux of the issue. To take advantage of multicore
 systems, Python must support multiple threads of execution. Being an
@@ -73,8 +69,7 @@ mulithreading works well, and it is perhaps a testament to both the
 interpreter implementation and the core developers that there are not more complaints
 about Python's multithreading performance.
 
-What Now? Panic?
-----------------
+## What Now? Panic?
 
 So what, then, can be done? Are we as Python developers meant to give up
 the idea of using multiple threads to exploit parallelism? Why does the
@@ -87,8 +82,7 @@ These are useful questions with interesting answers. The GIL protects access to 
 
 So why not get rid of it? Many are not aware, but this was attempted back in 1999 for Python 1.5 in the oft-cited but poorly understood "free threading" patches from Greg Stein. In the patches, the GIL was completely removed and replaced with finer grained locking. Its removal, however, came at the expense of execution speed for single-threaded programs. It was perhaps 40% slower when running with a single thread. Two threads showed an increase in speed, but beyond that the benefits did not scale linearly with the number of cores. Because of the degredation in execution speed, the patches were rejected and largely forgotten.
 
-The GIL is Hard. Let's Go Shopping!
------------------------------------
+## The GIL is Hard. Let's Go Shopping!
 
 The "free threading" patches are instructive, though, in that they demonstrate a fundamental point about the Python interpreter: removing the GIL is _hard_. Since the time of the patches, the interpreter has come to rely on _more_ global state, making the removal of today's GIL that much more difficult. It should be noted that it is precisely for this reason that many become interested in attempting to remove the GIL in the first place; hard problems are fun.
 

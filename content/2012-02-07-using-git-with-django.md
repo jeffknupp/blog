@@ -15,6 +15,7 @@ Before committing, we'll want to setup our `.gitignore` file to tell
 git what files not to track in version control. Since I'm working with Python files using
 vim, my `.gitignore` file has the following contents:
 
+    :::bash
     *.pyc
     *.swp
     local_settings.py

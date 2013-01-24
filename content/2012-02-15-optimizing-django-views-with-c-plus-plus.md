@@ -42,21 +42,20 @@ a simple class in the code of my previous entry name `LinkScore`. It
 was basically a C struct with a list of objects and an integer. The C++
 code for it is:
 
-```cpp
-using namespace boost::python;
+    #!cpp
+    using namespace boost::python;
 
-class LinkScore
-{
-    public:
-        LinkScore() {}
-        LinkScore(const object& link, int score) : score_(score)
+    class LinkScore
     {
-        links_.append(link);
-    }
-    list links_;
-    int score_;
-};
-```
+        public:
+            LinkScore() {}
+            LinkScore(const object& link, int score) : score_(score)
+        {
+            links_.append(link);
+        }
+        list links_;
+        int score_;
+    };
 
 If you're thinking my data members should be private, guess what: I
 don't care. That's part of the joy of working on code that only you will
@@ -66,11 +65,10 @@ The Details
 ----------------
 
 Anyway, the boost::python code to make this callable from Python is:
-```cpp
+    #!cpp
     class_<LinkScore>("LinkScore", init<object, int>())
         .def_readwrite("links", &LinkScore::links_)
         .def_readwrite("score", &LinkScore::score_);
-```
 
 Really, it couldn't be more simple. The `<Python.h>` way of
 accomplishing this involves setting a struct with like 40 values to
@@ -79,43 +77,42 @@ declare each class. I was happy to not have to bother with that.
 The actual code for my view is a free function called `get_scores`.
 Here's a brief snippet:
 
-```cpp
-using namespace boost::python;
-using namspace std;
+    #!cpp
+    using namespace boost::python;
+    using namspace std;
 
-class CompareObject {
-    public:
-      bool  operator()(const LinkScore& l, const LinkScore& r) { return l.score_ > r.score_; }
-};
+    class CompareObject {
+        public:
+        bool  operator()(const LinkScore& l, const LinkScore& r) { return l.score_ > r.score_; }
+    };
 
-list get_scores(object links)
-{
-    object utility = import("links.utility");
-    set<LinkScore, CompareObject> seen_links;
-    list python_seen_links;
-    for (int i = 0; i < len(links); ++i)
+    list get_scores(object links)
     {
-        const object& link = links[i];
-        LinkScore score = LinkScore(link, score_link (link, links));
-        auto iter = seen_links.find(score);
+        object utility = import("links.utility");
+        set<LinkScore, CompareObject> seen_links;
+        list python_seen_links;
+        for (int i = 0; i < len(links); ++i)
+        {
+            const object& link = links[i];
+            LinkScore score = LinkScore(link, score_link (link, links));
+            auto iter = seen_links.find(score);
 
-        if (iter != seen_links.end())
-        {
-            // Do stuff
+            if (iter != seen_links.end())
+            {
+                // Do stuff
+            }
+            else
+            {
+                // Do other stuff
+            }
         }
-        else
+        // TODO: Optimize this
+        for (auto i = seen_links.begin(); i != seen_links.end(); ++i)
         {
-            // Do other stuff
+            python_seen_links.append(*i);
         }
+        return python_seen_links;
     }
-    // TODO: Optimize this
-    for (auto i = seen_links.begin(); i != seen_links.end(); ++i)
-    {
-        python_seen_links.append(*i);
-    }
-    return python_seen_links;
-}
-```
 
 If you know C++ and Python, it's almost like reading a mix of the two.
 The above, however, is valid C++ code and is the interface that Python
