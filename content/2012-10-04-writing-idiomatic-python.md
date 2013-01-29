@@ -26,8 +26,8 @@ add it with attribution to the name you use in your comment.
 This list will temporarily live here as a blog post, but I have an interesting
 idea for its final home. More on that next week.
 
-###Update: 'Writing Idiomatic Python' e-Book Coming
-[See here](http://www.jeffknupp.com/blog/2012/10/11/idiomatic-python-ebook-coming/) for details!
+###Update: The 'Writing Idiomatic Python' e-Book is here!
+[See here](http://www.jeffknupp.com/writing-idiomatic-python-ebook/) for details!
 
 *Update 10/05/12: Add context managers, PEP8, itertools, string join(), dict.get()
 default values*
