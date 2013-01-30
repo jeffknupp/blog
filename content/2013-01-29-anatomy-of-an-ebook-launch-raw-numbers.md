@@ -18,6 +18,9 @@ Between the 24th and 29th, I received 10,002 page views during 6,052 visits from
 4,848 visitors. As you can see below, the majority of these came during the first two days (1,570
 visits on the 24th and 1,896 on the 25th).
 
+<div id="visitor_div">
+</div>
+
 ## Missteps
 
 When I started, I only offered PDF versions of the book ($8.99) with payment via credit
@@ -113,6 +116,24 @@ google.setOnLoadCallback(drawChart);
 // draws it.
 function drawChart() {
 
+var visitor_data = new google.visualization.DataTable();
+visitor_data.addColumn('string', 'Date');
+visitor_data.addColumn('number', 'Visitors');
+visitor_data.addColumn('number', 'Page Views');
+visitor_data.addRows([
+['01-24-13', 1570, 2911],
+['01-25-13', 1896, 3151],
+['01-26-13', 745, 1138],
+['01-27-13', 621, 995],
+['01-28-13', 830, 1224],
+['01-29-13', 591, 887]]);
+
+var options = {
+    title: 'Traffic to jeffknupp.com between 1-24 and 1-29',
+    hAxis: {title: 'Date'}}
+
+var visitor_chart = new google.visualization.AreaChart(document.getElementById('visitor_div'));
+        visitor_chart.draw(visitor_data, options);
 // Create the data table.
 var data = new google.visualization.DataTable();
 data.addColumn('string', 'Version');
