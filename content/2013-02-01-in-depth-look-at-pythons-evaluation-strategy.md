@@ -107,4 +107,29 @@ append some values, and the list is updated in place. A `string` is immutable.
 Once you create a string, you can't change its value. 
 
 I know what you're thinking. "Of course you can change the value of a string, I
-do it all the time in my code!" When you "change" a string, 
+do it all the time in my code!" When you "change" a string, you're actually
+rebinding it to a newly created string object. The original object remains
+unchanged, even though its possible that nothing refers to it anymore.
+
+See for yourself:
+
+    #!py
+    >>> a = 'foo'
+    >>> a
+    'foo'
+    >>> b = a
+    >>> a += 'bar'
+    >>> a
+    'foobar'
+    >>> b
+    'foo'
+
+Even though we're using `+=` and it *seems* that we're changing the string, we
+just get a new one with the result of the change. This is why you may hear
+people say, "string concatenation is slow.". It's because concatenating strings
+must allocate memory for a new string and copy the contents, while appending to
+a list (in most cases) requires no allocation. Immutable objects are
+fundamentally expensive to "change", because doing so involves creating a copy.
+Changing mutable objects is cheap.
+
+# TODO: discuss immutable (container) object with mutable contents
