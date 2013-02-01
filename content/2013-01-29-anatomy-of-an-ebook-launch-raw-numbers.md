@@ -2,7 +2,7 @@ title: Anatomy of an eBook Launch: Raw Numbers
 date: 2013-01-29 16:18
 categories: ebook python idiomatic freelance
 
-On January 24th, I officially "launched" my eBook [Writing Idiomatic Python](www.jeffknupp.com/writing-idiomatic-python-ebook). I had no idea what to expect and even less of an idea about what I should do to promote it. So I did the easiest thing: posted to reddit ([/r/python](http://www.reddit.com/r/python/) to be specific). Aside from a [post to hacker news](http://news.ycombinator.com/item?id=5112211) not about the book itself and a single tweet, posting on reddit was the only thing I did.
+On January 24th, I officially "launched" my eBook [Writing Idiomatic Python](http://www.jeffknupp.com/writing-idiomatic-python-ebook). I had no idea what to expect and even less of an idea about what I should do to promote it. So I did the easiest thing: posted to reddit ([/r/python](http://www.reddit.com/r/python/) to be specific). Aside from a [post to hacker news](http://news.ycombinator.com/item?id=5112211) not about the book itself and a single tweet, posting on reddit was the only thing I did.
 
 **And that was enough.**
 
@@ -58,7 +58,7 @@ likely, the bundle's price was very attractive compared to a single version.
 ## Free copies and returns
 
 As I specify on the landing page for the 
- [book](www.jeffknupp.com/writing-idiomatic-python-ebook), I'm happy to send out
+ [book](http://www.jeffknupp.com/writing-idiomatic-python-ebook), I'm happy to send out
 free copies of the book to those without the financial means to purchase it. To
 date I've given out roughly 30 free copies in various versions/formats. Everyone
 has been quite appreciative and I've noticed I get the most feedback from those
