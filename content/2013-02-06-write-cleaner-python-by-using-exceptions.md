@@ -8,6 +8,8 @@ The Python community's approach to exceptions leads to cleaner code that's
 easier to read. And that's without the monstrous hit to performance commonly
 associated with exceptions in other languages. 
 
+<!--more-->
+
 ## Using exceptions to write *cleaner* code?
 
 When I talk about "using exceptions", I'm specifically *not* referring to
