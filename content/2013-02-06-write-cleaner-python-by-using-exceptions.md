@@ -10,6 +10,8 @@ associated with exceptions in other languages.
 
 <!--more-->
 
+**EDIT: Updated with more useful exception idioms**
+
 ## Using exceptions to write *cleaner* code?
 
 When I talk about "using exceptions", I'm specifically *not* referring to
@@ -111,11 +113,82 @@ for `TypeError`, which is what would be raised if the coercion failed. Never
 use a "bare" `except:` clause or you'll end up suppressing 
 real errors you didn't intend to catch.
 
-The two approaches to error handling are known as *Look Before You Leap (LBYL)* 
-and *Easier to Ask for Forgiveness than Permission*. In the LBYL camp, you
-always check to see if something can be done before doing it. In EAFP, you 
-just do the thing. If it turns out that wasn't possible, *shrug* "my
-bad", and deal with it.
+### But wait, there's more!
+
+The function above is admittedly contrived (though certainly based on a common
+anti-pattern). There are a number of other useful ways to use exceptions. Let's
+take a look at the use of an `else` clause when handling exceptions.
+
+In the rewritten version of `print_object` below, the code in the `else` block is 
+executed only if the code in the `try` block **didn't** throw an exception. 
+It's conceptually similar to using `else` with a `for` loop (which is itself a 
+useful, if not widely known, idiom). It also fixes a bug in the previous
+version: we caught a `TypeError` assuming that only the call to `str()` would
+generate it. But what if it was actually (somehow) generated from the call to
+`print()` and has nothing to do with our string coercion?
+
+    #!py
+    def print_object(some_object):
+        # Check if the object is printable...
+        try:
+            printable = str(some_object)
+        except TypeError:
+            print("unprintable object")
+        else:
+            print(printable)
+
+Now, the `print()` line is only called if no exception was raised. If `print()`
+raises an exception, this will bubble up the call stack as normal. The `else`
+clause is often overlooked in exception handling but incredibly useful in
+certain situations. Another use of  `else` is when code in the `try`
+block requires some cleanup (and doesn't have a usable context manager), as in
+the below example:
+
+    #!py
+    def display_username(user_id):
+        try:
+            db_connection = get_db_connection()
+        except DatabaseEatenByGrueError:
+            print('Sorry! Database was eaten by a grue.')
+        else:
+            print(db_connection.get_username(user_id))
+            db_connection.cleanup()
+
+### How not to confuse your users
+
+A useful pattern when dealing with exceptions is the bare `raise`. 
+Normally, `raise` is paired with an exception to be raised. However, if 
+it's used in exception handling code, `raise` has a slightly 
+different (but immensely useful) meaning.
+
+    #!py
+    def calculate_value(self, foo, bar, baz):
+        try:
+            result = self._do_calculation(foo, bar, baz)
+        except:
+            self.user_screwups += 1 
+            raise
+        return result
+
+Here, we have a member function doing some calculation. 
+We want to keep some statistics on how often the function is misused and
+throws an exception, but we have no intention of actually handling the 
+exception.  Ideally, we want to an exception raised in `_do_calculation` 
+to be flow back to the user code as normal. If we simply raised a new exception 
+from our `except` clause, the traceback point to our `except`
+clause and mask the real issue (not to mention confusing the user). 
+`raise` on its own, however, lets the exception propagate normally *with its
+original traceback*. In this way, we record the information we want and the user
+is able to see what actually caused the exception.
+
+### A tale of two styles
+
+We've now seen two distinct approaches to error handling (lots of `if`
+statements vs. catching exceptions). These approaches are respectively known 
+as *Look Before You Leap (LBYL)* and *Easier to Ask for Forgiveness than 
+Permission*. In the LBYL camp, you always check to see if something can 
+be done before doing it. In EAFP, you just do the thing. If it turns out 
+that wasn't possible, *shrug* "my bad", and deal with it.
 
 Idiomatic Python is written in the EAFP style (where reasonable). We can do so
 because exceptions are cheap in Python.
