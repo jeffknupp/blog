@@ -8,18 +8,122 @@ The Python community's approach to exceptions leads to cleaner code that's
 easier to read. And that's without the monstrous hit to performance commonly
 associated with exceptions in other languages. 
 
+## Using exceptions to write *cleaner* code?
+
+When I talk about "using exceptions", I'm specifically *not* referring to
+creating some crazy exception hierarchy for your package and raising exceptions
+at every possible opportunity. That will most certainly lead to unmaintainable
+and difficult to understand code. This notion has been widely discussed and is
+well summarized [on Joel Spolsky's blog](http://www.joelonsoftware.com/items/2003/10/13.html).
+
+*Note: Python avoids much of the tension of the "error codes vs exceptions" argument.
+Between the ability to return multiple values from a function and the ability to
+return values of different types (e.g. `None` or something similar in the error
+case) the argument is moot. But this is besides the point.*
+
+The style of exception usage I'm advocating is quite different. In short: **take
+advantage of Python built-ins and standard library modules that already throw
+exceptions.** Exceptions are built in to Python at the lowest levels. In fact, I
+*guarantee* your code is already using exceptions, even if not explicitly. 
+
+### Intermezzo: How the `for` statement works
+
+Any time you use `for` to iterate over an `iterable` (basically, all `sequence`
+types and anything that defines `__iter__()` or `__getitem__()`), it needs to 
+know when to stop iterating. Take a look at the code below: 
+
+    #!py
+    words = ['exceptions', 'are', 'useful']
+    for word in words:
+        print(word)
+
+How does `for` know when it's reached the last element in `words` and should 
+stop trying to get more items? The answer may surprise you: *the list raises a
+`StopIteration` exception*. 
+
+In fact, all `iterables` follow this pattern. When a `for` statement is 
+first evaluated, it calls `iter()` on the object being iterated over. 
+This creates an `iterator` for the object, capable of returning the 
+contents of the object in sequence. For the call to `iter()` to succeed, the
+object must either support the iteration protocol (by defining `__iter__()`) or
+the sequence protocol (by defining `__getitem__()`).
+
+As it happens, both the `__iter__()` and `__getitem__()` functions are 
+required to *raise an exception* when the items to iterate over are 
+exhausted. `__iter__()` raises the `StopIteration` exception, as discussed
+earlier, and `__getitem__()` raises the `IndexError` exception. This is how
+`for` knows when to stop.
+
+**In summary: if you use `for` anywhere in your code, you're using exceptions.**
+
 ## LBYL vs. EAFP
 
-The difference of opinion regarding when (not if) to use exceptions
-boils down to a tension between coding styles. Code that doesn't use
-exceptions is always checking if it's OK to do something.
+It's all well and good that exceptions are widely used in core Python constructs,
+but *why* is a different question. After all, `for` could certainly have
+been written to not rely on exceptions to mark the end of a sequence. Indeed,
+exceptions could have been avoided altogether.
+
+But they exist due to the philosophical approach to error checking adopted in 
+Python. Code that doesn't use exceptions is always checking if it's OK to do 
+something. In practice, it must ask a number of different questions before it is
+convinced it's OK to do something. If it doesn't ask *all* of the right 
+questions, bad things happen. Consider the following code:
+
+    #!py
+    def print_object(some_object):
+        # Check if the object is printable...
+        if isinstance(some_object, str):
+            print(some_object)
+        elif isinstance(some_object, dict):
+            print(some_object)
+        elif isinstance(some_object, list):
+            print(some_object)
+        # 97 elifs later...
+        else:
+            print("unprintable object")
+
+This trivial function is responsible for calling `print()` on an object. If it can't be
+`print()`-ed, it prints an error message.
+
+Trying to anticipate all error conditions in advance is destined for failure
+(and is also really ugly). Duck typing is a central idea in Python, but this
+function will incorrectly print an error for types than *can* be printed but
+aren't explicitly checked.
+
+The function can be rewritten like so:
+
+    #!py
+    def print_object(some_object):
+        # Check if the object is printable...
+        try:
+            printable = str(some_object)
+            print(printable)
+        except TypeError:
+            print("unprintable object")
+
+If the object can be coerced to a string, do so and print it. If that attempt 
+raises an exception, print our error string. Same idea, much easier to follow
+(the lines in the `try` block could obviously be combined but weren't to make the
+example more clear). Also, note that we're explicitly checking 
+for `TypeError`, which is what would be raised if the coercion failed. Never
+use a "bare" `except:` clause or you'll end up suppressing 
+real errors you didn't intend to catch.
+
+The two approaches to error handling are known as *Look Before You Leap (LBYL)* 
+and *Easier to Ask for Forgiveness than Permission*. In the LBYL camp, you
+always check to see if something can be done before doing it. In EAFP, you 
+just do the thing. If it turns out that wasn't possible, *shrug* "my
+bad", and deal with it.
+
+Idiomatic Python is written in the EAFP style (where reasonable). We can do so
+because exceptions are cheap in Python.
 
 ## Slow is relative
 
-The fact that this schism exists is understandable. In a number of other 
-languages (especially compiled ones), exceptions are comparatively expensive.
-In this context, avoiding exceptions in performance sensitive code is 
-reasonable. 
+The fact that the schism over exception usage exists is understandable. In a 
+number of other languages (especially compiled ones), exceptions are 
+comparatively expensive.  In this context, avoiding exceptions in 
+performance sensitive code is reasonable. 
 
 But this argument doesn't hold weight for Python. There is *some* overhead,
 of course, to using exceptions in Python. *Comparatively*, though, it's
@@ -134,7 +238,8 @@ timing script:
 The only thing of note is the `percentage` variable, which essentially dictates
 how likely our randomly chosen `word` is to be in `my_dict`. 
 
-So with a 90% chance of an exception being thrown, here are the numbers:
+So with a 90% chance of an exception being thrown in the code above, here 
+are the numbers:
 
     using if statement:
         minimum: 1.35720682144
@@ -160,7 +265,7 @@ Changing the chance of an exception to 20% gives the following result:
         minimum: 1.92286801338
         per_lookup: 1.92286801338e-06
 
-At this point the numbers are close enough to not care. A differnce of 0.5 \* 10^6
+At this point the numbers are close enough to not care. A difference of 0.5 \* 10^6
 seconds shouldn't matter to anyone. If it does, I have a spare copy of the K&R C
 book you can have; go nuts.
 
@@ -168,4 +273,9 @@ What did we learn?
 
 **Exceptions in Python are not "slow".**
 
+## To sum up...
 
+Exceptions are baked-in to Python at the language level, can lead to cleaner
+code, and impose almost zero performance impact. If you were hesitant about
+using exceptions in the style described in this post, don't be. If you've
+avoided exceptions like the plague, it's time to give them another look.
