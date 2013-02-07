@@ -267,7 +267,7 @@ Changing the chance of an exception to 20% gives the following result:
         minimum: 1.92286801338
         per_lookup: 1.92286801338e-06
 
-At this point the numbers are close enough to not care. A difference of 0.5 \* 10^6
+At this point the numbers are close enough to not care. A difference of 0.5 \* 10^-6
 seconds shouldn't matter to anyone. If it does, I have a spare copy of the K&R C
 book you can have; go nuts.
 
