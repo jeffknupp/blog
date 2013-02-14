@@ -391,7 +391,7 @@ blocks are modules, class definitions, and the bodies of functions. So the
 
 Let's now return to the original question: how does the interpreter "find" 
 what a name is bound to (or if it's even a valid name at all)? It begins 
-by checking the innermost `scope` of the innermost `block`. Then it checks the
+by checking the `scope` of the innermost `block`. Then it checks the
 `scope` that contained the innermost `block`, then the `scope` that contained
 that, and so on. 
 
