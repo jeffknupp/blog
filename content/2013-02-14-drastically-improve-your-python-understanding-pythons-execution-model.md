@@ -315,13 +315,13 @@ after the function call completes, `tree` is still the same dictionary with some
 updates. It is *not* the last value of `root` in the function call. So in one
 sense `tree` is being updated; in another sense it's not.
 
-To make sense of this, consider what the `root` parameter actually is: a *new* binding
-to the object refered to by the name `root`. In the case of our example, `root`
-is a name initially bound to the same object as `tree`. It is *not* `tree` itself, which
-explains why changing `root` to a new dictionary in the function leaves `tree` 
-unchanged. As you'll recall, assigning `root` to `root.setdefault(character, {})` 
-merely rebinds `root` to the object created by the 
-`root.setdefault(character, {})` statement.
+To make sense of this, consider what the `root` parameter actually is: a *new* 
+binding to the object refered to by the name passed in as the `root` 
+parameter. In the case of our example, `root` is a name initially bound to the 
+same object as `tree`. It is *not* `tree` itself, which explains why changing 
+`root` to a new dictionary in the function leaves `tree` unchanged. As you'll 
+recall, assigning `root` to `root.setdefault(character, {})` merely rebinds 
+`root` to the object created by the `root.setdefault(character, {})` statement.
 
 Here's another, more straightforward, example:
 
