@@ -288,31 +288,6 @@ as arguments to a function? The truth is, we aren't really passing all that much
 Take a look at this code:
 
     #!py
-    def list_changer(input_list):
-        input_list[0] = 10
-
-        input_list = range(1, 10)
-        print(input_list)
-        input_list[0] = 10
-        print(input_list)
-
-    >>> test_list = [5, 5, 5]
-    >>> list_changer(test_list)
-    [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    [10, 2, 3, 4, 5, 6, 7, 8, 9]
-    >>> print test_list
-    [10, 5, 5]
-
-Our first statement *does* change the value of the underlying list (as we can
-see in the last line printed). However, once we rebind the name `input_list` by
-saying `input_list = range(1, 10)`, **we're now referring to a completely
-different object**. We basically said "bind the name `input_list` to this new list." 
-After that line, we have no way of referring to the original `input_list` parameter 
-again. 
-
-Here's another example that's a bit more involved:
-
-    #!py
     def add_to_tree(root, value_string):
         """Given a string of characters `value_string`, create or update a
         series of dictionaries where the value at each level is a dictionary of
@@ -334,7 +309,6 @@ Here's another example that's a bit more involved:
         for character in value_string:
             root = root.setdefault(character, {})
 
-
 We're essentially creating an auto-vivifying dictionary that operates like a
 trie. Notice that we change the `root` parameter in the `for` loop. And yet
 after the function call completes, `tree` is still the same dictionary with some
@@ -348,6 +322,31 @@ explains why changing `root` to a new dictionary in the function leaves `tree`
 unchanged. As you'll recall, assigning `root` to `root.setdefault(character, {})` 
 merely rebinds `root` to the object created by the 
 `root.setdefault(character, {})` statement.
+
+Here's another, more straightforward, example:
+
+    #!py
+    def list_changer(input_list):
+        input_list[0] = 10
+
+        input_list = range(1, 10)
+        print(input_list)
+        input_list[0] = 10
+        print(input_list)
+
+    >>> test_list = [5, 5, 5]
+    >>> list_changer(test_list)
+    [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    [10, 2, 3, 4, 5, 6, 7, 8, 9]
+    >>> print test_list
+    [10, 5, 5]
+
+Our first statement *does* change the value of the underlying list (as we can
+see in the last line printed). However, once we rebind the name `input_list` by
+saying `input_list = range(1, 10)`, **we're now referring to a completely
+different object**. We basically said "bind the name `input_list` to this new list." 
+After that line, we have no way of referring to the original `input_list` parameter 
+again. 
 
 By now, you should have a clear understanding of how binding a name works.
 There's just one more item to take care of.
