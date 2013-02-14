@@ -5,7 +5,7 @@ categories: python execution binding name scope block
 Those new to Python are often surprised by the behavior of their own code. They
 expect *A* but, seemingly for no reason, *B* happens instead.
 The root cause of many of these "surprises" is confusion about the Python
-data model. It's the sort of thing that, if it's explained to you once, a number of
+execution model. It's the sort of thing that, if it's explained to you once, a number of
 Python concepts that seemed hazy before become crystal clear. It's also really
 difficult to just "figure out" on your own, as it requires a fundamental shift
 in thinking about core language concepts like variables, objects, and functions.
@@ -43,9 +43,9 @@ user-defined classes, though, the interpreter spits out some odd looking string
 like:
 
     #!py
-    >> class Foo(): pass
-    >> foo = Foo()
-    >> print(foo)
+    >>> class Foo(): pass
+    >>> foo = Foo()
+    >>> print(foo)
     <__main__.Foo object at 0xd3adb33f>
 
 `print()` is supposed to print the value of a "variable", right? So why is it 
@@ -68,10 +68,10 @@ value `42`. That is, *variables are a sort of container for values*.
 In Python, this isn't the case. When we say:
 
     #!py
-    >> foo = Foo()
+    >>> foo = Foo()
 
 it would be wrong to say that `foo` "contained" a `Foo` object. 
-Rather, `foo` *is a `name` with a `binding` to the `object` created by* `Foo(bar)`. 
+Rather, `foo` *is a `name` with a `binding` to the `object` created by* `Foo()`. 
 The portion of the right hand side of the equals sign creates an object. 
 Assigning `foo` to that object merely says "I want to be able to refer 
 to this object as `foo`." **Instead of variables (in the classic 
@@ -88,7 +88,7 @@ way to check if two names are bound to the same object is to use `is`
 If we continued our example and wrote
 
     #!py
-    >> baz = foo
+    >>> baz = foo
 
 we should read this as "Bind the name `baz` to the same object `foo` is bound 
 to (whatever that may be)." It should be clear, then why the following happens
@@ -103,14 +103,18 @@ to (whatever that may be)." It should be clear, then why the following happens
     'set from foo'
     
 Changing the object in some way using `foo` will also be reflected in `baz`: they 
-are both bound to the same underlying object. `names` in Python are not unlike names 
+are both bound to the same underlying object. 
+
+###What's in a name...
+
+`names` in Python are not unlike names 
 in the real world. If my wife calls me "Jeff", my dad calls me "Jeffrey", and my 
 boss calls me "Idiot", it doesn't fundamentally change *me*. If my boss decides 
 to call me "Captain Programming," great, but it still hasn't changed anything 
-about me. It does mean, however, if my wife kills "Jeff", "Captain Programmer" is 
-also dead. Likewise, in Python binding a name to an object doesn't change it. Changing 
-some property of the object, however, will be reflected in all other names bound 
-to that object.
+about me. It does mean, however, that if my wife kills "Jeff" (and who could 
+blame her), "Captain Programming" is also dead. Likewise, in Python binding a 
+name to an object doesn't change it. Changing some property of the object, 
+however, will be reflected in all other names bound to that object.
 
 ###Everything really *is* an object. I swear.
 
@@ -118,20 +122,20 @@ Here, a questions arises: How do we know that the thing on the right hand side o
 the equals sign will always be an object we can bind a name to? What about
 
     #!py
-    >> foo = 10
+    >>> foo = 10
 
 or
 
     #!py
-    >> foo = "Hello World!"
+    >>> foo = "Hello World!"
 
 Now is when "everything is an object" pays off. Anything you can (legally) place 
 on the right hand side of the equals sign is (or creates) an object in Python. 
 Both `10` and `Hello World` are objects. Don't believe me? Check for yourself
 
     #!py
-    >> foo = 10
-    >> print(foo.__add__)
+    >>> foo = 10
+    >>> print(foo.__add__)
     <method-wrapper '__add__' of int object at 0x8502c0>
 
 If `10` was actually just the number '10', it probably wouldn't have
@@ -165,18 +169,20 @@ silly (but interesting) stuff like this:
     >>> datetime.datetime.now()
     datetime.datetime(2013, 02, 14, 02, 53, 59, 608842)
     >>> class PartyTime():        
-    ...    def __call__(self, *args):
-    ...        imp.reload(datetime)
-    ...        value = datetime.datetime(*args)
-    ...        datetime.datetime = self
-    ...        return value
-    ...    
-    ...    def __getattr__(self, value):
-    ...        if value == 'now':
-    ...            return lambda: print('Party Time!')
-    ...        else:
-    ...            return getattr(datetime.datetime, value)
-        
+    ...     def __call__(self, *args):
+    ...         imp.reload(datetime)
+    ...         value = datetime.datetime(*args)
+    ...         datetime.datetime = self
+    ...         return value
+    ...     
+    ...     def __getattr__(self, value):
+    ...         if value == 'now':
+    ...             return lambda: print('Party Time!')
+    ...         else:
+    ...             imp.reload(datetime)
+    ...             value = getattr(datetime.datetime, value)
+    ...             datetime.datetime = self
+    ...             return value
     >>> datetime.datetime = PartyTime()
     >>> datetime.datetime.now() 
     Party Time!
