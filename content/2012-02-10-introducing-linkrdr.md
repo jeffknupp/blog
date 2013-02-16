@@ -47,12 +47,12 @@ entries as determined by the number of feeds they appear in. If everyone
 on the Tubes is linking to something, it might be worth checking out
 even if it's not in one of your feeds.
 
-linkrdr is by not even close to finished , nor even particularly useable at the
+linkrdr is by not even close to finished , nor even particularly usable at the
 moment, but progress is coming quickly. I'll describe more of linkrdr's
 functionality in future posts. For now, if you want to sign up for it
 while it's free (I may charge a one-time fee if I think the service is
 actually useful), go ahead and do so at [linkrdr.com](http://www.linkrdr.com).
-I can't guarantee stuff will work but signup at least should.
+I can't guarantee stuff will work but sign up at least should.
 
 Questions or comments on _Introducing linkrdr_? Let me know in the comments below. 
 Also, follow me on Twitter to see all of my blog posts and updates.

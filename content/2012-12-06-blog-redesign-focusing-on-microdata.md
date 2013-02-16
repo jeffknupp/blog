@@ -24,7 +24,7 @@ some free publicity, feel free to re-theme the blog and I'll link to it from
 here.
 
 Lastly, this is the first change in a much larger vision I have for Blug. If you
-check out the code from GitHub, you'll notice there's a webserver in there with
+check out the code from GitHub, you'll notice there's a web server in there with
 in memory caching of generated pages. Blug will eventually generate *and serve*
 blogs, with plugin services that are able to regenerate the static page in
 response to some external event. Stuff like adding links to other sites discussing your

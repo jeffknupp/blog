@@ -1,4 +1,4 @@
-title: The Writing Idiomatic Python eBook is Finally Available!
+title: The Writing Idiomatic Python Book is Finally Available!
 date: 2013-01-24 11:52
 categories: python idiomatic book software
 

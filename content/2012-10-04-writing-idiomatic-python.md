@@ -70,16 +70,16 @@ In Python, it is possible to 'unpack' data for multiple assignment. Those famili
 ######Harmful
 
     #!py
-    list_from_comma_seperated_value_file = ['dog', 'Fido', 10] 
-    animal = list_from_comma_seperated_value_file[0]
-    name = list_from_comma_seperated_value_file[1]
-    age = list_from_comma_seperated_value_file[2]
+    list_from_comma_separated_value_file = ['dog', 'Fido', 10] 
+    animal = list_from_comma_separated_value_file[0]
+    name = list_from_comma_separated_value_file[1]
+    age = list_from_comma_separated_value_file[2]
 
 ######Idiomatic
     
     #!py
-    list_from_comma_seperated_value_file = ['dog', 'Fido', 10] 
-    (animal, name, age) = list_from_comma_seperated_value_file
+    list_from_comma_separated_value_file = ['dog', 'Fido', 10] 
+    (animal, name, age) = list_from_comma_separated_value_file
 
 ####Use ''.join when creating a single string for list elements
 It's faster, uses less memory, and you'll see it everywhere anyway. Note that
@@ -217,7 +217,7 @@ builds a list from existing data. Especially when data is both checked for some
 condition *and* transformed in some way, list comprehensions make it clear
 what's happening. There are also (usually) performance benefits to using list
 comprehensions (or alternately, set comprehensions) due to optimizations in the
-cPython interpreter.
+CPython interpreter.
 
 ######Harmful
 

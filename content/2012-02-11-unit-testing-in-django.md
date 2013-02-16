@@ -3,9 +3,9 @@ date: 2012-02-11 14:17
 categories: django python unit testing
 
 
-As a follow-up to my post [Starting a Django Project the Right Way](http://www.jeffknupp.com/blog/2012/02/09/starting-a-django-project-the-right-way/), I wanted to talk aboue the importance of writing tests for Django applications. I previously mentioned that my first site [IllestRhyme](http://www.illestrhyme.com), has no app specific tests for it. This is both embarassing and true. I've lost countless hours to fixing problems caused by new changes. I wasn't going to make the same mistake with [linkrdr](http://www.linkrdr.com). Having a set of unit tests that I can run in an automated fashion has made a world of difference.
+As a follow-up to my post [Starting a Django Project the Right Way](http://www.jeffknupp.com/blog/2012/02/09/starting-a-django-project-the-right-way/), I wanted to talk about the importance of writing tests for Django applications. I previously mentioned that my first site [IllestRhyme](http://www.illestrhyme.com), has no app specific tests for it. This is both embarrassing and true. I've lost countless hours to fixing problems caused by new changes. I wasn't going to make the same mistake with [linkrdr](http://www.linkrdr.com). Having a set of unit tests that I can run in an automated fashion has made a world of difference.
 
-The Django `unittest` framework (really the Python `unittest` framework) is both simple and powerfull. Along with the test client (`django.test.client.Client`), there's a lot you can
+The Django `unittest` framework (really the Python `unittest` framework) is both simple and powerful. Along with the test client (`django.test.client.Client`), there's a lot you can
 do with Django right out of the box.
 
 Setup
@@ -137,14 +137,14 @@ Anyway, back to our tests. We should now be able to run the tests using:
     :::bash 
     $  python manage.py test <appname>
 
-and get output similar to when we ran the testcases before.
+and get output similar to when we ran the test cases before.
 
 Code Coverage
 --------------------
 
 Tests are all well and good, but if you aren't testing a vast majority
 of your code, they're just a false sense of security. Code coverage
-tools are designed to intrument your test runs and determine what parts
+tools are designed to instrument your test runs and determine what parts
 of your tested code were actually exercised. With code coverage tools,
 saying your code is 100% tested is not matter of opinion but rather a provable fact.
 
@@ -155,7 +155,7 @@ I use coverage.py for my code coverage. You can install it using pip via
     $  coverage run manage.py test
 
 This will produce an instrumentation file that you can convert to HTML
-or LaTex, or view from the command line. Run
+or LaTeX, or view from the command line. Run
 
     :::bash
     $  coverage report

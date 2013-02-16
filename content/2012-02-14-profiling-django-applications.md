@@ -15,7 +15,7 @@ becomes 'slow'. This doesn't have to be the case (more on that later),
 but it's often the result of changes made without performance
 in mind. 
 
-In the begining, this is actually a good thing: __focus on
+In the beginning, this is actually a good thing: __focus on
 making it work first, then focus on making it fast__. Of course, you
 don't want to code yourself into a corner by writing code that "works"
 but does so in a way that it will _never_ be fast. Instead, you want to
@@ -54,12 +54,12 @@ A Case Study
 ------------------------------
 [linkrdr](http://www.linkrdr.com) allows, among other things, a user to
 import their RSS/Atom/Twitter/Anything Else feeds and get an
-inteligently laid out view of the _links_ contained in their feeds. The
+intelligently laid out view of the _links_ contained in their feeds. The
 `show_items` view for linkrdr is responsible for retrieving the user's
 current feeds, gathering the links from those feeds' entries, and
 scoring, sorting, and aggregating the links for presentation.
 
-When I first began work on the view, I did so with a unit test prewritten.
+When I first began work on the view, I did so with a unit test pre-written.
 I needed to get that test working, so I did so in the simplest way possible. Here's what
 the code looked like:
 
@@ -83,13 +83,13 @@ the code looked like:
 
         return render_to_response('links/entries.html', {'links': sorted_links, }, context_instance=RequestContext(request))
 
-Simple, right? If someone asked you to write psuedo-code to perform this
+Simple, right? If someone asked you to write pseudo-code to perform this
 task, I'm guessing it would look largely similar to this. Remember,
-that's a good thing in the begining. We're focusing on correctness more
+that's a good thing in the beginning. We're focusing on correctness more
 than performance.
 
 This code turned out to be 'all right' in the performance department.
-It eventually got on my nerves, though, becuase I knew it has a problem that experienced Django developers probably
+It eventually got on my nerves, though, because I knew it has a problem that experienced Django developers probably
 spotted right away. Even though I was %99.99 percent sure I knew what
 was slowing down this view, I approached optimizing this code the same
 way I approach any optimization task. I began with profiling.
@@ -155,7 +155,7 @@ many other useful things. I confirmed that the number of queries
 reported was the same in the debug-toolbar and went about optimizing the
 code.
 
-The first approach to optmization in Django should always be to modify the
+The first approach to optimization in Django should always be to modify the
 problematic function without changing anything else. Sometimes, you won't be
 able to optimize without making changes to your models or other parts
 of your application, but this kind of change shouldn't be your first

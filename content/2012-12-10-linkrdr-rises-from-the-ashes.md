@@ -4,7 +4,7 @@ categories: python linkrdr django
 
 In the beginning of 2012, I developed a site called Linkrdr. It was designed to be "the next generation RSS reader." Instead of simply listing each item in your RSS feeds in chronological order, it would: scan their content, extract links it found, then intelligently rank all of the links from all new entries and display them accordingly. 
 
-The idea was, if I subscribe to TNW and TechCrunch and they both have a writeup of the same story, I'd rather see the link they're talking about than two entries from secondary sources. As you interacted with it, Linkrdr learned your preferences and factored them in to its rankings. The result: a personalized list of interesting links, with some traditional RSS reader functionality to boot.
+The idea was, if I subscribe to TNW and TechCrunch and they both have a write up of the same story, I'd rather see the link they're talking about than two entries from secondary sources. As you interacted with it, Linkrdr learned your preferences and factored them in to its rankings. The result: a personalized list of interesting links, with some traditional RSS reader functionality to boot.
 
 The system worked, but faced some scaling challenges. Users could import their feeds from other sources, and some had hundreds of feeds they followed. This meant the content retrieval and analysis process had a ton of work to do, even for a relatively small number of users.
 
@@ -24,7 +24,7 @@ But the setup is not ideal. For one, I need to use two different applications fo
     1. No offline reading
     1. Impossible to tell why a specific story is presented to you
     1. No history of viewed pages (impossible to find article you read a month ago)
-    1. Something as simple as changing phone orientation causes page redownload (really annoying)
+    1. Something as simple as changing phone orientation causes page re-download (really annoying)
 
 **Pocket**
 
@@ -62,7 +62,7 @@ So I decided that Linkrdr would solve my specific problem, and no more. At a min
 
 That's it. The entire application. It's exactly what my ideal application would do, but no more. And it's implemented in the simplest way possible: 
 
-* Links are gathered by querying the Twitter search API with simple, hardcoded queries.
+* Links are gathered by querying the Twitter search API with simple, hard-coded queries.
 * Categories are restricted to a dozen or so software focused keywords
 * The mobile app will be for Android (because I own a Galaxy S3) and use PhoneGap as the development platform (because I don't feel like writing Java and most of the functionality is incredibly straightforward).
 * The web facing portion will be written in Django because I miss doing Django development. It's also often the source of  blog posts others find helpful. I definitely would have used Flask otherwise.

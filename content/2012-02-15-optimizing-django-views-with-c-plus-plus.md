@@ -11,7 +11,7 @@ was slower than what I deemed acceptable. After thinking of various architectura
 I realize that not every Django developer knows C++, nor should they, but those that do should realize it's a viable tool available when Python is just too slow. Eventually, you may get to a point where you can't really optimize your Python code any more. In this case, profiling will show that most of your time is spent in Python library calls. Once you hit that point, you've either written a horribly inefficient algorithm or you've got a problem not suited for Python.
 
 When I realized I had hit that point with my view code, I panicked.
-_'What more is there to do?'_ I wondered. Then I rememberd a work
+_'What more is there to do?'_ I wondered. Then I remembered a work
 project where I had written some C++ code that interfaced with Python.
 From a technical perspective, there was nothing stopping me from
 implementing some aspects of my Django app in C++ (besides the fact
@@ -30,7 +30,7 @@ features, which really are rather nice. After building the newest
 version of the boost::python library, I set out to learn how to actually
 use the thing. It turned out to be incredibly easy.
 
-boost::python wraps a number of Python datatypes for you: `object`
+boost::python wraps a number of Python data types for you: `object`
 represents a generic Python object, `list` is a list, and so on. Since
 Python is dynamically typed, there really aren't a whole lot of these.
 'Everything is an Object' means that everything is a
@@ -79,7 +79,7 @@ Here's a brief snippet:
 
     #!cpp
     using namespace boost::python;
-    using namspace std;
+    using namespace std;
 
     class CompareObject {
         public:
@@ -131,13 +131,13 @@ To call the C++ code, I just needed to make sure the .so generated was
 on my PYTHON_PATH. I could then `import` it like a normal Python
 library. I added it to my views.py and ran my unit tests. After they
 passed, I committed everything and put the new code through it's paces
-on the development web server. The reponse time was noticably improved,
+on the development web server. The response time was noticeably improved,
 with the view being served seemingly instantaneously.
 
 Wrap Up
 -----------------
 
-I realize this is not an optimization option avaiable to everyone, but
+I realize this is not an optimization option available to everyone, but
 it _is_ an option. Python is a fantastic language and Django is a nice
 framework. When you need raw speed for computationally expensive
 procedures, though, nothing beats getting closer to the metal. Overall,

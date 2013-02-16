@@ -17,7 +17,7 @@ It wasn't until I signed up for [Clicky](http://getclicky.com/66528953)
 that I started to take analytics seriously. In fact, more specifically,
 it was when I combined Clicky and
 [django-analytical](https://github.com/jcassee/django-analytical) that I
-really took my first deep-dive into using analytical data for decision
+really took my first deep-dive into using analytics data for decision
 making. Since django-analytical already integrates with a number of
 analytics services, including Clicky, setup was a breeze. Sure, I could
 have inserted the raw code into my Django templates, but
@@ -29,7 +29,7 @@ __django-analytical's Clicky integration let me see my users in Clicky via
 their contrib.auth usernames__. This was __huge__. Now, instead of
 staring at IP addresses, I could follow users on their visit to the site (using
 [Clicky's](http://getclicky.com/66528953) awesome Spy feature) in
-real-time by username. Believe me, nothing will teach you more about you
+real-time by user name. Believe me, nothing will teach you more about you
 users than recognizing usernames and their associated behavior patterns.
 I could tell which users were hitting the site to check quickly for
 updates, which users hung around for a while, and which users _used the

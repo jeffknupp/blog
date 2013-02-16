@@ -37,7 +37,7 @@ Bitbucket, so that Bitbucket always has the latest copy of the repo.
 Once we've committed to git, the first thing to do is clone our
 repository to create a development environment in a new area on our
 machine reserved for development. If you're cloning on the
-same machine, you'll use `git clone <path/to/original/git/repo>`. Github
+same machine, you'll use `git clone <path/to/original/git/repo>`. GitHub
 or Bitbucket users will use `git clone <remote repository>`, where
 "<remote repository>" is what the service shows is the URL for your repo. Regardless,
 clone your repo to create a dev environment that exactly mirrors your
@@ -61,14 +61,14 @@ changed files that git is tracking.
 Now it's time to merge your changes back into your master branch. Switch
 back to the master branch with `git checkout master` and merge the
 changes with `git merge <branchname>`. If there are no conflicts, _git
-will autocommit the merge changes_ and nothing more needs to be done. If
+will auto commit the merge changes_ and nothing more needs to be done. If
 conflicts do arise, manually fix them and `git commit` them. Git will
 prepopulate the commit message with something like 'Merge from
 <branchname>', which you can replace or, better yet, enhance.
 
 Now that we've got our changes committed to the master branch in our
 development area, it's time to push them to production. If you're using
-a service like Github or Bitbucket, first push the changes there with a
+a service like GitHub or Bitbucket, first push the changes there with a
 `git push`. Next, `cd` into your production area and pull down the
 changes using `git pull` (or `git pull <development repo area>` for a
 repo on the local machine). This should update the master branch in your

@@ -3,12 +3,12 @@ date: 2012-02-09 09:13
 categories: django pip virtualenv fabric python deployment south
 
 
-**Using Django 1.4? [Check out the new, updated version of this post with Django 1.4 specfic changes and updates](http://www.jeffknupp.com/blog/2012/10/24/starting-a-django-14-project-the-right-way/).**
+**Using Django 1.4? [Check out the new, updated version of this post with Django 1.4 specific changes and updates](http://www.jeffknupp.com/blog/2012/10/24/starting-a-django-14-project-the-right-way/).**
 
 One of the things I wish I had known when starting my Django project for
 [IllestRhyme](http://www.illestrhyme.com) was "How do I start a _real_
 Django project". As in, one that's actually going to be used and
-developed more, not the toy project from the (admittedly execellent)
+developed more, not the toy project from the (admittedly excellent)
 Django documentation.
 
 Having just gone through this process again for my new site, I wanted to
@@ -17,7 +17,7 @@ Django. By the end of this post, you will have
 
     1. A fully functional Django project
     2. All resources under source control (with git)
-    3. An environment independet install of your project (using virtualenv)
+    3. An environment independent install of your project (using virtualenv)
     4. Automated deployment and testing (using Fabric)
     5. Automatic database migrations (using South)
     6. A solid start to your new site
@@ -63,7 +63,7 @@ or, if virtualenv isn't in your $PATH (though it should be):
     $ python virtualenv.py --distribute env
     
 Now that we have a virtualenv environment, we need to _activate_ it.
-This sets up various envrionment variables to effectively bypass the
+This sets up various environment variables to effectively bypass the
 system's Python install and uses our `env` one instead. Activate like
 so:
 
@@ -119,7 +119,7 @@ Source Control Using Git
 
 Even though we haven't actually done anything besides starting a
 project, we know we're going to want everything under source
-control. We have two sets of 'things' we're going to be commiting: our
+control. We have two sets of 'things' we're going to be committing: our
 Django project files _and our virtualenv install_. I can already hear
 the comments pouring in, but committing your virtualenv install means
 you have a __totally reproducible environment__ under source control.
@@ -144,7 +144,7 @@ Now we actually commit them to our new repo:
     :::bash
     $ git commit -a -m 'Initial commit of myproject'
 
-If you plan on using a service like Github or Bitbucket, now would be a
+If you plan on using a service like GitHub or Bitbucket, now would be a
 good time to push to them.
 
 Using South for Database Migrations
@@ -187,7 +187,7 @@ To commit, first add any untracked files:
     $ git add .
 
 Git users may notice I'm not adding specific files but rather everything
-under our main directory. That's becuase, to this point, _there isn't
+under our main directory. That's because, to this point, _there isn't
 anything we don't want to commit_. Let's commit our changes using:
 
     :::bash
@@ -305,7 +305,7 @@ Simple. Just run:
 
 Technically, these could be combined into a single command, but I find
 it's better to explicitly prepare your deployment and then deploy as it
-makes you focus a bit more on what you're doign.
+makes you focus a bit more on what you're doing.
 
 Enjoy Your New Django Application
 ---------------------------------
@@ -313,7 +313,7 @@ Enjoy Your New Django Application
 That's it! You're ready to start your actual development. If you do a
 lot of Django development, just dump all of the commands above into a
 fabfile and make creating a proper Django app a one step process. I have
-one which I'll upload to my github account later today. If you have any
+one which I'll upload to my GitHub account later today. If you have any
 questions or corrections, or think there's a tool/step I missed, feel
 free to email me at [jeff@jeffknupp.com](mailto:jeff@jeffknupp.com) or leave
 a comment below. [Follow me on Twitter](http://www.twitter.com/jeffknupp) to get all of the latest blog updates!

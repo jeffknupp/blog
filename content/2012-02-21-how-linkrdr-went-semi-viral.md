@@ -4,13 +4,13 @@ categories: linkrdr seo viral blog
 
 
 I was a bit under the weather this past weekend, but it turns out I
-wasn't the only thing to go viral. Below is a brief story of how [linkrdr](http://www.linkrdr.com) enjoyed it's first encouter with virality.
+wasn't the only thing to go viral. Below is a brief story of how [linkrdr](http://www.linkrdr.com) enjoyed it's first encounter with virality.
 
 Background
 ----------
 
 Before Saturday, linkrdr had about 10 users, who had figured out a way
-to signup without me really providing one. Sometime Thursday evening, I
+to sign up without me really providing one. Sometime Thursday evening, I
 believe, I slapped a 'Beta' sticker on the front page, cleaned some
 stuff up, and declared linkrdr open for business. Come the weekend, I
 was under the weather and not feeling like working on anything, so I

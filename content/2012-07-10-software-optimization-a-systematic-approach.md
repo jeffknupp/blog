@@ -152,12 +152,12 @@ exact portion of that subsystem's code responsible for the slowness.
     They're almost certainly wrong
 
 There is a key truth to be mindful of while doing optimization work: _programmers are, as a rule, 
-terrible at anticipating at the cause of slowness in their application._ This is counterintuitive but almost always 
+terrible at anticipating at the cause of slowness in their application._ This is counter-intuitive but almost always 
 true. Time and time again developers will go off to "make something faster" without systematically _proving_ the 
 cause of slowness and come back two weeks later with 700 lines of hand optimized code that have precisely __zero__ impact 
 on overall performance. There's a good reason for this, although it's not an especially satisfying one: computers are complicated.
 Even if you are aware of every cause of every performance issue ever, you'll still have an extremely difficult time anticipating
-the cause of slowness through reasoning alone. The interaction between the different subystems, logical units within those subsystems,
+the cause of slowness through reasoning alone. The interaction between the different subsystems, logical units within those subsystems,
 the operating system, the hardware, etc is just too complicated to be able to work out in your head. If it wasn't, we would never
 have performance issues or, more tellingly, bugs in our software.
 
@@ -168,7 +168,7 @@ to help developers find the reasons for a program's slowness. They can generally
 
 ##### Function Call Profilers #####
 
-Profilers are tools that create an _execution profile_ of a running program. There are two general types of profilers: _statistical profilers_ and _instrumenting profilers_. Statistical profilers are typically added in at link time and take 'snapshots' of the executing program. These snapshots record the call stack of each thread of execution. Over time, the aggregate of these snapshots create a reasonably complete picture of the relative frequency of various operations (i.e. function calls). The other type of profiler interposes itself in some manner and records _every_ function call instead of a sampling. This higher level of detail comes at a cost: your program will typically run __noticably__ slower while being profiled.
+Profilers are tools that create an _execution profile_ of a running program. There are two general types of profilers: _statistical profilers_ and _instrumenting profilers_. Statistical profilers are typically added in at link time and take 'snapshots' of the executing program. These snapshots record the call stack of each thread of execution. Over time, the aggregate of these snapshots create a reasonably complete picture of the relative frequency of various operations (i.e. function calls). The other type of profiler interposes itself in some manner and records _every_ function call instead of a sampling. This higher level of detail comes at a cost: your program will typically run __noticeably__ slower while being profiled.
 
 ##### Cache profilers #####
 
@@ -180,7 +180,7 @@ Lastly, a number of cache profilers are able to profile _branch mispredictions_.
 
 ##### Heap profilers #####
 
-Inevitably in your optimization journey you'll come to realize a simple fact: dynamic allocation is _slow_. Really slow. You'll look at the profile output for a program and see all of the time being spent in '''malloc''' and '''free''' Enter heap profilers. Rather than telling you how much _time_ a portion of your code is taking, a heap profiler will tell you how much memory that portion is allocating. Many times, especially in enterprise development (for a reason I still don't really understand), objects are allocated on the heap, used as local variables, and destroyed without passing ownership elsewhere. This is both unnessecary and wasteful. Stack objects are created statically and accessed via an offset from the stack pointer. Using them is as close to "free" as you're going to get. Heap allocations are another thing altogether. You need to fetch a portion of memory from the OS which, as we discussed in describing cache profilers, is not always a lightening fast operation. Adding in virtual memory operations and the overhead of system calls in general and you've got one _slow_ operation for zero benefit. Also, physical memory is a shared resource, so you better be sure you free it lest you create a memory leak and slow down or crash the machine.
+Inevitably in your optimization journey you'll come to realize a simple fact: dynamic allocation is _slow_. Really slow. You'll look at the profile output for a program and see all of the time being spent in '''malloc''' and '''free''' Enter heap profilers. Rather than telling you how much _time_ a portion of your code is taking, a heap profiler will tell you how much memory that portion is allocating. Many times, especially in enterprise development (for a reason I still don't really understand), objects are allocated on the heap, used as local variables, and destroyed without passing ownership elsewhere. This is both unnecessary and wasteful. Stack objects are created statically and accessed via an offset from the stack pointer. Using them is as close to "free" as you're going to get. Heap allocations are another thing altogether. You need to fetch a portion of memory from the OS which, as we discussed in describing cache profilers, is not always a lightening fast operation. Adding in virtual memory operations and the overhead of system calls in general and you've got one _slow_ operation for zero benefit. Also, physical memory is a shared resource, so you better be sure you free it lest you create a memory leak and slow down or crash the machine.
 
 #### List of Profilers ####
 

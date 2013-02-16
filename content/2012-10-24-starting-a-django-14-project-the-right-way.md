@@ -65,7 +65,7 @@ can get both virtualenv and virtualenvwrapper by simply installing the latter.
     :::bash    
     $ pip install virtualenvwrapper
 
-After it's installed, add the following lines to your shell's startup file
+After it's installed, add the following lines to your shell's start-up file
 (.zshrc, .bashrc, .profile, etc).
 
     :::bash
@@ -73,7 +73,7 @@ After it's installed, add the following lines to your shell's startup file
     export PROJECT_HOME=$HOME/directory-you-do-development-in
     source /usr/local/bin/virtualenvwrapper.sh
 
-Reload your startup file (e.g. ```source .zshrc```) and you're ready to go.
+Reload your start up file (e.g. ```source .zshrc```) and you're ready to go.
 
 ### Creating a new environment
 Creating a virtual environment is simple. Just type

@@ -25,7 +25,7 @@ Our end goal in optimization is not to merely increase performance. Rather, it i
 
 Your goal is to have hard data that answers those questions for you, and this forms the cornerstone of our approach. 
 
-A natural analogy for optimization is detective work. Imagine yourself investigating a robbery at the mansion of your least-favorite wealthy celebrity: You arrive on the scene and are told that, among other things, a priceless piece of art was stolen. Without having even surveyed the scene or collected evidence, you shout out "Professional art theif!" and run back to the station to research every art theif you've ever heard of.
+A natural analogy for optimization is detective work. Imagine yourself investigating a robbery at the mansion of your least-favorite wealthy celebrity: You arrive on the scene and are told that, among other things, a priceless piece of art was stolen. Without having even surveyed the scene or collected evidence, you shout out "Professional art thief!" and run back to the station to research every art thief you've ever heard of.
 
 Hopefully, this sounds like a ridiculous way to investigate a crime. Unfortunately, it's the exact method employed by a large number of programmers when tasked with optimization. Instead of doing the appropriate investigation, they make an initial guess based on little more than gut-feeling and programming myths and rush off to fix a portion of the process that is quite likely not the culprit.
 
@@ -38,7 +38,7 @@ In our approach to optimization, every step is motivated by data produced from t
 To optimize software without guesswork and wasted effort, one has to be 
 **SMART**. In keeping with this, I've named the methodology used for the 
 rest of this paper is the **S.M.A.R.T** method. The goal is to never encounter a 
-situtation where you do some work and then think, "OK, now what?". Data
+situation where you do some work and then think, "OK, now what?". Data
 tells us what to work on. The **S.M.A.R.T** method tells us *how* to work 
 on it.
 
@@ -59,7 +59,7 @@ the work to be done in each step.
 ##Sandbox
 *Sandboxing*, in software development, refers to the creation of an environment
 where untested code can run without affecting (or being affected by) processes
-or data outside the sandbox. It is akin to a cleanroom in manufacturing or
+or data outside the sandbox. It is akin to a clean room in manufacturing or
 research, which completely isolates the material being worked on from the
 external environment. The rationale for creating such an environment for
 software is much the same as for other fields: *to prevent external sources from

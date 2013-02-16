@@ -351,7 +351,7 @@ little gem, [on GitHub](https://github.com/jeffknupp/presser). Note that while
 the word finding portion is done, the optimal move evaluation is still a work in
 progress.
 
-If you found this post useful, you may be interested in my upcoming ebook
+If you found this post useful, you may be interested in my upcoming book
 [Writing Idiomatic Python](http://www.jeffknupp.com/blog/2012/10/18/writing-a-python-book-in-python/). 
-It's nearly complete, and preorder copies should be available by January 15th.
+It's nearly complete, and pre-order copies should be available by January 15th.
 Sign up for the email list to get an email when it's released.

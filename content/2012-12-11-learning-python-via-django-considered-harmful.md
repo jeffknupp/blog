@@ -51,7 +51,7 @@ classes and forces the end user to do the same.
 
 They're basically just a bunch of crazy configuration settings as far as the
 user is concerned. What `urlpatterns` actually is (a list of lists,
-tuples, and `RegexURLPattern`s, which are then further tranformed for resolution) is remarkable in its unclarity (a new workd). I'm skipping this section out of anger.
+tuples, and `RegexURLPattern`s, which are then further transformed for resolution) is remarkable in its unclarity (a new word). I'm skipping this section out of anger.
 
 ##Views
 
@@ -68,7 +68,7 @@ This is the example in the tutorial to map URLs to view functions:
 
 The fact that it uses the function names as strings makes my blood boil. For
 novice Python programmers, learning that everything *really is* an object is
-relevatory. When they finally understand that stuff like functions, classes (not just instances!), modules, and code objects can be passed as arguments, it's an amazing moment. They finally
+revelatory. When they finally understand that stuff like functions, classes (not just instances!), modules, and code objects can be passed as arguments, it's an amazing moment. They finally
 begin to glimpse the purpose and power of "everything is an object." 
 
 Django hides all of this by passing function names as strings, revealing none of
