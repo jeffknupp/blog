@@ -9,6 +9,17 @@ they're useful, and how (and when/if) to use them.
 When we call a normal Python function, the code starts at the first line of the
 function and executes until it hits a `return` statement, an `exception` is
 thrown, or there are no more lines to execute (in which case it returns `None`).
+Once a function returns control to it's caller, that's it. The values calculated
+while the function executed are destroyed, as is the location the function
+exited from. 
+
+This is all very standard when discussing functions (or *subroutines*) in most
+programming languages. There are times, though, when we want 
+to cooperate. 
+it would be useful for a
+function to generate a value and *temporarily* yield control back to its caller. 
+Of course, during that temporary swap of control, the function would need to 
+keep it's "state" saved for when it control is given back to *it*.
 
 Let's look at an example. Suppose our boss asks us to write
 a function that takes a `list` of `int`s and returns all the elements which are
