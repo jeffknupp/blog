@@ -101,6 +101,7 @@ we normally do, start up where we left off at line 4." Functions have a single e
 point: the first line.
 
 Luckily, Python has a tool designed to solve this exact problem:
+
 **`Generators`**.
 
 A `generator function` looks like a normal function, but whenever we need to generate a
@@ -109,9 +110,15 @@ descriptive. `yield` implies "I am voluntarily giving up control for a while,"
 while `return` basically says, "Return to wherever you were before you called
 me."
 
+Any time the code following a `def` contains the `yield` statement, the result is 
+changed from a normal function to a `generator function`. `generator function`s 
+automatically define a few methods, one of which is `next()`. Since any object 
+defining a `next` function can be iterated over, `generator function`s can be
+used in a `for` loop like any other `Iterable`.
+
 When we write our `get_primes` function as a `generator`, we no longer need 
 the `magical_infinite_range` function. Since generators "remember" both where
-they left off *and* the values of variables, we can create our own infinite
+they left off *and* the values of their variables, we can create our own infinite
 sequence:
 
     #!py
@@ -145,27 +152,10 @@ Instead of starting back at the top, we resume at line 5, where we left off.
                 yield start
             start += 1 <<<<<<<<<
 
-Most importantly, `start` has the same value it did when we called `yield`
+Most importantly, `start` still has the same value it did when we called `yield`
 (`5`). So `start` is incremented to `6`, we hit the top of the `while` loop, and 
 keep incrementing start until we hit the next prime (`7`). Again we `yield` the 
 value of `start` to the `for` loop. Subsequent values are produced in the same way.
-
-
-Any time a `def` contains a `yield` statement, the result is changed from a
-normal function to a `generator function`. `generator function`s automatically
-define a few methods, one of which is `next()`. Since any object defining a
-`next` function can be iterated over, we're able to use our `generator function`
-in a `for` loop.
-
-It should now be clear how we can implement `get_primes`. Like
-`magical_infinite_range`, we'll create a `generator function` and simply `yield` 
-each value in turn:
-
-    #!py
-    def get_primes(start):
-        for element in magical_infinite_range(start):
-            if is_prime(element):
-                yield element
 
 Note that, just like with iterators, we are free to assign a `generator
 function` to a variable and call `next()` on it directly. The following would
@@ -177,17 +167,25 @@ print the first three primes:
     print(generator.next())
     print(generator.next())
 
-### Communicating with a generator
+### `yield` Does More Than Simple Iteration
 
-The `yield` keyword can do more than just yield a value. It can also be used to
-*set* a value at the same time. Instead of simply printing every prime number
-greater than `start`, let's find the smallest prime number greater than
-successive factors of 10 (that is, the smallest prime greater than 10, then 100,
-then 1000, etc.). We start in the same way as `magical_infinite_range`:
+When `generator`s were first introduced in Python, they were a restricted type
+of coroutine: A `generator` could only yield a value back to the code that invoked 
+it. What's more, once you created a generator the communication was one-way only.
+It sent you values. You couldn't send *it* anything. 
+
+The `yield` keyword can do more than just yield a value. In PEP 342, support 
+was added for passing values *into* generators. In fact, it can both 
+yield a value and receive a (possibly different) value simultaneously! 
+
+Let's return to our prime number example. This time, instead of simply printing 
+every prime number greater than `start`, let's find the smallest prime 
+number greater than successive factors of 10 (that is, the smallest prime greater 
+than 10, then 100, then 1000, etc.). We start in the same way as `get_primes`:
 
     #!py
     def print_successive_primes(base=10, iterations):
-        generator = get_primes(base)
+        prime_generator = get_primes(base)
         # missing code...
         for power in range(iterations):
             # missing code...
@@ -197,15 +195,15 @@ then 1000, etc.). We start in the same way as `magical_infinite_range`:
             if is_prime(start):
 
 The next line takes a bit of explanation. While `yield start` would yield the
-value of start, the statement `other = (yield start)` means "yield `start` and,
-if any value is sent to me, set `other` to that value." You can "send" values to
+value of `start`, a statement of the form `other = yield value` means, "yield `value` and,
+when a value is sent to me, set `other` to that value." You can "send" values to
 a generator using the generator's `send` method.
 
     #!py
     def get_primes(start):
         while True:
             if is_prime(start):
-                start = (yield start)
+                start = yield start
             start += 1
 
 In this way, we can set `start` to a different value each time the generator
@@ -213,14 +211,15 @@ In this way, we can set `start` to a different value each time the generator
 
     #!py
     def print_successive_primes(base=10, iterations):
-        generator = get_primes(base)
-        generator.send(None)
+        prime_generator = get_primes(base)
+        prime_generator.send(None)
         for power in range(iterations):
             print(generator.send(base ** power))
 
 Two things to note here: First, we're printing the result of `generator.send`,
-which is possible because `send` both sends a value to the generator and 
-returns the value yielded by the generator. 
+which is possible because `send` both sends a value to the generator *and*
+returns the value yielded by the generator (mirroring how `yield` works from
+within the `generator function`). 
 
 Second, notice the `generator.send(None)` line. When you're using send to "start" a generator 
 (that is, execute the code from the first line of the generator function up to
@@ -229,11 +228,15 @@ the generator hasn't gotten to the first `yield` statement yet, so if we sent a
 real value there would be nothing to "receive" it. Once the generator is started, we
 can send values as we do above.
 
+### Finally: `yield`'s Full Power
 
+After a series of PEPs enhancing the power of `yield`, PEP 380 gave `generator`s
+the final piece of the puzzle: control over to whom you `yield`. 
 
-especially when more than one is involved. In a typical
-producer/consumer implementation, we either need something in the 
-middle to mediate (like the following):
+This means that multiple `generators` can create a sort of symbiotic relationship,
+yielding back and forth between one another. When might this be useful? Let's
+implement a simple producer/consumer model. In a typical implementation, 
+either something sits between the producer and consumer to mediate (like the following):
 
     #!py
     def process_data():
@@ -262,11 +265,12 @@ on a separate thread. Here's an example from the Python documentation:
 
     q.join()    
 
-Of course, the `Queue` must be synchronized because it represents data shared
-between multiple threads. In the example above, it's straightforward (the
-`Queue` class manages this internally), but more realistic uses of shared data
-is a recipe for race conditions, deadlocks, starvation, and all the other
-attendant issues of multi-threaded code.
+Here, access to the `Queue` must be synchronized. It is data shared
+between multiple threads. In this case, it's straightforward because
+`Queue` class manages access internally. In a more realistic situation
+use of shared data between threads is a recipe for race 
+conditions, deadlocks, starvation, and all the other attendant issues 
+of multi-threaded code.
 
 If we implement `produce` and `consume` as coroutines, however, we avoid both
 the pains of multithreading and the need for "central management". `produce`
