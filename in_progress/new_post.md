@@ -1,32 +1,33 @@
-
-There are a handful of topics that Python novices find a bit confusing. Three
-stand out as the most common: Generators, Decorators, and Class and Metaclass
-magic. This is the first in a series of posts that explain the concepts, why
-they're useful, and how (and when/if) to use them.
+*Note: This post discusses generators and the `yield` keyword without assuming
+any prior knowledge. If you're already familiar with the ins and outs of
+`yield`, you can skip down to the section: 
+[Coroutines, Asynchronous I/O, and Cooperative Multitasking](#coro)
 
 ##Understanding `yield` and Generators
 
-When we call a normal Python function, the code starts at the first line of the
-function and executes until it hits a `return` statement, an `exception` is
-thrown, or there are no more lines to execute (in which case it returns `None`).
-Once a function returns control to it's caller, that's it. The values calculated
-while the function executed are destroyed, as is the location the function
-exited from. 
+When we call a normal Python function, execution starts at function's first line
+and continues until a `return` statement, `exception`, or the end of the
+function is encountered (which returns `None`).
+Once a function returns control to it's caller, that's it. All of the variables
+used in the function are destroyed, and a new call to the function starts
+everything from the beginning.
 
 This is all very standard when discussing functions (or *subroutines*) in most
 programming languages. There are times, though, when it's beneficial to have
-functions that can do something, yield a value, then later resume where
-they left off. I say "yield a value" because they dont't "returning" the value.
-`return` implies that the function is "returning" execution to the point at
+functions that can do work, yield an intermediate value, then later resume where
+they left off. I say "yield a value" because they don't "return" in the normal
+sense. `return` implies that the function is "returning" execution to the point at
 which it was called. "Yield," however, implies that the transfer of control is
-temporary, and the function expects to regain it in the future.
+temporary and voluntary, and the function expects to regain it in the future.
 
-"Functions" with these capabilites are called `coroutines`, and they're
+"Functions" with these capabilites are a subset of `coroutines`, and they're
 incredibly useful. Consider the following example where the main issue is one of
-controlling iteration: 
+controlling iteration:
+
+### Example: Fun With Prime Numbers
 
 Suppose our boss asks us to write a function that takes a `list` of `int`s and 
-returns all the elements which are prime numbers TODO asdf!!!!(^prime]. The only
+returns all the elements which are prime numbers [^prime]. The only
 additional requirement is that he needs to be able to iterate over the results.
 
 "Simple," we say, and we write the following:
@@ -43,6 +44,9 @@ additional requirement is that he needs to be able to iterate over the results.
     def get_primes(input_list):
         return [element for element in input_list if is_prime(element)]
 
+    # not germane to the example, but here's a possible implementation of
+    # is_prime...
+    
     def is_prime(number):
     if number > 1:
         if number % 2 == 0:
@@ -53,26 +57,30 @@ additional requirement is that he needs to be able to iterate over the results.
         return True
     return False
 
-Either implementation fulfills the requirements, so we tell our boss we're done.
+Either `is_prime` implementation fulfills the requirements, so we tell our 
+boss we're done.
 
-# Infinite sequences
+#### Dealing With Infinite Sequences
 
-Our boss comes back after a couple of days and tells us our function is working
+Later, our boss comes back tells us our function is working
 great, but there's a problem: he wants to use our `get_primes` function on a
 very large list of numbers. In fact, the list is so large that merely creating 
-it would use all the memory on the system. He wants to be able to 
-call `get_primes` with a `start` value and get all the primes larger than `start`.
+it would use all the memory on the system. To work around this, he wants to be 
+able to call `get_primes` with a `start` value and get all the primes 
+larger than `start`.
 
-This is obviously not a simple change to `get_primes`. Operating on infinite
-sequences, though, is a generally useful thing to be able to do. In `get_primes`,
+This is obviously not a simple change to `get_primes`. Clearly, we can't return a 
+list of all the prime numbers from `start` to infinity. Operating on infinite
+sequences, though, is a generally useful thing. The problem we have is in how 
+normal functions are executed. In `get_primes`,
 it would be nice if instead of returning all of the values, we could 
 just return the *next* value. Then we're not creating a list at all and, thus,
 avoid the memory issue. And because our boss told us he's just iterating 
 over the results, he wouldn't know the difference. 
 
-But that doesn't seem possible. Even if we had a magical function that we could
-iterate over from `n` to `infinity`, we'd get stuck after returning the first
-value:
+But that doesn't seem possible using a normal function. Even if we had a 
+magical function that we could iterate from `n` to `infinity`, we'd get 
+stuck after returning the first value:
 
     #!py
     def get_primes(start):
@@ -83,15 +91,14 @@ value:
 Imagine `get_primes` is called like so:
 
     #!py
-    for prime in get_primes(10):
-        print(prime)
-        # should stop is determined by the user
-        if should_stop():
-            break
+    while should_continue():
+        for prime in get_primes(5):
+            print(prime)
 
-In our code, we would hit the number `5` and return at line 4 of `get_primes`. 
+
+In `get_primes`, we would hit the number `5` and return at line 4.
 But what about generating the next value? Instead of `return`, we need a way to
-return an "intermediate" value and, when asked for next prime, pick up where 
+return an "intermediate" value and, when asked for next value, pick up where 
 we left off.
 
 Functions, though, can't do this. When they `return`, they're
@@ -100,18 +107,16 @@ have no way of saying, "OK, now, instead of starting at the first line like
 we normally do, start up where we left off at line 4." Functions have a single entry
 point: the first line.
 
-Luckily, Python has a tool designed to solve this exact problem:
-
-**`Generators`**.
+Luckily, Python has a tool designed to solve this exact problem: the **`generator`**.
 
 A `generator function` looks like a normal function, but whenever we need to generate a
 value, we call `yield` instead of `return`. Those names are quite
-descriptive. `yield` implies "I am voluntarily giving up control for a while,"
-while `return` basically says, "Return to wherever you were before you called
-me."
+descriptive. As I said in the introduction, `yield` implies "I am voluntarily giving 
+up execution control for a while." `return` says, "return to wherever you were before 
+you called me."
 
-Any time the code following a `def` contains the `yield` statement, the result is 
-changed from a normal function to a `generator function`. `generator function`s 
+In Python, any time the code following a `def` contains the `yield` keyword, the result is 
+not a normal function but a `generator function`. `generator function`s 
 automatically define a few methods, one of which is `next()`. Since any object 
 defining a `next` function can be iterated over, `generator function`s can be
 used in a `for` loop like any other `Iterable`.
@@ -137,10 +142,11 @@ It's helpful to visualize how the first few elements are created when we call
     for element in get_primes(4):
         print(element)
 
-For the first element, we enter `get_primes` as we would in a
-function: we enter the `while` loop. The `if` condition doesn't hold (4 isn't
-prime) so we add 1 to `start`. The next time through, the `if` condition *does*
-hold, so we give back the value of start (`5`) and yield control to the `for` loop. 
+In the code above, when the `for` loop requests the first `element`, we enter `get_primes` 
+as we would in a function: from the first line. We enter the `while` loop, the `if` condition 
+doesn't hold (4 isn't prime) so we add 1 to `start`. The next time through the `while` 
+loop, the `if` condition *does* hold, so we give back the value of 
+start (`5`) and yield control to the `for` loop. 
 
 The `for` loop then requests the next element from `get_primes`.
 Instead of starting back at the top, we resume at line 5, where we left off.
@@ -171,20 +177,23 @@ print the first three primes:
 
 When `generator`s were first introduced in Python, they were a restricted type
 of coroutine: A `generator` could only yield a value back to the code that invoked 
-it. What's more, once you created a generator the communication was one-way only.
-It sent you values. You couldn't send *it* anything. 
+it. What's more, once you created a generator, the communication was one-way only;
+it sent you values. You couldn't send *it* anything. 
 
-The `yield` keyword can do more than just yield a value. In PEP 342, support 
-was added for passing values *into* generators. In fact, it can both 
-yield a value and receive a (possibly different) value simultaneously! 
+In PEP 342, support was added for passing values *into* generators. While still
+able to simply yield a value, PEP 342 allowed generators to both yield a value and 
+receive a (possibly different) value in a single statement.
 
-Let's return to our prime number example. This time, instead of simply printing 
-every prime number greater than `start`, let's find the smallest prime 
-number greater than successive factors of 10 (that is, the smallest prime greater 
+To illustrate, let's return to our prime number example. This time, instead of simply printing 
+every prime number greater than `start`, we'll find the smallest prime 
+number greater than successive powers of a number (i.e. for 10, we get the smallest prime greater 
 than 10, then 100, then 1000, etc.). We start in the same way as `get_primes`:
 
     #!py
     def print_successive_primes(base=10, iterations):
+        # like normal functions, a generator function
+        # can be assigned to a variable
+
         prime_generator = get_primes(base)
         # missing code...
         for power in range(iterations):
@@ -194,7 +203,7 @@ than 10, then 100, then 1000, etc.). We start in the same way as `get_primes`:
         while True:
             if is_prime(start):
 
-The next line takes a bit of explanation. While `yield start` would yield the
+Notice that, . The next line takes a bit of explanation. While `yield start` would yield the
 value of `start`, a statement of the form `other = yield value` means, "yield `value` and,
 when a value is sent to me, set `other` to that value." You can "send" values to
 a generator using the generator's `send` method.
@@ -235,16 +244,8 @@ the final piece of the puzzle: control over to whom you `yield`.
 
 This means that multiple `generators` can create a sort of symbiotic relationship,
 yielding back and forth between one another. When might this be useful? Let's
-implement a simple producer/consumer model. In a typical implementation, 
-either something sits between the producer and consumer to mediate (like the following):
-
-    #!py
-    def process_data():
-        while True:
-            items = produce()
-            consume(items)
-
-or we use a queue available to both `produce` and `consume`, each of which runs
+implement a simple producer/consumer system. In a typical implementation, 
+we would use a queue available to both `produce` and `consume`, each of which runs
 on a separate thread. Here's an example from the Python documentation:
 
     #!py
@@ -272,16 +273,21 @@ use of shared data between threads is a recipe for race
 conditions, deadlocks, starvation, and all the other attendant issues 
 of multi-threaded code.
 
-If we implement `produce` and `consume` as coroutines, however, we avoid both
-the pains of multithreading and the need for "central management". `produce`
-simply gets some data and yields to `consume`. `consume` processes the data and 
-yields control back to `produce`, waiting until more data is available. 
+If we implement `produce` and `consume` as coroutines, however, we avoid
+the pains of multithreading. `produce` simply gets some data and yields 
+to `consume`. `consume` processes the data and yields control back 
+to `produce`, waiting until more data is available. 
 
 Two interesting things to note here. Only one coroutine is executing at any
 time, so data sharing issues dissapear. Also, the execution pattern 
 of `consume` is the basis for a large number of asynchronous IO frameworks.
 Like `consume`, work is done until some resource is required, at which point
 the coroutine yields.
+
+<a id="coro"></a>
+### Coroutines, Asynchronous I/O, and Cooperative Multitasking
+
+The 
 
 [^1]: A refresher: a prime number is a positive integer greater than 1
     that has no divisors other than 1 and itself. 3 is prime because there are no
