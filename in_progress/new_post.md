@@ -14,15 +14,20 @@ everything from the beginning.
 
 This is all very standard when discussing functions (or *subroutines*) in most
 programming languages. There are times, though, when it's beneficial to have
-functions that can do work, yield an intermediate value, then later resume where
-they left off. I say "yield a value" because they don't "return" in the normal
-sense. `return` implies that the function is "returning" execution to the point at
-which it was called. "Yield," however, implies that the transfer of control is
-temporary and voluntary, and the function expects to regain it in the future.
+the ability to create a function which, instead of simply returning a single
+value, is able to yield a series of values. To do so, it would have to 
+"remember" where it left off each time.
 
-"Functions" with these capabilites are a subset of `coroutines`, and they're
-incredibly useful. Consider the following example where the main issue is one of
-controlling iteration:
+Earlier, I said "yield a series of values" because out hypothetical function 
+doesn't "return" in the normal sense. `return` implies that the function is "returning" execution 
+to the point at which it was called. "Yield," however, implies that the transfer of control is
+temporary and voluntary, and our function expects to regain it in the future.
+
+"Functions" with these capabilites are called `generators`, and they're incredibly useful. 
+The `yield` statement was initially introduced to give programmers the ability to 
+create a `generator function` in much the same way they already wrote normal
+functions. Consider the following example where the main issue is controlling 
+iteration:
 
 ### Example: Fun With Prime Numbers
 
@@ -48,16 +53,18 @@ additional requirement is that he needs to be able to iterate over the results.
     # is_prime...
     
     def is_prime(number):
-    if number > 1:
-        if number % 2 == 0:
-            return False
-        for current in range(3, number, 2):
-            if number % current == 0: 
+        if number > 1:
+            if number == 2:
+                return True
+            if number % 2 == 0:
                 return False
-        return True
-    return False
+            for current in range(3, int(math.sqrt(number) + 1), 2):
+                if number % current == 0: 
+                    return False
+            return True
+        return False
 
-Either `is_prime` implementation fulfills the requirements, so we tell our 
+Either `is_prime` implementation above fulfills the requirements, so we tell our 
 boss we're done.
 
 #### Dealing With Infinite Sequences
@@ -67,15 +74,15 @@ great, but there's a problem: he wants to use our `get_primes` function on a
 very large list of numbers. In fact, the list is so large that merely creating 
 it would use all the memory on the system. To work around this, he wants to be 
 able to call `get_primes` with a `start` value and get all the primes 
-larger than `start`.
+larger than `start` (perhaps he's solving [Project Euler problem 10](http://projecteuler.net/problem=10)).
 
 This is obviously not a simple change to `get_primes`. Clearly, we can't return a 
 list of all the prime numbers from `start` to infinity. Operating on infinite
-sequences, though, is a generally useful thing. The problem we have is in how 
-normal functions are executed. In `get_primes`,
+sequences, though, has a wide range of useful applications. Our issue stems from
+how normal functions are executed. In `get_primes`,
 it would be nice if instead of returning all of the values, we could 
-just return the *next* value. Then we're not creating a list at all and, thus,
-avoid the memory issue. And because our boss told us he's just iterating 
+just return the *next* value. Then we're not creating a list at all. No list,
+no memory issues. And because our boss told us he's just iterating 
 over the results, he wouldn't know the difference. 
 
 But that doesn't seem possible using a normal function. Even if we had a 
@@ -91,12 +98,18 @@ stuck after returning the first value:
 Imagine `get_primes` is called like so:
 
     #!py
-    while should_continue():
-        for prime in get_primes(5):
-            print(prime)
 
+        def solve_number_10():
+            # He *is* working on Project Euler #10, I knew it!
+            total = 2
+            for next_prime in get_primes(3):
+                if next_prime < 2000000:
+                    total += next_prime
+                else:
+                    print(total)
+                    return
 
-In `get_primes`, we would hit the number `5` and return at line 4.
+In `get_primes`, we would hit the number `3` and return at line 4.
 But what about generating the next value? Instead of `return`, we need a way to
 return an "intermediate" value and, when asked for next value, pick up where 
 we left off.
@@ -104,25 +117,25 @@ we left off.
 Functions, though, can't do this. When they `return`, they're
 done for good. Even if we could guarantee a function would be called again, we
 have no way of saying, "OK, now, instead of starting at the first line like
-we normally do, start up where we left off at line 4." Functions have a single entry
-point: the first line.
+we normally do, start up where we left off at line 4." Functions have a single `entry
+point`: the first line.
 
-Luckily, Python has a tool designed to solve this exact problem: the **`generator`**.
+## Enter Generators
 
-A `generator function` looks like a normal function, but whenever we need to generate a
-value, we call `yield` instead of `return`. Those names are quite
+A `generator function` looks like a normal function, but whenever it needs to generate a
+value, it uses `yield` instead of `return`. Those names are quite
 descriptive. As I said in the introduction, `yield` implies "I am voluntarily giving 
 up execution control for a while." `return` says, "return to wherever you were before 
 you called me."
 
 In Python, any time the code following a `def` contains the `yield` keyword, the result is 
-not a normal function but a `generator function`. `generator function`s 
-automatically define a few methods, one of which is `next()`. Since any object 
-defining a `next` function can be iterated over, `generator function`s can be
+not a normal function but a `generator function`. `generator functions`
+automatically define a few methods, one of which is `__next__`. Since any object 
+defining a `__next__` method can be iterated over, `generator functions` can be
 used in a `for` loop like any other `Iterable`.
 
 When we write our `get_primes` function as a `generator`, we no longer need 
-the `magical_infinite_range` function. Since generators "remember" both where
+the `magical_infinite_range` function. Since `generators` "remember" both where
 they left off *and* the values of their variables, we can create our own infinite
 sequence:
 
@@ -135,21 +148,13 @@ sequence:
 
 
 It's helpful to visualize how the first few elements are created when we call
-`get_primes` in a `for` loop.
+`get_primes` in `solve_number_10`'s `for` loop. When the `for` loop requests the first `next_prime`, 
+we enter `get_primes` as we would in a normal function: from the first line. 
+We enter the `while` loop, the `if` condition holds (`3` is prime) so we yield 
+the value `3` and control to ` solve_number_10`.  The `for` loop then requests 
+the next element from `get_primes`. Instead of starting back at the top, we 
+resume at line 4, where we left off.
 
-    #!py
-
-    for element in get_primes(4):
-        print(element)
-
-In the code above, when the `for` loop requests the first `element`, we enter `get_primes` 
-as we would in a function: from the first line. We enter the `while` loop, the `if` condition 
-doesn't hold (4 isn't prime) so we add 1 to `start`. The next time through the `while` 
-loop, the `if` condition *does* hold, so we give back the value of 
-start (`5`) and yield control to the `for` loop. 
-
-The `for` loop then requests the next element from `get_primes`.
-Instead of starting back at the top, we resume at line 5, where we left off.
 
     #!py
     def get_primes(start):
@@ -158,36 +163,67 @@ Instead of starting back at the top, we resume at line 5, where we left off.
                 yield start
             start += 1 <<<<<<<<<
 
-Most importantly, `start` still has the same value it did when we called `yield`
-(`5`). So `start` is incremented to `6`, we hit the top of the `while` loop, and 
-keep incrementing start until we hit the next prime (`7`). Again we `yield` the 
-value of `start` to the `for` loop. Subsequent values are produced in the same way.
+Most importantly, `start` *still has the same value it did when we called* `yield`
+(i.e. `3`). Clearly, then, `start` is incremented to `4`, we hit the top of the `while` loop, and 
+keep incrementing start until we hit the next prime (`5`). Again we `yield` the 
+value of `start` to the `for` loop. This continues until the `for` loop
+stops (at the first prime greater than `2,000,000`).
 
 Note that, just like with iterators, we are free to assign a `generator
 function` to a variable and call `next()` on it directly. The following would
-print the first three primes:
+print the first three primes greater than or equal to `3`:
 
     #!py
     generator = get_primes(3)
-    print(generator.next())
-    print(generator.next())
-    print(generator.next())
+    print(next(generator))
+    print(next(generator))
+    print(next(generator))
 
-### `yield` Does More Than Simple Iteration
+## `yield`: More Than Simple Iteration
 
-When `generator`s were first introduced in Python, they were a restricted type
-of coroutine: A `generator` could only yield a value back to the code that invoked 
-it. What's more, once you created a generator, the communication was one-way only;
-it sent you values. You couldn't send *it* anything. 
+When `generators` were first introduced in Python, they had some restrictions: 
 
-In PEP 342, support was added for passing values *into* generators. While still
-able to simply yield a value, PEP 342 allowed generators to both yield a value and 
-receive a (possibly different) value in a single statement.
+* A `generator` could only yield a value to the code that invoked it
+* A `generator` which `yield`ed the value of *another* generator yielded a
+    `generator object` rather than the actual value `yield`ed by the generator it
+     called. For example, in the code below the value printed in the `for` 
+     loop would be `<generator object foo at 0xdeadbeef00000000>` because
+    `bar` was `yield`ing the value of another generator: `foo`.  
 
-To illustrate, let's return to our prime number example. This time, instead of simply printing 
+    #!py
+    def foo(value):
+        value = yield (value + 2)
+
+    def bar():
+        current = 0
+        while True:
+            yield foo(current)
+            current += 1
+
+    b = bar()
+    next(b)
+    for value in range(10):
+        print(next(b))
+
+* After a `generator` was created, the communication was one-way only; it sent you values. 
+  You couldn't send *it* anything.
+
+## Moar Power
+
+In PEP 342, support was added for passing values *into* generators. 
+PEP 342 gave `generator`s the power to yield a value (as before), *receive* a
+value, or both yield a value and receive a (possibly different) value in a 
+single statement.
+
+*By doing so, it effectively allowed a generator to call other functions
+or generators without blocking. More on this later.*
+
+To illustrate how values are sent to a `generator`, let's return to our 
+prime number example. This time, instead of simply printing 
 every prime number greater than `start`, we'll find the smallest prime 
-number greater than successive powers of a number (i.e. for 10, we get the smallest prime greater 
-than 10, then 100, then 1000, etc.). We start in the same way as `get_primes`:
+number greater than successive powers of a number (i.e. for 10, we get 
+the smallest prime greater than 10, then 100, then 1000, etc.). 
+We start in the same way as `get_primes`:
 
     #!py
     def print_successive_primes(base=10, iterations):
@@ -202,9 +238,10 @@ than 10, then 100, then 1000, etc.). We start in the same way as `get_primes`:
     def get_primes(start):
         while True:
             if is_prime(start):
+            # ...
 
-Notice that, . The next line takes a bit of explanation. While `yield start` would yield the
-value of `start`, a statement of the form `other = yield value` means, "yield `value` and,
+The next line of `get_primes` takes a bit of explanation. While `yield start` would yield the
+value of `start`, a statement of the form `other = yield foo` means, "yield `foo` and,
 when a value is sent to me, set `other` to that value." You can "send" values to
 a generator using the generator's `send` method.
 
