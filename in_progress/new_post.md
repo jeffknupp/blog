@@ -23,7 +23,7 @@ doesn't "return" in the normal sense. `return` implies that the function is "ret
 to the point at which it was called. "Yield," however, implies that the transfer of control is
 temporary and voluntary, and our function expects to regain it in the future.
 
-"Functions" with these capabilites are called `generators`, and they're incredibly useful. 
+"Functions" with these capabilities are called `generators`, and they're incredibly useful. 
 The `yield` statement was initially introduced to give programmers the ability to 
 create a `generator function` in much the same way they already wrote normal
 functions. Consider the following example where the main issue is controlling 
@@ -339,7 +339,7 @@ we could perform cooperative multitasking without needing to change our
 programming paradigms.
 
 Two interesting things to note here. Only one coroutine is executing at any
-time, so data sharing issues dissapear. Also, the execution pattern 
+time, so data sharing issues disappear. Also, the execution pattern 
 of `consume` is the basis for a large number of asynchronous IO frameworks.
 Like `consume`, work is done until some resource is required, at which point
 the coroutine yields.
@@ -353,7 +353,7 @@ should be implemented in Python were all over python-dev. GvR created a number
 of discussion threads exploring different approaches. Ultimately, he began a reference
 implementation called ["Tulip"](https://code.google.com/p/tulip/). It's an
 async I/O library that provides an event loop-and-callback style interface. This
-is useful for interoperability with exisiting third-party asyc I/O frameworks
+is useful for interoperability with existing third-party async I/O frameworks
 like Twisted and Tornado. But the BDFL (and many others)
 aren't in love with frameworks that rely on callbacks. 
 
