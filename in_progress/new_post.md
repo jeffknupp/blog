@@ -47,7 +47,7 @@ additional requirement is that he needs to be able to iterate over the results.
     # or better yet...
 
     def get_primes(input_list):
-        return [element for element in input_list if is_prime(element)]
+        return (element for element in input_list if is_prime(element))
 
     # not germane to the example, but here's a possible implementation of
     # is_prime...
@@ -80,7 +80,7 @@ This is obviously not a simple change to `get_primes`. Clearly, we can't return 
 list of all the prime numbers from `start` to infinity. Operating on infinite
 sequences, though, has a wide range of useful applications. Our issue stems from
 how normal functions are executed. In `get_primes`,
-it would be nice if instead of returning all of the values, we could 
+it would be nice if instead of returning values at once, we could 
 just return the *next* value. Then we're not creating a list at all. No list,
 no memory issues. And because our boss told us he's just iterating 
 over the results, he wouldn't know the difference. 
@@ -123,7 +123,7 @@ point`: the first line.
 ## Enter Generators
 
 A `generator function` looks like a normal function, but whenever it needs to generate a
-value, it uses `yield` instead of `return`. Those names are quite
+value, it does so with the `yield` keyword rather than `return`. Those names are quite
 descriptive. As I said in the introduction, `yield` implies "I am voluntarily giving 
 up execution control for a while." `return` says, "return to wherever you were before 
 you called me."
@@ -185,7 +185,7 @@ When `generators` were first introduced in Python, they had some restrictions:
 
 * A `generator` could only yield a value to the code that invoked it
 * A `generator` which `yield`ed the value of *another* generator yielded a
-    `generator object` rather than the actual value `yield`ed by the generator it
+    `generator object` rather than the *value* `yield`ed by the generator it
      called. For example, in the code below the value printed in the `for` 
      loop would be `<generator object foo at 0xdeadbeef00000000>` because
     `bar` was `yield`ing the value of another generator: `foo`.  
@@ -213,10 +213,11 @@ When `generators` were first introduced in Python, they had some restrictions:
 In PEP 342, support was added for passing values *into* generators. 
 PEP 342 gave `generator`s the power to yield a value (as before), *receive* a
 value, or both yield a value and receive a (possibly different) value in a 
-single statement.
+single statement. 
 
 *By doing so, it effectively allowed a generator to call other functions
-or generators without blocking. More on this later.*
+or generators without blocking. This gave `yield` the power to create proper
+`coroutines`.  More on this later.*
 
 To illustrate how values are sent to a `generator`, let's return to our 
 prime number example. This time, instead of simply printing 
@@ -277,13 +278,21 @@ can send values as we do above.
 ### Finally: `yield`'s Full Power
 
 After a series of PEPs enhancing the power of `yield`, PEP 380 gave `generator`s
-the final piece of the puzzle: control over to whom you `yield`. 
+the final piece of the puzzle: control over to whom you `yield`. Instead of
+`yield` always returning a value to the calling function, a `generator function`
+could "delegate" its `yield` to another `generator` (called a `subgenerator`).
 
-This means that multiple `generators` can create a sort of symbiotic relationship,
-yielding back and forth between one another. When might this be useful? Let's
-implement a simple producer/consumer system. In a typical implementation, 
-we would use a queue available to both `produce` and `consume`, each of which runs
-on a separate thread. Here's an example from the Python documentation:
+All this really means is that, just like before we could `yield` the value
+returned by a function call (e.g. `yield is_prime(10)`), we can now yield the
+*value* returned by a subgenerator without worrying about if we're getting back
+a proper value or a `generator object`.
+
+This effectively means that multiple `generators` can create a sort of 
+symbiotic relationship, yielding back and forth between one another. 
+When might this be useful? Let's implement a simple producer/consumer system. 
+In a typical implementation, we would use a queue available to 
+both `produce` and `consume`, each of which runs on a separate thread. 
+Here's an example from the Python documentation:
 
     #!py
     def worker():
@@ -310,10 +319,24 @@ use of shared data between threads is a recipe for race
 conditions, deadlocks, starvation, and all the other attendant issues 
 of multi-threaded code.
 
-If we implement `produce` and `consume` as coroutines, however, we avoid
-the pains of multithreading. `produce` simply gets some data and yields 
-to `consume`. `consume` processes the data and yields control back 
-to `produce`, waiting until more data is available. 
+<a id="coro"></a>
+## Coroutines, Asynchronous I/O, and Cooperative Multitasking
+
+There's another way to implement a producer/consumer in Python, however.
+Dave Beazly has [an excellent set of slides and examples](http://www.dabeaz.com/coroutines/) on using coroutines
+to do (among other things) `cooperative multitasking`.  If we 
+implement `produce` and `consume` as coroutines, however, we avoid
+the pains of multithreading. `produce` yields data to `consume` each time it is
+called. `consume` simply yields until data is available, processes it, then
+resumes waiting for data by yielding. 
+
+The scheduler takes care of managing the interaction between `produce` 
+and `consume`, but in a very generic way. It knows how to 
+dispatch `coroutines` and queue up `coroutines` to be run. It knows
+nothing about what the tasks are actually doing (producing and consuming in this
+case). **This is a powerful idea.** If we could write one "perfect" scheduler,
+we could perform cooperative multitasking without needing to change our
+programming paradigms.
 
 Two interesting things to note here. Only one coroutine is executing at any
 time, so data sharing issues dissapear. Also, the execution pattern 
@@ -321,10 +344,30 @@ of `consume` is the basis for a large number of asynchronous IO frameworks.
 Like `consume`, work is done until some resource is required, at which point
 the coroutine yields.
 
-<a id="coro"></a>
-### Coroutines, Asynchronous I/O, and Cooperative Multitasking
+### Tulip: The Future of Asynchronous I/O in Python
 
-The 
+Lack of first-party support for asynchronous I/O has hurt Python a bit, especially when 
+node.js showed how powerful it can be. It has been discussed quite frequently on
+the python-dev dlist. Towards the end of last year, however, discussions about how asynchronous I/O 
+should be implemented in Python were all over python-dev. GvR created a number
+of discussion threads exploring different approaches. Ultimately, he began a reference
+implementation called ["Tulip"](https://code.google.com/p/tulip/). It's an
+async I/O library that provides an event loop-and-callback style interface. This
+is useful for interoperability with exisiting third-party asyc I/O frameworks
+like Twisted and Tornado. But the BDFL (and many others)
+aren't in love with frameworks that rely on callbacks. 
+
+As an alternative, there's a scheduler for `coroutine` based 
+asynchronous I/O and additional support from the library 
+(in the form of `Tasks`) for using `coroutines` with the event loop. The Tulip
+library is a perfect example of how powerful the combination of  
+PEP 342's `send` and PEP 380's `yield from` can be. 
+
+Hopefully, this post has made it clear that `yield` can do far more than simple
+iteration. Understanding `yield` at a fundamental level allows you to express
+algorithms (especially those involving state machines) in an elegant and
+easy-to-read way. And, after all, elegance and clarity are what we're after,
+right?
 
 [^1]: A refresher: a prime number is a positive integer greater than 1
     that has no divisors other than 1 and itself. 3 is prime because there are no
