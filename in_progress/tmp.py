@@ -1,36 +1,47 @@
 import random
 
 def data_avilable():
-    return random.randint(0, 10) % 2 == 0
+    """Return True or False randomly"""
+    return random.randint(0, 1) % 2 == 0
 
 def get_data():
-    number = 1
+    """Represents a non-blocking function which gets data"""
+    data_queue = []
+    number = 0
     while True:
         if not data_avilable():
-            yield
-        else:
-            yield range(number, number + 3)
+            data_queue += range(number, number + 3)
             number += 3
+        else:
+            yield data_queue
+            data_queue = []
 
-def consume():
+def consume(data_queue):
     while True:
-        data = yield
-        for datum in data:
-            print('Data [{}] consumed'.format(datum))
+        data_queue += (yield) or []
+        while data_queue:
+            print('Current data queue: {}'.format(data_queue))
+            for _ in range(3):
+                datum = data_queue.pop(0)
+                print('Data [{}] consumed'.format(datum))
+            data_queue += (yield) or []
 
 
-def produce():
+def produce(consumer):
     while True:
         yield from get_data()
 
-consumer = consume()
+consumer = consume([])
 consumer.send(None)
 
-producer = produce()
+producer = produce(consumer)
 
-for iteration in range(10):
+for i in range(10):
+    print('Asking for data')
     data = next(producer)
     if data:
+        print('Got data {}'.format(data))
         consumer.send(data)
     else:
-        print('No data, doing something else...')
+        print('Consuming data if possible...')
+        next(consumer)
