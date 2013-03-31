@@ -1,21 +1,36 @@
+import random
+
+def data_avilable():
+    return random.randint(0, 10) % 2 == 0
+
 def get_data():
     number = 1
     while True:
-        yield range(number, number + 3)
-        number += 3
+        if not data_avilable():
+            yield
+        else:
+            yield range(number, number + 3)
+            number += 3
 
-def consume(data):
-    iteration = yield
-    print('Consume iteration #{}'.format(iteration))
-    for datum in data:
-        print('Data [{}] consumed'.format(datum))
-
-def produce(source):
+def consume():
     while True:
-        data = next(source)
-        yield from consume(data)
+        data = yield
+        for datum in data:
+            print('Data [{}] consumed'.format(datum))
 
-producer = produce(get_data())
-producer.send(None)
+
+def produce():
+    while True:
+        yield from get_data()
+
+consumer = consume()
+consumer.send(None)
+
+producer = produce()
+
 for iteration in range(10):
-    producer.send(iteration)
+    data = next(producer)
+    if data:
+        consumer.send(data)
+    else:
+        print('No data, doing something else...')
