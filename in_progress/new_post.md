@@ -302,7 +302,8 @@ When might this be useful?
 Let's implement a simple producer/consumer system. 
 In a typical implementation, we would use a queue available to 
 both `produce` and `consume`, each of which runs on a separate thread. 
-Here's an example from the Python documentation:
+Here's an example (equivalent to our `produce` and `consume` description) 
+[from the Python documentation](http://:
 
     #!py
     def worker():
@@ -322,13 +323,12 @@ Here's an example from the Python documentation:
 
     q.join()    
 
-Here, access to the `Queue` must be synchronized. It is data shared
-between multiple threads. In this case, it's straightforward because
-`Queue` class manages access internally. In a more realistic situation
-use of shared data between threads is a recipe for race 
-conditions, deadlocks, starvation, and all the other attendant issues 
+Becuase it is shared between multiple threads, access to the `Queue` must be synchronized.
+In this case, it's straightforward because Python's
+`Queue` class manages access internally. In the real world,
+use of shared data between threads common. It is also a recipe for race 
+conditions, deadlocks, thread starvation, and all the other attendant issues 
 of multi-threaded code.
-
 
 There's another way to implement a producer/consumer in Python, however.
 Dave Beazly has [an excellent set of slides and examples](http://www.dabeaz.com/coroutines/) on using coroutines
