@@ -1,9 +1,20 @@
-*Note: This post discusses generators and the `yield` keyword without assuming
-prior knowledge. If you're already familiar with the ins and outs of
-`yield`, you can skip down to the section: 
-[Coroutines, Asynchronous I/O, and Cooperative Multitasking](#coro)
+Prior to beginning tutoring sessions, I ask new students to fill out a brief
+questionaire about their understanding of various Python concepts. Some 
+topics ("control flow with if/else" or "defining and using functions") are 
+understood by a majority of students before beginning tutoring. There are a
+handful of topics, however, that almost all students report having no
+knowledge/limited understanding of. Of these, the `generators` and the `yield` 
+keyword is one of the biggest culprits. I'm guessing this is the case for most 
+novice Python programmers.
 
-##Understanding `yield` and Generators
+Many report having difficulty understanding `generators` and the `yield` 
+keyword even after making a concerted effort to teach themselves the topic.
+I want to change that. In this post, I'll explain *what* the `yield` 
+keyword does, *why* it's useful, and *how* to use it.
+
+*Note: In recent years, generators have grown more powerful as features have beend added through PEPs. In an upcoming post, I'll explore the true power of `yield` with respect to coroutines, cooperative multitasking and asynchronous I/O (especially their use in the ["tulip"](https://code.google.com/p/tulip/) prototype implementation GvR has been working on). Before we get there, however, we need a solid understanding of how the `yield` keyword and `generators` work.* 
+
+## Coroutines and Subroutines
 
 When we call a normal Python function, execution starts at function's first line
 and continues until a `return` statement, `exception`, or the end of the
@@ -17,7 +28,7 @@ programming languages. There are times, though, when it's beneficial to have
 the ability to create a function which, instead of simply returning a single
 value, is able to yield a series of values. To do so, it would have to 
 "remember" where it left off each time and, unlike normal functions, have
-multiple points of entry. 
+multiple points of entry.
 
 Earlier, I said, "yield a series of values" because our hypothetical function 
 doesn't "return" in the normal sense. `return` implies that the function 
@@ -31,7 +42,7 @@ programmers the ability to create `generator functions` in much the same
 way they already wrote normal functions. Consider the following example 
 where the main issue is controlling iteration.
 
-*Note: Outside of Python, all but the simplest `generators` would be referred to as `coroutines`. I'll use the latter term later in the post. The important thing to remember is, in Python, everything described here as a `coroutine` is still a `generator`. Python formally defines the term `generator`; `coroutine` is used in discussion but has no formal definition in the language.*
+*Note: Outside of Python, all but the simplest `generators` would be referred to as [`coroutines`](http://en.wikipedia.org/wiki/Coroutine). I'll use the latter term later in the post. The important thing to remember is, in Python, everything described here as a `coroutine` is still a `generator`. Python formally defines the term `generator`; `coroutine` is used in discussion but has no formal definition in the language.*
 
 ### Example: Fun With Prime Numbers
 
@@ -76,7 +87,7 @@ boss we're done.
 Later, our boss comes back tells us our function is working
 great, but there's a problem: she wants to use our `get_primes` function on a
 very large list of numbers. In fact, the list is so large that merely creating 
-it would use all the memory on the system. To work around this, she wants to be 
+it would consume all of the system's memory. To work around this, she wants to be 
 able to call `get_primes` with a `start` value and get all the primes 
 larger than `start` (perhaps she's solving [Project Euler problem 10](http://projecteuler.net/problem=10)).
 
@@ -359,7 +370,7 @@ node.js showed how powerful it can be. It has been discussed quite frequently on
 the python-dev dlist. Towards the end of last year, however, discussions about how asynchronous I/O 
 should be implemented in Python were all over python-dev. GvR created a number
 of discussion threads exploring different approaches. Ultimately, he began a reference
-implementation called ["Tulip"](https://code.google.com/p/tulip/). It's an
+implementation called . It's an
 async I/O library that provides an event loop-and-callback style interface. This
 is useful for interoperability with existing third-party async I/O frameworks
 like Twisted and Tornado. But the BDFL (and many others)
