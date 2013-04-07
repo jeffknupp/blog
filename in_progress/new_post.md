@@ -18,37 +18,42 @@ keyword does, *why* it's useful, and *how* to use it.
 
 When we call a normal Python function, execution starts at function's first line
 and continues until a `return` statement, `exception`, or the end of the
-function is encountered (which is seen as an implicit `return None`).
-Once a function returns control to it's caller, that's it. All of the variables
-created in the function are destroyed, and a new call to the function starts
-everything from the beginning.
+function (which is seen as an implicit `return None`) is encountered.
+Once a function returns control to it's caller, that's it. Any work done by the
+function and stored in local variables is lost. A new call to the function
+creates everything from scratch.
 
-This is all very standard when discussing functions (or *subroutines*) in most
-programming languages. There are times, though, when it's beneficial to have
-the ability to create a function which, instead of simply returning a single
-value, is able to yield a series of values. To do so, it would have to 
-"remember" where it left off each time and, unlike normal functions, have
-multiple points of entry.
+This is all very standard when discussing functions (more generally refferred to as [subroutines](http://en.wikipedia.org/wiki/Subroutine)) in
+computer programming. There are times, though, when it's beneficial to have
+the ability to create a "function" which, instead of simply returning a single
+value, is able to yield a series of values. To do so, such a function would need
+to be able to "save it's work," so to speak.
 
-Earlier, I said, "yield a series of values" because our hypothetical function 
+I said, "yield a series of values" because our hypothetical function 
 doesn't "return" in the normal sense. `return` implies that the function 
-is "returning" control of execution to the point at which it was called. 
-"Yield," however, implies that the transfer of control is temporary and 
-voluntary, and our function expects to regain it in the future.
+is *returning control of execution* to the point where the function was called. 
+"Yield," however, implies that *the transfer of control is temporary and voluntary*, 
+and our function expects to regain it in the future.
 
 In Python, "functions" with these capabilities are called `generators`, and 
-they're incredibly useful. The `yield` statement was initially introduced to give 
-programmers the ability to create `generator functions` in much the same 
-way they already wrote normal functions. Consider the following example 
-where the main issue is controlling iteration.
+they're incredibly useful. `generators` (and the `yield` statement) were initially introduced to give 
+programmers a more straightforward way of writing code that produced a series of
+values. Previously, creating something like a random number generator required
+a class or module that both generated values and kept track of state between calls. 
+With the introduction of `generators`, this became much simpler.
+
+To better understand the problem `generators` solve, let's take a look at an 
+example. Throughout the example, keep in mind the core problem being solved:
+**generating a series of values.**
 
 *Note: Outside of Python, all but the simplest `generators` would be referred to as [`coroutines`](http://en.wikipedia.org/wiki/Coroutine). I'll use the latter term later in the post. The important thing to remember is, in Python, everything described here as a `coroutine` is still a `generator`. Python formally defines the term `generator`; `coroutine` is used in discussion but has no formal definition in the language.*
 
 ### Example: Fun With Prime Numbers
 
 Suppose our boss asks us to write a function that takes a `list` of `int`s and 
-returns all the elements which are prime numbers [^prime]. The only
-additional requirement is that she needs to be able to iterate over the results.
+returns some Iterable containing the elements which are prime numbers [^prime].
+
+*Remember, an [Iterable](http://docs.python.org/3/glossary.html#term-iterable) is just an object capable of returning its members one at a time.*
 
 "Simple," we say, and we write the following:
 
@@ -80,28 +85,39 @@ additional requirement is that she needs to be able to iterate over the results.
         return False
 
 Either `is_prime` implementation above fulfills the requirements, so we tell our 
-boss we're done.
+boss we're done. She reports our function works and is exactly what she wanted.
 
 #### Dealing With Infinite Sequences
 
-Later, our boss comes back tells us our function is working
-great, but there's a problem: she wants to use our `get_primes` function on a
+Well, not quite *exactly*. A few days later, our boss comes back and tells 
+us she's run into a small problem: she wants to use our `get_primes` function on a
 very large list of numbers. In fact, the list is so large that merely creating 
 it would consume all of the system's memory. To work around this, she wants to be 
 able to call `get_primes` with a `start` value and get all the primes 
 larger than `start` (perhaps she's solving [Project Euler problem 10](http://projecteuler.net/problem=10)).
 
-This is obviously not a simple change to `get_primes`. Clearly, we can't return a 
-list of all the prime numbers from `start` to infinity. **Operating on infinite sequences, though, has a wide range of useful applications**. Our issue stems from
-how normal functions are executed. In `get_primes`,
-it would be nice if, instead of returning values at once, we could 
-just return the *next* value. Then we're not creating a list at all. No list,
-no memory issues. And because our boss told us she's just iterating 
-over the results, she wouldn't know the difference. 
+Once we think about this new requirement, it becomes clear that it requires 
+more than a simple change to `get_primes`. Clearly, we can't return a 
+list of all the prime numbers from `start` to infinity. *(operating on infinite sequences, though, has a wide range of useful applications)*. 
+The chances of solving this problem using a normal function seem bleak.
 
-But that doesn't seem possible using a normal function. Even if we had a 
-magical function that we could iterate from `n` to `infinity`, we'd get 
-stuck after returning the first value:
+Before we give up, let's determine the core obstacle preventing us 
+from writing a function that satisfies our boss's new requirements.
+Thinking about it, we arrive at the following: *functions only get 
+one chance to return results, and thus must return all results at once.*
+It seems pointless to make such an obvious statement; "functions just
+work that way," we think. The real value lies in asking, "but what if they
+didn't?"
+
+Imagine if `get_primes` could simply return the *next* value
+instead of all the values at once. It wouldn't need to create
+a list at all. No list, no memory issues. Since our boss told 
+us she's just iterating over the results, she wouldn't know 
+the difference.
+
+Unfortunately, this doesn't seem possible. Even if we had a 
+magical function that allowed us to iterate from `n` to `infinity`, we'd 
+get stuck after returning the first value:
 
     #!py
     def get_primes(start):
@@ -123,10 +139,9 @@ Imagine `get_primes` is called like so:
                     print(total)
                     return
 
-In `get_primes`, we would hit the number `3` and return at line 4.
-But what about generating the next value? Instead of `return`, we need a way to
-return an "intermediate" value and, when asked for next value, pick up where 
-we left off.
+Clearly, in `get_primes`, we would hit the number `3` and return at line 4.
+Instead of `return`, we need a way to generate a value and, when asked for 
+the next one, pick up where we left off.
 
 Functions, though, can't do this. When they `return`, they're
 done for good. Even if we could guarantee a function would be called again, we
@@ -136,20 +151,59 @@ point`: the first line.
 
 ## Enter Generators
 
-A `generator function` looks like a normal function, but whenever it needs to generate a
-value, it does so with the `yield` keyword rather than `return`. Those names are quite
-descriptive. As I said in the introduction, `yield` implies, "I am voluntarily giving 
-up execution control for a while." `return` says, "return to wherever you were before 
-you called me."
+This sort of problem is so common that a new concept was added to Python
+to help solve it: the `generator`. A `generator` "generates" values. To make creating
+generators as straightforward as possible, `generator functions` were introduced as well.
+A `generator function` is defined like a normal function, but whenever it needs to generate a
+value, it does so with the `yield` keyword rather than `return`. If the body of a `def` 
+contains `yield`, it automatically becomes a `generator function` (even if it
+also contains a `return` statement). There's nothing else we need to do to create one. 
 
-In Python, any time the code following a `def` contains the `yield` keyword, the result is 
-not a normal function but a `generator function`. `generator functions`
-automatically define a few methods, one of which is `__next__`. Since any object 
-defining a `__next__` method can be iterated over, `generator functions` can be
-used in a `for` loop like any other `Iterable`.
+`generator functions` create `generator iterators`. That's the last time 
+you'll see the term `generator iterator`, though, since they're almost
+always refferred to as "`generators`". Just remember that a `generator`
+is a special type of `iterator`. To be considered an `iterator`, `generators` 
+must define a few methods, one of which is `__next__()`. 
 
-When we write our `get_primes` function as a `generator function`, we no longer need 
-the `magical_infinite_range` function. Since `generators` "remember" both where
+**To get the next value from a `generator`, we use the same built-in function as
+for `iterators`: `next()`.** 
+    
+(`next()` takes care of calling the generator's `__next__()` method). Since a
+`generator` is a type of `iterator`, it can be used in a `for` loop.
+
+So whenever `next()` is called on a `generator`, the `generator` is responsible
+for passing back a value to whomever called `next()`. It does so by calling `yield`
+along with the value to be passed back (e.g. `yield 7`). 
+
+**`yield` is just `return` (plus a little magic) for `generator functions`.**
+
+Here's a simple `generator function`:
+
+    def simple_generator_function():
+        yield 1
+        yield 2
+        yield 3
+
+And here are two simple ways to use it:
+
+    #!py
+    our_generator = simple_generator_function()
+    print(next(our_generator))
+    >>> 1
+    print(next(our_generator))
+    >>> 2
+    print(next(our_generator))
+    >>> 3
+    
+
+What's the magic part? Glad you asked! When a `generator function` calls `yield`, 
+the "state" of the `generator function` is frozen; the values of all variables and the next line of code to be
+executed are recorded. To get the next value from a `generator`, we call `next()` 
+on it (or let a `for` loop do it for us automatically).
+If `yield` is called with a value, as in `yield 7`, the value is
+returned to the caller 
+Let's rewrite our `get_primes` function as a `generator function`. We no longer need 
+the `magical_infinite_range` function. Since `generator functions` "remember" both where
 they left off *and* the values of their variables, we can create our own infinite
 sequence:
 
@@ -159,6 +213,7 @@ sequence:
             if is_prime(number):
                 yield number
             number += 1
+
 
 
 It's helpful to visualize how the first few elements are created when we call
