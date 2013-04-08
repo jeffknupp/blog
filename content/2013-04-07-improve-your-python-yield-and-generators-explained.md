@@ -389,7 +389,7 @@ to understand some of the more "mind-bending" things that `yield` can be used fo
 
 Believe it or not, we've barely scratched the surface of the power of `yield`.
 For example, while `send` *does* work as described above, it's almost never
-needed when generating simple sequences like the example above. Below, I've pasted
+used when generating simple sequences like our example. Below, I've pasted
 a small demonstration of one common way `send` *is* used. I'll not say any more
 about it as figuring out how and why it works will be a good warm-up for part
 two.
