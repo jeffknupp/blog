@@ -3,12 +3,12 @@ date: 2013-04-07 20:23
 categories: python yield generators tutorial explained
 
 Prior to beginning tutoring sessions, I ask new students to fill out a brief
-questionaire about their understanding of various Python concepts. Some 
+self-assessment where they rate their understanding of various Python concepts. Some 
 topics ("control flow with if/else" or "defining and using functions") are 
-understood by a majority of students before beginning tutoring. There are a
+understood by a majority of students before ever beginning tutoring. There are a
 handful of topics, however, that almost all students report having no
-knowledge/limited understanding of. Of these, the `generators` and the `yield` 
-keyword is one of the biggest culprits. I'm guessing this is the case for most 
+knowledge or *very* limited understanding of. Of these, "`generators` and the `yield` 
+keyword" is one of the biggest culprits. I'm guessing this is the case for *most*
 novice Python programmers.
 
 Many report having difficulty understanding `generators` and the `yield` 
@@ -18,22 +18,22 @@ keyword does, *why* it's useful, and *how* to use it.
 
 <!--more-->
 
-*Note: In recent years, generators have grown more powerful as features have beend added through PEPs. In an upcoming post, I'll explore the true power of `yield` with respect to coroutines, cooperative multitasking and asynchronous I/O (especially their use in the ["tulip"](https://code.google.com/p/tulip/) prototype implementation GvR has been working on). Before we get there, however, we need a solid understanding of how the `yield` keyword and `generators` work.* 
+*Note: In recent years, generators have grown more powerful as features have been added through PEPs. In my next post, I'll explore the true power of `yield` with respect to coroutines, cooperative multitasking and asynchronous I/O (especially their use in the ["tulip"](https://code.google.com/p/tulip/) prototype implementation GvR has been working on). Before we get there, however, we need a solid understanding of how the `yield` keyword and `generators` work.* 
 
 ## Coroutines and Subroutines
 
 When we call a normal Python function, execution starts at function's first line
 and continues until a `return` statement, `exception`, or the end of the
 function (which is seen as an implicit `return None`) is encountered.
-Once a function returns control to it's caller, that's it. Any work done by the
+Once a function returns control to its caller, that's it. Any work done by the
 function and stored in local variables is lost. A new call to the function
 creates everything from scratch.
 
-This is all very standard when discussing functions (more generally refferred to as [subroutines](http://en.wikipedia.org/wiki/Subroutine)) in
+This is all very standard when discussing functions (more generally referred to as [subroutines](http://en.wikipedia.org/wiki/Subroutine)) in
 computer programming. There are times, though, when it's beneficial to have
 the ability to create a "function" which, instead of simply returning a single
 value, is able to yield a series of values. To do so, such a function would need
-to be able to "save it's work," so to speak.
+to be able to "save its work," so to speak.
 
 I said, "yield a series of values" because our hypothetical function 
 doesn't "return" in the normal sense. `return` implies that the function 
@@ -43,7 +43,7 @@ and our function expects to regain it in the future.
 
 In Python, "functions" with these capabilities are called `generators`, and 
 they're incredibly useful. `generators` (and the `yield` statement) were initially introduced to give 
-programmers a more straightforward way of writing code that produced a series of
+programmers a more straightforward way to write code responsible for producing a series of
 values. Previously, creating something like a random number generator required
 a class or module that both generated values and kept track of state between calls. 
 With the introduction of `generators`, this became much simpler.
@@ -57,7 +57,7 @@ example. Throughout the example, keep in mind the core problem being solved:
 ### Example: Fun With Prime Numbers
 
 Suppose our boss asks us to write a function that takes a `list` of `int`s and 
-returns some Iterable containing the elements which are prime numbers [^prime].
+returns some Iterable containing the elements which are prime[^prime] numbers.
 
 *Remember, an [Iterable](http://docs.python.org/3/glossary.html#term-iterable) is just an object capable of returning its members one at a time.*
 
@@ -104,18 +104,18 @@ larger than `start` (perhaps she's solving [Project Euler problem 10](http://pro
 
 Once we think about this new requirement, it becomes clear that it requires 
 more than a simple change to `get_primes`. Clearly, we can't return a 
-list of all the prime numbers from `start` to infinity. *(operating on infinite sequences, though, has a wide range of useful applications)*. 
+list of all the prime numbers from `start` to infinity *(operating on infinite sequences, though, has a wide range of useful applications)*. 
 The chances of solving this problem using a normal function seem bleak.
 
 Before we give up, let's determine the core obstacle preventing us 
 from writing a function that satisfies our boss's new requirements.
-Thinking about it, we arrive at the following: *functions only get 
-one chance to return results, and thus must return all results at once.*
+Thinking about it, we arrive at the following: **functions only get 
+one chance to return results, and thus must return all results at once.**
 It seems pointless to make such an obvious statement; "functions just
 work that way," we think. The real value lies in asking, "but what if they
 didn't?"
 
-Imagine if `get_primes` could simply return the *next* value
+Imagine what we could do if `get_primes` could simply return the *next* value
 instead of all the values at once. It wouldn't need to create
 a list at all. No list, no memory issues. Since our boss told 
 us she's just iterating over the results, she wouldn't know 
@@ -144,7 +144,7 @@ Imagine `get_primes` is called like so:
                 print(total)
                 return
 
-Clearly, in `get_primes`, we would hit the number `3` and return at line 4.
+Clearly, in `get_primes`, we would immediately hit the case where `number = 3` and return at line 4.
 Instead of `return`, we need a way to generate a value and, when asked for 
 the next one, pick up where we left off.
 
@@ -154,40 +154,46 @@ have no way of saying, "OK, now, instead of starting at the first line like
 we normally do, start up where we left off at line 4." Functions have a single `entry
 point`: the first line.
 
-## Enter Generators
+## Enter the Generator
 
-This sort of problem is so common that a new concept was added to Python
-to help solve it: the `generator`. A `generator` "generates" values. To make creating
-generators as straightforward as possible, `generator functions` were introduced as well.
+This sort of problem is so common that a new construct was added to Python
+to solve it: the `generator`. A `generator` "generates" values. Creating
+`generators` was made as straightforward as possible through the concept 
+of `generator functions`, introduced simultaneously.
+
 A `generator function` is defined like a normal function, but whenever it needs to generate a
 value, it does so with the `yield` keyword rather than `return`. If the body of a `def` 
-contains `yield`, it automatically becomes a `generator function` (even if it
+contains `yield`, the function automatically becomes a `generator function` (even if it
 also contains a `return` statement). There's nothing else we need to do to create one. 
 
 `generator functions` create `generator iterators`. That's the last time 
 you'll see the term `generator iterator`, though, since they're almost
-always refferred to as "`generators`". Just remember that a `generator`
+always referred to as "`generators`". Just remember that a `generator`
 is a special type of `iterator`. To be considered an `iterator`, `generators` 
 must define a few methods, one of which is `__next__()`. 
+To get the next value from a `generator`, we use the same built-in function as
+for `iterators`: `next()`.
 
-**To get the next value from a `generator`, we use the same built-in function as
-for `iterators`: `next()`.** 
+This point bear repeating: **to get the next value from a `generator`, we use the same built-in function as for `iterators`: `next()`**.
+
     
 (`next()` takes care of calling the generator's `__next__()` method). Since a
 `generator` is a type of `iterator`, it can be used in a `for` loop.
 
 So whenever `next()` is called on a `generator`, the `generator` is responsible
 for passing back a value to whomever called `next()`. It does so by calling `yield`
-along with the value to be passed back (e.g. `yield 7`). 
+along with the value to be passed back (e.g. `yield 7`). The easiest way to remember
+what `yield` does is to think of it as `return` (plus a little magic) for `generator functions`.**
 
-**`yield` is just `return` (plus a little magic) for `generator functions`.**
+Again, this bears repeating: **`yield` is just `return` (plus a little magic) for `generator functions`.**
 
 Here's a simple `generator function`:
 
-    def simple_generator_function():
-        yield 1
-        yield 2
-        yield 3
+    #!py
+    >>> def simple_generator_function():
+    >>>    yield 1
+    >>>    yield 2
+    >>>    yield 3
 
 And here are two simple ways to use it:
 
@@ -197,8 +203,6 @@ And here are two simple ways to use it:
     1
     2
     3
-
-    #!py
     >>> our_generator = simple_generator_function()
     >>> next(our_generator)
     1
@@ -245,13 +249,17 @@ the values of a `generator` once. The following will not work:
     >>> our_generator = simple_generator_function()
     >>> for value in our_generator:
     >>>     print(value)
-    >>> 
-    >>> # our_generator has been consumed:
-    >>> print(next(our_generator)) # Error!
-    >>>
+     
+    >>> # our_generator has been exhausted...
+    >>> print(next(our_generator))
+    Traceback (most recent call last):
+      File "<ipython-input-13-7e48a609051a>", line 1, in <module>
+        next(our_generator)
+    StopIteration
+     
     >>> # however, we can always create a new generator
     >>> # by calling the generator function again...
-    >>>
+    
     >>> new_generator = simple_generator_function()
     >>> print(next(new_generator)) # perfectly valid
     1 
@@ -279,58 +287,36 @@ Let's go back to the code that was calling `get_primes`: `solve_number_10`.
 It's helpful to visualize how the first few elements are created when we call
 `get_primes` in `solve_number_10`'s `for` loop. When the `for` loop requests 
 the first value from `get_primes`, we enter `get_primes` as we would in a normal 
-function. We immediately enter the `while` loop, the `if` condition 
-holds (`3` is prime) and we yield the value `3` and control to ` solve_number_10`. 
+function. 
 
-The `for` loop requests the next element from `get_primes`. Instead of starting back 
-at the top of `get_primes`, we resume at line 5, where we left off.
+1. We enter the `while` loop on line 3
+1. The `if` condition holds (`3` is prime)
+1. We yield the value `3` and control to ` solve_number_10`. 
 
+Then, back in `solve_number_10`:
+
+1. The value `3` is passed back to the `for` loop
+1. The `for` loop assigns `next_prime` to this value
+1. `next_prime` is added to `total` 
+1. The `for` loop requests the next element from `get_primes`
+
+This time, though, instead of entering `get_primes` back 
+at the top, we resume at line `5`, where we left off.
 
     #!py
     def get_primes(number):
         while True:
             if is_prime(number):
                 yield number
-            number += 1 <<<<<<<<<<
+            number += 1 # <<<<<<<<<<
 
 Most importantly, `number` *still has the same value it did when we called `yield`*
-(i.e. `3`). Remember, `yield` both passes a value to whoever called `next()` (the `for` loop in our case),
+(i.e. `3`). Remember, `yield` both passes a value to whoever called `next()`,
 *and* saves the "state" of the `generator function`. Clearly, then, `number` is incremented 
 to `4`, we hit the top of the `while` loop, and keep incrementing `number` until we hit 
 the next prime number (`5`). Again we `yield` the value of `number` to the `for` loop 
-in `solve_number_10`. This continues until the `for` loop stops (at the first prime 
+in `solve_number_10`. This cycle continues until the `for` loop stops (at the first prime 
 greater than `2,000,000`).
-
-## `yield`: More Than Simple Iteration
-
-When `generators` were first introduced in Python, they had some restrictions: 
-
-* A `generator` could only yield a value to the code that invoked it
-* A `generator` which `yield`ed the value of *another* generator yielded a
-    `generator object` rather than the *value* `yield`ed by the generator it
-     called. For example, in the code below the value printed in the `for` 
-     loop would be `<generator object foo at 0xdeadbeef00000000>` because
-    `bar` was essentially `yield`ing a `generator object` "wrapping" the 
-    `generator object` created by `foo`.  
-
-    #!py
-    def foo(value):
-        value = yield (value + 2)
-
-    def bar():
-        current = 0
-        while True:
-            yield foo(current)
-            current += 1
-
-    b = bar()
-    next(b)
-    for value in range(10):
-        print(next(b))
-
-* After a `generator object` was created, the communication was one-way only; it sent you values. 
-  You couldn't send *it* anything.
-
 
 ## Moar Power
 
@@ -338,8 +324,6 @@ In [PEP 342](http://www.python.org/dev/peps/pep-0342/), support was added for pa
 [PEP 342](http://www.python.org/dev/peps/pep-0342/) gave `generator`s the power to yield a value (as before), *receive* a
 value, or both yield a value *and* receive a (possibly different) value in a 
 single statement. 
-
-*By doing so, [PEP 342](http://www.python.org/dev/peps/pep-0342/) effectively allowed a generator to call other functions or generators without blocking. This gave `yield` the power to create proper `coroutines`. More on this in the next post.*
 
 To illustrate how values are sent to a `generator`, let's return to our 
 prime number example. This time, instead of simply printing 
@@ -399,19 +383,58 @@ can send values as we do above.
 
 ## Round-up
 
-While `send` *does* work as described above, it's almost never used when
-generating simple sequences of numbers like our code above. In fact, believe 
-it or not, we've barely scratched the surface of the power of `yield`. This is a natural 
-stopping point, however, and I don't want to post giant walls of text 
-that no one gets to the end of. 
-
-In the (*ahem*) exciting conclusion to this series, we'll discuss the various ways in which
-`generators` were enhanced and the power they gained as a result. `yield` has
+In the second half of this series, we'll discuss the various ways in which
+`generators` have been enhanced and the power they gained as a result. `yield` has
 become one of the most powerful keywords in Python. Now that we've built a solid
-understanding of how `yield` works, we have the foundational knowledge necessary
-for understanding some of the mind-bending things that `yield` can be used for.
+understanding of how `yield` works, we have the knowledge necessary
+to understand some of the more "mind-bending" things that `yield` can be used for.
 
-All that being said, there are a few key ideas I hope you take away from this
+Believe it or not, we've barely scratched the surface of the power of `yield`.
+For example, while `send` *does* work as described above, it's almost never
+needed when generating simple sequences like the example above. Below, I've pasted
+a small demonstration of one common way `send` *is* used. I'll not say any more
+about it as figuring out how and why it works will be a good warm-up for part
+two.
+
+    #!py
+    import random
+
+    def get_data():
+        """Return 3 random integers between 0 and 9"""
+        return random.sample(range(10), 3)
+
+    def consume():
+        """Displays a running average across lists of integers sent to it"""
+        running_sum = 0
+        data_items_seen = 0
+
+        while True:
+            data = yield
+            data_items_seen += len(data)
+            running_sum += sum(data)
+            print('The running average is {}'.format(running_sum / float(data_items_seen)))
+
+    def produce(consumer):
+        """Produces a set of values and forwards them to the pre-defined consumer
+        function"""
+        while True:
+            data = get_data()
+            print('Produced {}'.format(data))
+            consumer.send(data)
+            yield
+
+    if __name__ == '__main__':
+        consumer = consume()
+        consumer.send(None)
+        producer = produce(consumer)
+
+        for _ in range(10):
+            print('Producing...')
+            next(producer)
+
+### Remember...
+
+There are a few key ideas I hope you take away from this
 discussion:
 
 * `generators` are used to *generate* a series of values
@@ -421,16 +444,16 @@ discussion:
 * Like `iterators`, we can get the next value from a `generator` using `next()`
     * `for` gets values by calling `next()` implicitly
 
-I hope today's post was helpful. If you had never heard 
+I hope this post was helpful. If you had never heard 
 of `generators`, I hope you now understand what they are,
 why they're useful, and how to use them. If you were somewhat familiar with
-`generators`, I hope this post cleared up the confusion.
+`generators`, I hope any confusion is now cleared up.
 
 As always, if any section is unclear (or, more importantly, contains errors), by
 all means let me know. You can leave a comment below, email me at
 [jeff@jeffknupp.com](mailto:jeff@jeffknupp.com), or hit me up on Twitter
 [@jeffknupp](http://www.twitter.com/jeffknupp). 
 
-[^1]: A refresher: a prime number is a positive integer greater than 1
+[^prime]: Quick refresher: a prime number is a positive integer greater than 1
     that has no divisors other than 1 and itself. 3 is prime because there are no
-    numbers that evenly divide it other than 1 and 3 itself.*
+    numbers that evenly divide it other than 1 and 3 itself.
