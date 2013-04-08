@@ -69,6 +69,8 @@ returns some Iterable containing the elements which are prime[^prime] numbers.
         for element in input_list:
             if is_prime(element):
                 result_list.append()
+
+        return result_list
     
     # or better yet...
 
