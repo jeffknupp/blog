@@ -367,14 +367,14 @@ In this way, we can set `number` to a different value each time the generator
         prime_generator = get_primes(base)
         prime_generator.send(None)
         for power in range(iterations):
-            print(generator.send(base ** power))
+            print(prime_generator.send(base ** power))
 
 Two things to note here: First, we're printing the result of `generator.send`,
 which is possible because `send` both sends a value to the generator *and*
 returns the value yielded by the generator (mirroring how `yield` works from
 within the `generator function`). 
 
-Second, notice the `generator.send(None)` line. When you're using send to "start" a generator 
+Second, notice the `prime_generator.send(None)` line. When you're using send to "start" a generator 
 (that is, execute the code from the first line of the generator function up to
 the first `yield` statement), you must send `None`. This makes sense, since by definition
 the generator hasn't gotten to the first `yield` statement yet, so if we sent a
