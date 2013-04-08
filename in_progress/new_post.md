@@ -424,3 +424,7 @@ As always, if any section is unclear (or, more importantly, contains errors), by
 all means let me know. You can leave a comment below, email me at
 [jeff@jeffknupp.com](mailto:jeff@jeffknupp.com), or hit me up on Twitter
 [@jeffknupp](http://www.twitter.com/jeffknupp). 
+
+[^1]: A refresher: a prime number is a positive integer greater than 1
+    that has no divisors other than 1 and itself. 3 is prime because there are no
+    numbers that evenly divide it other than 1 and 3 itself.*

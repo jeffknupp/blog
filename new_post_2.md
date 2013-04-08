@@ -190,8 +190,3 @@ iteration. Understanding `yield` at a fundamental level allows you to express
 algorithms (especially those involving state machines) in an elegant and
 easy-to-read way. And, after all, elegance and clarity are what we're after,
 right?
-
-[^1]: A refresher: a prime number is a positive integer greater than 1
-    that has no divisors other than 1 and itself. 3 is prime because there are no
-    numbers that evenly divide it other than 1 and 3 itself.*
-
