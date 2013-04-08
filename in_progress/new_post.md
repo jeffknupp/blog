@@ -128,16 +128,15 @@ get stuck after returning the first value:
 Imagine `get_primes` is called like so:
 
     #!py
-
-        def solve_number_10():
-            # She *is* working on Project Euler #10, I knew it!
-            total = 2
-            for next_prime in get_primes(3):
-                if next_prime < 2000000:
-                    total += next_prime
-                else:
-                    print(total)
-                    return
+    def solve_number_10():
+        # She *is* working on Project Euler #10, I knew it!
+        total = 2
+        for next_prime in get_primes(3):
+            if next_prime < 2000000:
+                total += next_prime
+            else:
+                print(total)
+                return
 
 Clearly, in `get_primes`, we would hit the number `3` and return at line 4.
 Instead of `return`, we need a way to generate a value and, when asked for 
@@ -187,25 +186,35 @@ Here's a simple `generator function`:
 And here are two simple ways to use it:
 
     #!py
-    our_generator = simple_generator_function()
-    print(next(our_generator))
-    >>> 1
-    print(next(our_generator))
-    >>> 2
-    print(next(our_generator))
-    >>> 3
+    >>> for value in simple_generator_function():
+    >>>     print(value)
+    1
+    2
+    3
+
+    #!py
+    >>> our_generator = simple_generator_function()
+    >>> next(our_generator)
+    1
+    >>> next(our_generator)
+    2
+    >>> next(our_generator)
+    3
     
+    # or...
+    
+### Magic?    
 
 What's the magic part? Glad you asked! When a `generator function` calls `yield`, 
-the "state" of the `generator function` is frozen; the values of all variables and the next line of code to be
-executed are recorded. To get the next value from a `generator`, we call `next()` 
-on it (or let a `for` loop do it for us automatically).
-If `yield` is called with a value, as in `yield 7`, the value is
-returned to the caller 
-Let's rewrite our `get_primes` function as a `generator function`. We no longer need 
-the `magical_infinite_range` function. Since `generator functions` "remember" both where
-they left off *and* the values of their variables, we can create our own infinite
-sequence:
+the "state" of the `generator function` is frozen; the values of all variables are saved 
+and the next line of code to be executed is recorded until `next()` is called
+again. Once it is, the `generator function` simply resumes where it left off.
+If `next()` is never called again, the state recorded during the `yield` call 
+is (eventually) discarded. 
+
+Let's rewrite `get_primes` as a `generator function`. Notice that we no longer need 
+the `magical_infinite_range` function. Using a simple `while` loop, we can 
+create our own infinite sequence:
 
     #!py
     def get_primes(number):
@@ -215,14 +224,60 @@ sequence:
             number += 1
 
 
+If a `generator function` calls `return` or reaches the end its definition, a
+`StopIteration` exception is raised. This signals to whomever was calling `next()`
+that the `generator` is exhausted (this is normal `iterator` behavior).  It is also 
+the reason the `while True:` loop is present in `get_primes`. 
+If it weren't, the first time `next()` was called we would check 
+if the number is prime and possibly yield it. If `next()` were 
+called again, we would uselessly add `1` to `number` and hit the end of the
+`generator function` (causing `StopIteration` to be raised). Once a generator has been 
+exhausted, calling `next()` on it will result in an error, so you can only consume all 
+the values of a `generator` once. The following will not work:
+
+    #!py
+    >>> our_generator = simple_generator_function()
+    >>> for value in our_generator:
+    >>>     print(value)
+    >>> 
+    >>> # our_generator has been consumed:
+    >>> print(next(our_generator)) # Error!
+    >>>
+    >>> # however, we can always create a new generator
+    >>> # by calling the generator function again...
+    >>>
+    >>> new_generator = simple_generator_function()
+    >>> print(next(new_generator)) # perfectly valid
+    1 
+
+Thus, the `while` loop is there to make sure we *never* reach the end of
+`get_primes`. It allows us to generate a value for as long as `next()` is called
+on the generator. This is a common idiom when dealing with infinite series (and
+`generators` in general).
+
+### Visualizing the flow
+
+Let's go back to the code that was calling `get_primes`: `solve_number_10`.
+
+    #!py
+    def solve_number_10():
+        # She *is* working on Project Euler #10, I knew it!
+        total = 2
+        for next_prime in get_primes(3):
+            if next_prime < 2000000:
+                total += next_prime
+            else:
+                print(total)
+                return
 
 It's helpful to visualize how the first few elements are created when we call
-`get_primes` in `solve_number_10`'s `for` loop. When the `for` loop requests the first `next_prime`, 
-we enter `get_primes` as we would in a normal function: from the first line. 
-We enter the `while` loop, the `if` condition holds (`3` is prime) so we yield 
-the value `3` and control to ` solve_number_10`.  The `for` loop then requests 
-the next element from `get_primes`. Instead of starting back at the top, we 
-resume at line 5, where we left off.
+`get_primes` in `solve_number_10`'s `for` loop. When the `for` loop requests 
+the first value from `get_primes`, we enter `get_primes` as we would in a normal 
+function. We immediately enter the `while` loop, the `if` condition 
+holds (`3` is prime) and we yield the value `3` and control to ` solve_number_10`. 
+
+The `for` loop requests the next element from `get_primes`. Instead of starting back 
+at the top of `get_primes`, we resume at line 5, where we left off.
 
 
     #!py
@@ -233,21 +288,12 @@ resume at line 5, where we left off.
             number += 1 <<<<<<<<<<
 
 Most importantly, `number` *still has the same value it did when we called `yield`*
-(i.e. `3`). Clearly, then, `number` is incremented to `4`, we hit the top of the `while` loop, and 
-keep incrementing `number` until we hit the next prime number (`5`). Again we `yield` the 
-value of `number` to the `for` loop in `solve_number_10`. This continues until the `for` loop
-stops (at the first prime greater than `2,000,000`).
-
-Note that, when we invoke a `generator function` directly, a `generator object` is returned.
-This means, just like with iterators, we are free to assign the result of a `generator
-function` to a variable and call `next()` on it directly. The following would
-print the first three primes greater than or equal to `3`:
-
-    #!py
-    generator = get_primes(3)
-    print(next(generator))
-    print(next(generator))
-    print(next(generator))
+(i.e. `3`). Remember, `yield` both passes a value to whoever called `next()` (the `for` loop in our case),
+*and* saves the "state" of the `generator function`. Clearly, then, `number` is incremented 
+to `4`, we hit the top of the `while` loop, and keep incrementing `number` until we hit 
+the next prime number (`5`). Again we `yield` the value of `number` to the `for` loop 
+in `solve_number_10`. This continues until the `for` loop stops (at the first prime 
+greater than `2,000,000`).
 
 ## `yield`: More Than Simple Iteration
 
@@ -279,6 +325,7 @@ When `generators` were first introduced in Python, they had some restrictions:
 * After a `generator object` was created, the communication was one-way only; it sent you values. 
   You couldn't send *it* anything.
 
+
 ## Moar Power
 
 In [PEP 342](http://www.python.org/dev/peps/pep-0342/), support was added for passing values *into* generators. 
@@ -286,14 +333,12 @@ In [PEP 342](http://www.python.org/dev/peps/pep-0342/), support was added for pa
 value, or both yield a value *and* receive a (possibly different) value in a 
 single statement. 
 
-*By doing so, [PEP 342](http://www.python.org/dev/peps/pep-0342/) effectively allowed a generator to call other functions
-or generators without blocking. This gave `yield` the power to create proper
-`coroutines`.  More on this later.*
+*By doing so, [PEP 342](http://www.python.org/dev/peps/pep-0342/) effectively allowed a generator to call other functions or generators without blocking. This gave `yield` the power to create proper `coroutines`. More on this in the next post.*
 
 To illustrate how values are sent to a `generator`, let's return to our 
 prime number example. This time, instead of simply printing 
 every prime number greater than `number`, we'll find the smallest prime 
-number greater than successive powers of a number (i.e. for 10, we get 
+number greater than successive powers of a number (i.e. for 10, we want
 the smallest prime greater than 10, then 100, then 1000, etc.). 
 We start in the same way as `get_primes`:
 
@@ -310,7 +355,7 @@ We start in the same way as `get_primes`:
     def get_primes(number):
         while True:
             if is_prime(number):
-            # ...
+            # ... what goes here?
 
 The next line of `get_primes` takes a bit of explanation. While `yield number` would yield the
 value of `number`, a statement of the form `other = yield foo` means, "yield `foo` and,
@@ -346,104 +391,36 @@ the generator hasn't gotten to the first `yield` statement yet, so if we sent a
 real value there would be nothing to "receive" it. Once the generator is started, we
 can send values as we do above.
 
-### Finally: `yield`'s Full Power
+## Round-up
 
-After [PEP 342](http://www.python.org/dev/peps/pep-0342/) enhanced the power 
-of `yield`, [PEP 380](http://www.python.org/dev/peps/pep-0380/) gave `generator`s the final piece of the puzzle: control over where they `yield`ed to. Instead of
-`yield` always returning a value to the calling function, a `generator function`
-could "delegate" its `yield` to another `generator` (called a `subgenerator`).
+While `send` *does* work as described above, it's almost never used when
+generating simple sequences of numbers like our code above. In fact, believe 
+it or not, we've barely scratched the surface of the power of `yield`. This is a natural 
+stopping point, however, and I don't want to post giant walls of text 
+that no one gets to the end of. 
 
-In practical terms, just like before we could `yield` the value
-returned by a function call (e.g. `yield is_prime(10)`), we can now yield the
-*value* returned by a subgenerator without worrying about if we're getting back
-a proper value or a `generator object`.
+In the (*ahem*) exciting conclusion to this series, we'll discuss the various ways in which
+`generators` were enhanced and the power they gained as a result. `yield` has
+become one of the most powerful keywords in Python. Now that we've built a solid
+understanding of how `yield` works, we have the foundational knowledge necessary
+for understanding some of the mind-bending things that `yield` can be used for.
 
-This effectively means that multiple `generators` can create a sort of 
-symbiotic relationship, yielding back and forth between one another. 
-When might this be useful? 
+All that being said, there are a few key ideas I hope you take away from this
+discussion:
 
-<a id="coro"></a>
-## Coroutines, Asynchronous I/O, and Cooperative Multitasking
+* `generators` are used to *generate* a series of values
+* `yield` is like the `return` of `generator functions`
+* The only other thing `yield` does is save the "state" of a `generator function`
+* A `generator` is just a special type of `iterator`
+* Like `iterators`, we can get the next value from a `generator` using `next()`
+    * `for` gets values by calling `next()` implicitly
 
-Let's implement a simple producer/consumer system. 
-In a typical implementation, we would use a queue available to 
-both `produce` and `consume`, each of which runs on a separate thread. 
-Here's an example (equivalent to our `produce` and `consume` description) 
-[from the Python documentation](http://:
+I hope today's post was helpful. If you had never heard 
+of `generators`, I hope you now understand what they are,
+why they're useful, and how to use them. If you were somewhat familiar with
+`generators`, I hope this post cleared up the confusion.
 
-    #!py
-    def worker():
-        while True:
-            item = q.get()
-            do_work(item)
-            q.task_done()
-
-    q = Queue()
-    for i in range(num_worker_threads):
-        t = Thread(target=worker)
-        t.daemon = True
-        t.start()
-
-    for item in source():
-        q.put(item)
-
-    q.join()    
-
-Becuase it is shared between multiple threads, access to the `Queue` must be synchronized.
-In this case, it's straightforward because Python's
-`Queue` class manages access internally. In the real world,
-use of shared data between threads common. It is also a recipe for race 
-conditions, deadlocks, thread starvation, and all the other attendant issues 
-of multi-threaded code.
-
-There's another way to implement a producer/consumer in Python, however.
-Dave Beazly has [an excellent set of slides and examples](http://www.dabeaz.com/coroutines/) on using coroutines
-to do (among other things) `cooperative multitasking`.  If we 
-implement `produce` and `consume` as coroutines, we avoid
-the pains of multithreading. `produce` yields data to `consume` each time it is
-called. `consume` simply yields until data is available, processes it, then
-resumes waiting for data by yielding. 
-
-The scheduler takes care of managing the interaction between `produce` 
-and `consume`, but in a very generic way. It knows how to 
-dispatch `coroutines` and queue up `coroutines` to be run. It knows
-nothing about what the tasks are actually doing (producing and consuming in this
-case). **This is a powerful idea.** If we could write one "perfect" scheduler,
-we could perform cooperative multitasking without needing to change our
-programming paradigms.
-
-Two interesting things to note here. Only one coroutine is executing at any
-time, so data sharing issues disappear. Also, the execution pattern 
-of `consume` is the basis for a large number of asynchronous IO frameworks.
-Like `consume`, work is done until some resource is required, at which point
-the coroutine yields.
-
-### Tulip: The Future of Asynchronous I/O in Python
-
-Lack of first-party support for asynchronous I/O has hurt Python a bit, especially when 
-node.js showed how powerful it can be. It has been discussed quite frequently on
-the python-dev dlist. Towards the end of last year, however, discussions about how asynchronous I/O 
-should be implemented in Python were all over python-dev. GvR created a number
-of discussion threads exploring different approaches. Ultimately, he began a reference
-implementation called . It's an
-async I/O library that provides an event loop-and-callback style interface. This
-is useful for interoperability with existing third-party async I/O frameworks
-like Twisted and Tornado. But the BDFL (and many others)
-aren't in love with frameworks that rely on callbacks. 
-
-As an alternative, there's a scheduler for `coroutine` based 
-asynchronous I/O and additional support from the library 
-(in the form of `Tasks`) for using `coroutines` with the event loop. The Tulip
-library is a perfect example of how powerful the combination of  
-PEP 342's `send` and PEP 380's `yield from` can be. 
-
-Hopefully, this post has made it clear that `yield` can do far more than simple
-iteration. Understanding `yield` at a fundamental level allows you to express
-algorithms (especially those involving state machines) in an elegant and
-easy-to-read way. And, after all, elegance and clarity are what we're after,
-right?
-
-[^1]: A refresher: a prime number is a positive integer greater than 1
-    that has no divisors other than 1 and itself. 3 is prime because there are no
-    numbers that evenly divide it other than 1 and 3 itself.*
-
+As always, if any section is unclear (or, more importantly, contains errors), by
+all means let me know. You can leave a comment below, email me at
+[jeff@jeffknupp.com](mailto:jeff@jeffknupp.com), or hit me up on Twitter
+[@jeffknupp](http://www.twitter.com/jeffknupp). 
