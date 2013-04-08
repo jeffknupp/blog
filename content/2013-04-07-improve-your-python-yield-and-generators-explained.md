@@ -233,7 +233,7 @@ create our own infinite sequence:
 
 
 If a `generator function` calls `return` or reaches the end its definition, a
-`StopIteration` exception is raised. This signals to whomever was calling `next()`
+`StopIteration` exception is raised. This signals to whoever was calling `next()`
 that the `generator` is exhausted (this is normal `iterator` behavior).  It is also 
 the reason the `while True:` loop is present in `get_primes`. 
 If it weren't, the first time `next()` was called we would check 
