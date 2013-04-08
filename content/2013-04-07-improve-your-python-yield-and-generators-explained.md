@@ -333,7 +333,7 @@ the smallest prime greater than 10, then 100, then 1000, etc.).
 We start in the same way as `get_primes`:
 
     #!py
-    def print_successive_primes(base=10, iterations):
+    def print_successive_primes(iterations, base=10):
         # like normal functions, a generator function
         # can be assigned to a variable
 
@@ -363,7 +363,7 @@ In this way, we can set `number` to a different value each time the generator
 `yield`s. We can now fill in the missing code in `print_successive_primes`:
 
     #!py
-    def print_successive_primes(base=10, iterations):
+    def print_successive_primes(iterations, base=10):
         prime_generator = get_primes(base)
         prime_generator.send(None)
         for power in range(iterations):
