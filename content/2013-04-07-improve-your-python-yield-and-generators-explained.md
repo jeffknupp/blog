@@ -211,8 +211,6 @@ And here are two simple ways to use it:
     >>> next(our_generator)
     3
     
-    # or...
-    
 ### Magic?    
 
 What's the magic part? Glad you asked! When a `generator function` calls `yield`, 
