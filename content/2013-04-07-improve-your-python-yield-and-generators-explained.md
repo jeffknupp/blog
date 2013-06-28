@@ -92,7 +92,7 @@ returns some Iterable containing the elements which are prime[^prime] numbers.
             return True
         return False
 
-Either `is_prime` implementation above fulfills the requirements, so we tell our 
+Either `get_primes` implementation above fulfills the requirements, so we tell our 
 boss we're done. She reports our function works and is exactly what she wanted.
 
 #### Dealing With Infinite Sequences
