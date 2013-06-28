@@ -66,8 +66,19 @@ lists each child process must send to the parent process may be quite large. Thi
 means that the child process creates the large list and sends it to the parent, 
 who must then make its own copy of the list.
 
-In a pinch, one can make use of the state-sharing methods that `multiprocessing`
-makes available: *shared memory* and *server processes*. Shared memory is
-accessed through the `Value` and `Array` classes, and their names are indicative
-of what they're used for. Alternately, the `Manager` class can be used to manage
-access to shared state by way of *proxy* objects. The `Manager` 
+In a pinch, one can make use of the two state-sharing methods that `multiprocessing`
+makes available: *shared memory* and *server processes*. Shared memory comes
+in the form of the `Value` and `Array` classes, and their names are indicative
+of what they're used for. Updates to a `Value` or `Array` object will be immediately
+visible to other processes with access to that object. Needless to say, proper
+use of synchronization primitives is important when using shared memory.
+
+Alternately, the `Manager` class can be used to manage
+access to shared state by way of *proxy* objects. The `Manager` takes the data
+you want to be shared and creates proxies for them. To code interacting with these
+proxy objects, they appear identical to the underlying data being shared. All
+access and modification of the proxy object, however, goes through the
+`Manager`. One advantage of the `Manager` over shared memory is that the
+`Manager` need to reside on the same physicall machine as the processes using
+the proxy objects. Of course, that means that using a `Manager` is slower than
+shared memory (even when everything is on the same machine). 
