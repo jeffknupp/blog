@@ -13,7 +13,7 @@ to concurrency that the Python community has discovered/created. I hope this
 information is helpful to those who want practical advice for how 
 to take advantage of concurrency in Python.
 
-### Batteries Included: Multiprocessing
+## Batteries Included: Multiprocessing
 
 For many workloads for which the GIL is a bottleneck, one need look no further
 than the Python standard library. The [multiprocessing](insert link here)
@@ -40,9 +40,10 @@ feed's list in our feed dictionary. We needn't be concerned with locking access
 to the feed dictionary since we know that each thread will be appending to 
 independent lists. 
 
-Using processes, the work is divided as before. Processes, however, 
-don't share memory with the process that created them (unless explicitly told
-to). Thus our child processes must shares data via messaging rather than shared 
+Using processes, the work is divided as before. The default behaviour for processes, 
+however, is to not share memory with the process that created them. Global variables
+are an exception to this, but if you're using global variables on a regular basis
+Thus our child processes must shares data via messaging rather than shared 
 access to the feed dictionary. The usual issues associated with multithreaded 
 code (like data corruption, deadlocks, etc) are no longer a concern. Since no two 
 processes share access to memory, there is no chance of concurrent 
@@ -57,16 +58,18 @@ may occur. To protect process-unsafe code, `multiprocessing` makes available
 the same synchronization primitives as `threading`.
 
 Minor synchronization issues aside, all of this sounds great. That is, until we realize that 
-sharing data via messaging requires us to make a *copy* of the data we'd 
-like to share. In our example, the parent process would send a subset of the 
-keys of our dictionary (i.e. the feed URLs) to each process. Copying the keys is not 
-an expensive operation. However, the child processes must send back the contents of 
-each feed's item list. If we have many feeds and few processes, the set of 
-lists each child process must send to the parent process may be quite large. This 
-means that the child process creates the large list and sends it to the parent, 
-who must then make its own copy of the list.
+sharing data via messaging requires us to make *copies* of the data we'd 
+like to share. In our example, the parent process sends a portion of the 
+keys of our dictionary (i.e. the feed URLs) to each child process. Copying keys is not 
+an expensive operation. Retrieving the results is another matter.
+The child processes must send back the contents of each feed's item list. If we have many feeds and few 
+processes, the resulting lists each child process must send to the parent 
+process may be quite large (in terms of memory usage). Since no data is shared
+between processes, clearly the parent process must copy the data a child process
+sends to it. A workflow that includes copying data, possibly multiple times, is
+not a recipe for an especially quick program.
 
-In a pinch, one can make use of the two state-sharing methods that `multiprocessing`
+To work around these limitations, one can make use of the two state-sharing methods that `multiprocessing`
 makes available: *shared memory* and *server processes*. Shared memory comes
 in the form of the `Value` and `Array` classes, and their names are indicative
 of what they're used for. Updates to a `Value` or `Array` object will be immediately
@@ -82,3 +85,13 @@ access and modification of the proxy object, however, goes through the
 `Manager` need to reside on the same physicall machine as the processes using
 the proxy objects. Of course, that means that using a `Manager` is slower than
 shared memory (even when everything is on the same machine). 
+
+And now, with the state-sharing methods provided by `multiprocessing`, we've
+come full circle. The benefits of using separate processes for concurrency
+vanish. Once we introduce shared state, we are subject to all of the headaches
+associated with multi-threaded code. 
+
+But there's a silver lining: we can actually make progress on multiple threads
+of execution simultaneously. Since a parent process doesn't share the GIL with
+its child processes, *all* processes can execute simultaneously (subject to the
+constraints of the hardware and OS).
