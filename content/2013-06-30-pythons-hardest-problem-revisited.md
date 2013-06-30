@@ -1,8 +1,6 @@
 title: Python's Hardest Problem, Revisited
 date: 2013-06-30 16:02
 categories:
-/home/jeff/blog/in_progress/hardest_revisited.md
-## Revisiting "Python's Hardest Problem"
 
 One of the first long-form articles I ever posted to this blog was a piece about
 Python's *Global Interpreter Lock (GIL)* entitled ["Python's Hardest Problem"](http://www.jeffknupp.com/blog/2012/03/31/pythons-hardest-problem/).
@@ -16,6 +14,7 @@ In this article, I'll describe the various ways the Python community has
 discovered/created to mitigate the effects of the `GIL`. I hope this  information
 is helpful to those who want practical advice for how  to take advantage of
 concurrency in Python.
+<!--more-->
 
 ## Batteries Included: Multiprocessing
 
