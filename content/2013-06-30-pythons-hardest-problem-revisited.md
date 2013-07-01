@@ -29,7 +29,7 @@ threads doesn't require a massive rewrite to make use of multiple processes.
 
 How does it work in practice? One spawns a process in much the same
 way one creates a thread. The most visible difference between processes
-and threads is the amount of access to shared data they permit. An quick
+and threads is the amount of access to shared data they permit. A quick
 example is useful here. Suppose we are writing a RSS feed reader and want to
 update our feeds with any new items. We store the contents of our various feeds
 as a dictionary whose keys are the URL of the RSS feed and whose values are a
@@ -53,7 +53,7 @@ processes share access to memory, there is no chance of concurrent
 modification. 
 
 Well, that's mostly true. As it happens, there are two primary methods of
-communication available in muliprocessing: `Queues` and `Pipes`. While 
+communication available in multiprocessing: `Queues` and `Pipes`. While 
 the `Queue` class is internally synchronized and, thus, thread and process safe,
 the `Pipe` class is not. If more than one thread or process attempts to read
 from or write to the same end of the same `Pipe`, corruption of data
@@ -95,7 +95,7 @@ Now, with the state-sharing methods provided by `multiprocessing`, we've
 come full circle. The burden of managing synchronization when using  separate processes
 for  concurrency essentially is place back on the developer. Once shared
 state, is introduced, the developer is subject to all the attendant headaches
-associated with multi-threaded code.
+associated with multithreaded code.
 
 But there's a silver lining: processes can make progress on multiple threads
 of execution simultaneously. Since a parent process doesn't share the GIL with
@@ -115,14 +115,14 @@ In August of 2011, Armin Rigo (a PyPy developer and the creator of [Pysco](http:
 wrote a [post](http://morepypy.blogspot.com/2011/08/we-need-software-transactional-memory.html)
 on the PyPy blog that generated quite a bit of discussion. In it,
 he outlined a plan to add support for *Software Transactional Memory (STM)* to
-PyPy. Software Transaction Memory (and *Hardware Transaction Memory (HTM)*)
+PyPy. Software Transactional Memory (and *Hardware Transactional Memory (HTM)*)
 treats modification of data as a *transaction*. A transaction is an atomic
 operation; it either proceeds in it's entirety or is completely rolled
 back. In PyPy's case, transactions encapsulate modification of Python
 objects.
 
 It's an idea that has been around for a quite a while,
-but one that's receiving more  attention due to the planned introduction of  *Hardware Transaction Memory* into
+but one that's receiving more  attention due to the planned introduction of  *Hardware Transactional Memory* into
 general purpose CPUs (*some* of Intel's new Haswell CPUs have support for TSX,
 Intel's extensions for HTM). In the most aggressive form of HTM,  there is no need to use
 synchronization primitives to protect shared data. Each modification is recorded by the CPU; when a transaction finishes,
@@ -132,12 +132,12 @@ normally. If a modification was detected, the transaction is rolled back and
 and a "fallback" routine is executed. The fallback routine determines how
 (and if) the modification should be retried.
 
-This is a potential game-changer for multi-threaded programming. As "Python's
-Hardest Problem" described, multi-threaded programming is difficult due to
+This is a potential game-changer for multithreaded programming. As "Python's
+Hardest Problem" described, multithreaded programming is difficult due to
 both the cognitive load it burdens the developer with and the challenge in
 debugging and proving the correctness of code. If the hardware (or software)
 magically handled concurrent access to data without requiring anything from
-the developer, multi-threaded programming would be *much* easier.
+the developer, multithreaded programming would be *much* easier.
 
 But HTM remains quite experimental and hasn't yet gained traction. This is why,
 back in 2011, Armin Rigo decided that STM was the the most promising avenue for
@@ -178,7 +178,7 @@ used for safe manipulation of reference counts on all `PyObject`s).
 
 That's not to say that, when using Jython, one can ignore modification of
 shared state *in one's own Python code*. The `GIL` doesn't protect one from
-multi-threaded *Python programs* (otherwise there would be no need for
+multithreaded *Python programs* (otherwise there would be no need for
 `threading` to provide synchronization primitives). Rather,
 it protects *the interpreter itself* from corrupting the bookkeeping data
 associated with every Python object.
@@ -211,7 +211,7 @@ unnecessary due to the .NET DLR's garbage collector. Also like Jython,
 IronPython benefits from a JIT compiler to achieve speedups in longer running
 programs.
 
-While IronPython programs can take full advantage of multi-core hardware,
+While IronPython programs can take full advantage of multicore hardware,
 the drawbacks of IronPython are largely the same as those of Jython. C
 extensions are somewhat supported using "IronClad",
 a commercial tool developed by Resolver Systems. This support only extends to
@@ -243,7 +243,7 @@ them on their speed or knock their compatibility with C extensions. That was
 never their goal. Truly, they are both incredible projects that have been
 wildly successful at accomplishing what they set out to do. Most
 "vanilla" Python developers won't use alternate interpreters to increase
-performance of multi-threaded code. *And that's just fine.*
+performance of multithreaded code. *And that's just fine.*
 
 ## Third Party Libraries
 
