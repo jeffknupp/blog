@@ -95,3 +95,55 @@ But there's a silver lining: we can actually make progress on multiple threads
 of execution simultaneously. Since a parent process doesn't share the GIL with
 its child processes, *all* processes can execute simultaneously (subject to the
 constraints of the hardware and OS).
+
+## PyPy
+
+[PyPy](http://www.pypy.org) is often described as "a Python interpreter written in Python".
+While that's a misleading description in a number of ways, suffice it to say that PyPy is an alternative implementation
+of the Python interpreter that acheives (sometimes drastic) performance gains by using a JIT compiler, not unlike the JVM.
+The PyPy implementation does not (as many mistakenly beleive) do away with the `GIL`. It's still present and functions
+much the same as the `GIL` in the cPython interpreter.
+
+In August of 2011, Armin Rigo (a PyPy developer and the creator of [Pysco](http://psyco.sourceforge.net/)),
+wrote a [post](http://morepypy.blogspot.com/2011/08/we-need-software-transactional-memory.html)
+on the PyPy blog that generated quite a bit of discussion. In it,
+he outlined a plan to add support for *Software Transactional Memory (STM)* to
+PyPy. Software Transaction Memory (and *Hardware Transaction Memory (HTM)*) is used
+to treat modification of data as a *transaction*. A transaction is an atomic
+operation; it either goes through in it's entirety or is completely rolled
+back. In this case, the transaction is modification to Python objects.
+
+It's an idea that has been around for a while. It's receiving more attention
+now because of the planned introduction of *Hardware Transaction Memory* into
+general purpose CPUs (*some* of Intel's new Haswell CPUs have support for TSX,
+Intel's extensions for HTM). In the most aggressive form of HTM,  there is no need to use
+syncronization primitives to protect shared data. With the most aggressive HTM,
+each modification is recorded by the CPU. When a transaction finishes,
+it simply checks if anyone else made changes to the memory in question. If no
+other modifications were made, the transaction suceeded and proceeds
+ormally. If a modification was detected, the transaction is rolled back and
+and a "fallback" routine is executed. The fallback routine determines how
+(and if) the modification should be retried.
+
+This is a potential game-changer for multi-threaded programming. As "Python's
+Hardest Problem" described, multi-threaded programming is difficult due to
+both the cognitive load it burdens the developer with and the challenge in
+debugging/proving correctness of code. If the hardware, or software,
+magically handled concurrent access to data without requiring anything from
+the developer, multi-threaded programming would be *much* easier.
+
+But HTM has alway been experimental and hasn't yet gained traction. So,
+in 2011, Armin Rigo decided that STM was the the most promising avenue for
+creating a "GIL-less" PyPy. Progress has been slow for the past two years
+(for all the reasons that progress in any Open Source project is slow),
+but there are signs this is about to change. In a [post](http://morepypy
+.blogspot.com/2013/06/stm-on-drawing-board.html) earlier this month,
+Rigo cited a number of factors that would increase the pace of development
+and included a number of ideas for optimizing the implementation.
+
+The project's initial, stated goal was to include STM at a performance
+penalty between 2x and 5x, with the intention of reducing (and eventually
+eliminating) the penalty in subsequent releases. It remains to be seen if the
+approach taken by Rigo and others is a viable one, but PyPy's STM project is
+perhaps the Python community's best hope of C-based,
+GIL-less Python interpreter.
