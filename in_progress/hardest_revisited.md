@@ -33,17 +33,17 @@ as a dictionary whose keys are the URL of the RSS feed and whose values are a
 list of that feed's entries. When we "refresh" our feeds, we simply want to
 add new items to the end of the associated feed list.
 
-This is clearly a parallelizable task. If we're using threads, we simply give
+This is clearly a parallelizable task. With threads, we would simply give
 each thread a subset of the dictionary keys (i.e. feed URLs). For each key it 
-receives, a thread will fetch new posts for that feed and append them to the
-feed's list in our feed dictionary. We needn't be concerned with locking access 
-to the feed dictionary since we know that each thread will be appending to 
+receives, a thread will fetch new items in the associated feed and append  them to the
+feed's item list in our dictionary. We needn't be concerned with locking
+the feed dictionary since we know that each thread will be appending to
 independent lists. 
 
-Using processes, the work is divided as before. The default behaviour for processes, 
-however, is to not share memory with the process that created them. Global variables
+With processes, the work is still divided as before. The default behaviour
+for processes,  however, is to not share memory with the process that created them. Global variables
 are an exception to this, but if you're using global variables on a regular basis
-Thus our child processes must shares data via messaging rather than shared 
+we have much more important things to discuss. Our child processes must share data via messaging rather than shared
 access to the feed dictionary. The usual issues associated with multithreaded 
 code (like data corruption, deadlocks, etc) are no longer a concern. Since no two 
 processes share access to memory, there is no chance of concurrent 
@@ -53,18 +53,18 @@ Well, that's mostly true. As it happens, there are two primary methods of
 communication available in muliprocessing: `Queues` and `Pipes`. While 
 the `Queue` class is internally synchronized and, thus, thread and process safe,
 the `Pipe` class is not. If more than one thread or process attempts to read
-from or write to the same end of a `Pipe` at the same time, corruption of data
-may occur. To protect process-unsafe code, `multiprocessing` makes available 
+from or write to the same end of the same `Pipe`, corruption of data
+may occur. To protect unsafe operations, `multiprocessing` makes available
 the same synchronization primitives as `threading`.
 
 Minor synchronization issues aside, all of this sounds great. That is, until we realize that 
-sharing data via messaging requires us to make *copies* of the data we'd 
+sharing data via messaging requires us to make *copies* of everything we'd
 like to share. In our example, the parent process sends a portion of the 
-keys of our dictionary (i.e. the feed URLs) to each child process. Copying keys is not 
+keys in our dictionary (i.e. the feed URLs) to each child process. Copying keys is not
 an expensive operation. Retrieving the results is another matter.
-The child processes must send back the contents of each feed's item list. If we have many feeds and few 
-processes, the resulting lists each child process must send to the parent 
-process may be quite large (in terms of memory usage). Since no data is shared
+
+Each child process must send back the contents of the set of item lists that were updated. If
+we have many feeds and few processes, the resulting lists may be quite large (in terms of memory usage). Since no data is shared
 between processes, clearly the parent process must copy the data a child process
 sends to it. A workflow that includes copying data, possibly multiple times, is
 not a recipe for an especially quick program.
@@ -78,20 +78,23 @@ use of synchronization primitives is important when using shared memory.
 
 Alternately, the `Manager` class can be used to manage
 access to shared state by way of *proxy* objects. The `Manager` takes the data
-you want to be shared and creates proxies for them. To code interacting with these
-proxy objects, they appear identical to the underlying data being shared. All
-access and modification of the proxy object, however, goes through the
-`Manager`. One advantage of the `Manager` over shared memory is that the
+to be shared and creates proxies of them. Code interacting with these
+proxy objects is written as if it were interacting with the underlying data
+itself. All access and modification of the proxy object, however, goes through the
+`Manager`.
+
+One advantage of the `Manager` over shared memory is that the
 `Manager` need to reside on the same physicall machine as the processes using
 the proxy objects. Of course, that means that using a `Manager` is slower than
-shared memory (even when everything is on the same machine). 
+shared memory (even when everything is on the same machine).
 
-And now, with the state-sharing methods provided by `multiprocessing`, we've
-come full circle. The benefits of using separate processes for concurrency
-vanish. Once we introduce shared state, we are subject to all of the headaches
-associated with multi-threaded code. 
+Now, with the state-sharing methods provided by `multiprocessing`, we've
+come full circle. The burden of managing synchronization when using  separate processes
+for  concurrency essentially is place back on the developer. Once shared
+state, is introduced, the developer is subject to all the attendant headaches
+associated with multi-threaded code.
 
-But there's a silver lining: we can actually make progress on multiple threads
+But there's a silver lining: processes can make progress on multiple threads
 of execution simultaneously. Since a parent process doesn't share the GIL with
 its child processes, *all* processes can execute simultaneously (subject to the
 constraints of the hardware and OS).
@@ -100,7 +103,8 @@ constraints of the hardware and OS).
 
 [PyPy](http://www.pypy.org) is often described as "a Python interpreter written in Python".
 While that's a misleading description in a number of ways, suffice it to say that PyPy is an alternative implementation
-of the Python interpreter that acheives (sometimes drastic) performance gains by using a JIT compiler, not unlike the JVM.
+of the Python interpreter that acheives (sometimes drastic) performance gains
+ by using a JIT compiler (not unlike the JVM).
 The PyPy implementation does not (as many mistakenly beleive) do away with the `GIL`. It's still present and functions
 much the same as the `GIL` in the cPython interpreter.
 
@@ -108,36 +112,35 @@ In August of 2011, Armin Rigo (a PyPy developer and the creator of [Pysco](http:
 wrote a [post](http://morepypy.blogspot.com/2011/08/we-need-software-transactional-memory.html)
 on the PyPy blog that generated quite a bit of discussion. In it,
 he outlined a plan to add support for *Software Transactional Memory (STM)* to
-PyPy. Software Transaction Memory (and *Hardware Transaction Memory (HTM)*) is used
-to treat modification of data as a *transaction*. A transaction is an atomic
-operation; it either goes through in it's entirety or is completely rolled
-back. In this case, the transaction is modification to Python objects.
+PyPy. Software Transaction Memory (and *Hardware Transaction Memory (HTM)*)
+treats modification of data as a *transaction*. A transaction is an atomic
+operation; it either proceeds in it's entirety or is completely rolled
+back. In PyPy's case, transactions encapsulate modification of Python
+objects.
 
-It's an idea that has been around for a while. It's receiving more attention
-now because of the planned introduction of *Hardware Transaction Memory* into
+It's an idea that has been around for a quite a while,
+but one that's receiving more  attention due to the planned introduction of  *Hardware Transaction Memory* into
 general purpose CPUs (*some* of Intel's new Haswell CPUs have support for TSX,
 Intel's extensions for HTM). In the most aggressive form of HTM,  there is no need to use
-syncronization primitives to protect shared data. With the most aggressive HTM,
-each modification is recorded by the CPU. When a transaction finishes,
-it simply checks if anyone else made changes to the memory in question. If no
+syncronization primitives to protect shared data. Each modification is recorded by the CPU; when a transaction finishes,
+the CPU checks if anyone else made changes to the memory in question. If no
 other modifications were made, the transaction suceeded and proceeds
-ormally. If a modification was detected, the transaction is rolled back and
+normally. If a modification was detected, the transaction is rolled back and
 and a "fallback" routine is executed. The fallback routine determines how
 (and if) the modification should be retried.
 
 This is a potential game-changer for multi-threaded programming. As "Python's
 Hardest Problem" described, multi-threaded programming is difficult due to
 both the cognitive load it burdens the developer with and the challenge in
-debugging/proving correctness of code. If the hardware, or software,
+debugging and proving the correctness of code. If the hardware (or software)
 magically handled concurrent access to data without requiring anything from
 the developer, multi-threaded programming would be *much* easier.
 
-But HTM has alway been experimental and hasn't yet gained traction. So,
-in 2011, Armin Rigo decided that STM was the the most promising avenue for
+But HTM remains quite experimental and hasn't yet gained traction. This is why,
+back in 2011, Armin Rigo decided that STM was the the most promising avenue for
 creating a "GIL-less" PyPy. Progress has been slow for the past two years
-(for all the reasons that progress in any Open Source project is slow),
-but there are signs this is about to change. In a [post](http://morepypy
-.blogspot.com/2013/06/stm-on-drawing-board.html) earlier this month,
+(for all the reasons that progress on any Open Source project is slow),
+but there are signs this is about to change. In a [post](http://morepypy.blogspot.com/2013/06/stm-on-drawing-board.html) earlier this month,
 Rigo cited a number of factors that would increase the pace of development
 and included a number of ideas for optimizing the implementation.
 
@@ -150,7 +153,7 @@ GIL-less Python interpreter.
 
 ## Alternative Python Implementations
 
-While cPython is the official, "reference" interpreter for the Python
+While cPython is the official, "reference" interpreter implementation for the Python
 language, there are a number of alternate interpreters written in languages
 other than C. The two most popular are [Jython](http://www.jython.org) and
 [IronPython](http://ironpython.net). Why are they of interest? **Neither has
@@ -158,7 +161,7 @@ a GIL.**
 
 ### Jython
 
-Jython is a compiled Python interpreter in Java. It is the successor to the
+Jython is a compiled Python interpreter written in Java. It is the successor to the
 now defunct JPython project. The Jython project's focus, above all else,
 is compatability with cPython (tested using a slightly modified version of
 cPython's extensive regression tests).
@@ -179,17 +182,19 @@ associated with every Python object.
 
 Still, with no `GIL`, Jython programs can take full advantage of all of the
 cores on a machine (our "Holy Grail"). Jython, however,
-is not without its drawbacks. For starters, it does not support *any* C
-extensions. This is a deal-breaker for many people as a ton of popular Python
+is not without its drawbacks.
+
+For starters, it does not support *any* C extensions. This is a deal-breaker for many people as a ton of popular Python
 packages make use C extensions. Additionally, development and feature support
 lag well behind cPython. The *beta* for Python 2.7 was released in February
 of this year (and has not seen a release since). Python 2.5 is the officially
 supported version of Python in Jython. For reference,
 2.5 was released **September 2006**. So it's fair to say that compatability
-is a very real problem for Jython. Lastly, there a number of areas where
-Jython (by its own admission) is slower than cPython. Any Python standard
-library modules written in C (and there are a lot of them) are implemented in
-Python in Jython. These could be rewritten in Java,
+is a very real problem for Jython.
+
+Lastly, there a number of areas where Jython (by its own admission) is slower than cPython. Any Python standard
+library modules written in C (and there are a lot of them),
+Jython implements in Python. These could be rewritten in Java,
 but the amount of optimization done cPython's C-based modules is pretty
 extensive. Jython is unlikely to approach the speed of cPython modules
 written in C any time soon.
@@ -199,7 +204,7 @@ written in C any time soon.
 Just as Jython is a compiled Python interpreter written in Java,
 IronPython is a compiled interpreter written in C#, making it compatible with
 the rest of the .NET ecosystem. Much like Jython, the `GIL` is rendered
-unneccesary due to the .NET DLR's garbage collector. Like Jython,
+unneccesary due to the .NET DLR's garbage collector. Also like Jython,
 IronPython benefits from a JIT compiler to acheive speedups in longer running
 programs.
 
@@ -221,26 +226,26 @@ will run faster or slower on IronPython depends heavily on your workload.
 ### Missing the forest for the trees
 
 Our discussion of IronPython and Jython has focused on the fact that neither
-implementation has a `GIL`, but that's really of little interest to most.
-Both projects were created not to merely implement the cPython interpreter in
+implementation has a `GIL`, but that's really of little interest to most
+developers using either of them. Both projects were created not to merely implement the cPython interpreter in
 another language, but to allow Python code to interact with other parts of
-each interpreters ecosystem. Calling Java code from Jython is straightforward.
+each interpreter's ecosystem. Calling Java code from Jython is straightforward.
 To companies and individual developers operating in a Java-centric
 environment, this is a huge win. Likewise, IronPython allows Python code to
 interact with the rest of the .NET ecosystem.
 
 So while neither is likely to become the reference implementation for Python,
-it wasn't the goal of either project to begin with. It's not fair to judge
+that wasn't the goal of either project to begin with. It's not fair to judge
 them on their speed or knock their compatability with C extensions. That was
 never their goal. Truly, they are both incredible projects that have been
 wildly successful at accomplishing what they set out to do. Most
 "vanilla" Python developers won't use alternate interpreters to increase
-performance of multi-threaded code, and that's just fine.
+performance of multi-threaded code. *And that's just fine.*
 
 ## Third Party Libraries
 
 There are a number of libraries that extend the capabilities of the cPython
-interpreter in some way. **None, to my knowledge, does away with the GIL.**
+interpreter in some way. **None, to my knowledge, affect the GIL in any way.**
 Many people are under the assumption that [Stackless Python](www.stackless.com)
 has somehow removed the `GIL` (it hasn't). The same goes for [eventlet] (http://eventlet.net),
 [greenlet](greenlet.readthedocs.org), [Twisted](http://twistedmatrix.com/trac/),
@@ -255,8 +260,8 @@ When I originally wrote ["Python's Hardest Problem"](http://www.jeffknupp.com/bl
 my goal was to introduce Python novices to the `GIL`,  explain its function,
 discuss a bit of its history. "Hardest" in the title was meant to be
 interpreted as "most techincally challenging," not "most important" or "most
-interesting to everyday programmers," but it wasn't interpreted that way by a
-number of people. This is surely due to a lack of clarity on my part,
+interesting to everyday programmers," but that's not how a
+number of people took it. This is surely due to a lack of clarity on my part,
 but I hope that this post will help rectify that. There are likely a number
 of approaches/tools to dealing with the `GIL` I did not mention here. Feel
 free to point them out in the comments.
