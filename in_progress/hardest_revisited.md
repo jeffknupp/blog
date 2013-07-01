@@ -1,37 +1,37 @@
 ## Revisiting "Python's Hardest Problem"
 
 One of the first long-form articles I ever posted to this blog was a piece about
-Python's *Global Interpreter Lock* entitled ["Python's Hardest Problem"](http://www.jeffknupp.com/PUTLINKHERE).
+Python's *Global Interpreter Lock (GIL)* entitled ["Python's Hardest Problem"](http://www.jeffknupp.com/blog/2012/03/31/pythons-hardest-problem/).
 Two weeks ago, it was posted to [Hacker News](http://news.ycombinator.com) and sat
 on the front page for a while, driving a lot of traffic to the blog. 
 
 In the discussion on Hacker News, some commenters mentioned that I had neglected
 to mention the various ways of working around the GIL. While that information 
 didn't fit the purpose of the original article, it is nonetheless useful.
-In this article, I'll describe the various alternative approaches 
-to concurrency that the Python community has discovered/created. I hope this 
-information is helpful to those who want practical advice for how 
-to take advantage of concurrency in Python.
+In this article, I'll describe the various ways the Python community has
+discovered/created to mitigate the effects of the `GIL`. I hope this  information
+is helpful to those who want practical advice for how  to take advantage of
+concurrency in Python.
 
 ## Batteries Included: Multiprocessing
 
 For many workloads for which the GIL is a bottleneck, one need look no further
-than the Python standard library. The [multiprocessing](insert link here)
+than the Python standard library. The [multiprocessing](http://docs.python.org/3.4/library/multiprocessing.html)
 package trades threads for processes, to great effect. The idea is simple: if a
 single instance of the Python interpreter is constrained by the GIL, one can
-acheive gains in concurrent workloads by using *multiple interpreter processes*
+acheive gains in concurrent workloads by through *multiple interpreter  processes*
 in place of multiple threads. Helpfully, `multiprocessing` was written
-with the same interface as the `threads` package, so code already using threads
-doesn't require a massive rewrite to make use of multiple processes.
+with the same interface as the `threading` package, so code already using
+threads doesn't require a massive rewrite to make use of multiple processes.
 
-So how does it work in practice? One spawns a process in much the same
-way that one creates a thread. The most visible difference between processes
-and threads is their amount of access to shared data. An quick example is useful here.
-Suppose we are writing a RSS feed reader and want to update our feeds with any new items.
-We store the contents of our various feeds as a dictionary whose keys are 
-the URL of the RSS feed and whose values are a list of that feed's entries.
-When we "refresh" our feeds, we simply want to add new items to the end of the
-associated feed list. 
+How does it work in practice? One spawns a process in much the same
+way one creates a thread. The most visible difference between processes
+and threads is the amount of access to shared data they permit. An quick
+example is useful here. Suppose we are writing a RSS feed reader and want to
+update our feeds with any new items. We store the contents of our various feeds
+as a dictionary whose keys are the URL of the RSS feed and whose values are a
+list of that feed's entries. When we "refresh" our feeds, we simply want to
+add new items to the end of the associated feed list.
 
 This is clearly a parallelizable task. If we're using threads, we simply give
 each thread a subset of the dictionary keys (i.e. feed URLs). For each key it 
@@ -147,3 +147,121 @@ eliminating) the penalty in subsequent releases. It remains to be seen if the
 approach taken by Rigo and others is a viable one, but PyPy's STM project is
 perhaps the Python community's best hope of C-based,
 GIL-less Python interpreter.
+
+## Alternative Python Implementations
+
+While cPython is the official, "reference" interpreter for the Python
+language, there are a number of alternate interpreters written in languages
+other than C. The two most popular are [Jython](http://www.jython.org) and
+[IronPython](http://ironpython.net). Why are they of interest? **Neither has
+a GIL.**
+
+### Jython
+
+Jython is a compiled Python interpreter in Java. It is the successor to the
+now defunct JPython project. The Jython project's focus, above all else,
+is compatability with cPython (tested using a slightly modified version of
+cPython's extensive regression tests).
+
+So how did Jython do away with the `GIL`? Actually, it wasn't a conscious
+choice by the Jython developers. Because of the JVM's built-in garbage
+collection, there is no need to copy cPython's reference-counting
+implementation. Since there are no longer reference counts that need to be
+modified on every object, we are free to remove the `GIL` (which is primarly
+used for safe manipulation of reference counts on all `PyObject`s).
+
+That's not to say that, when using Jython, one can ignore modification of
+shared state *in one's own Python code*. The `GIL` doesn't protect one from
+multi-threaded *Python programs* (otherwise there would be no need for
+`threading` to provide syncronization primitives). Rather,
+it protects *the interpreter itself* from corrupting the bookkeeping data
+associated with every Python object.
+
+Still, with no `GIL`, Jython programs can take full advantage of all of the
+cores on a machine (our "Holy Grail"). Jython, however,
+is not without its drawbacks. For starters, it does not support *any* C
+extensions. This is a deal-breaker for many people as a ton of popular Python
+packages make use C extensions. Additionally, development and feature support
+lag well behind cPython. The *beta* for Python 2.7 was released in February
+of this year (and has not seen a release since). Python 2.5 is the officially
+supported version of Python in Jython. For reference,
+2.5 was released **September 2006**. So it's fair to say that compatability
+is a very real problem for Jython. Lastly, there a number of areas where
+Jython (by its own admission) is slower than cPython. Any Python standard
+library modules written in C (and there are a lot of them) are implemented in
+Python in Jython. These could be rewritten in Java,
+but the amount of optimization done cPython's C-based modules is pretty
+extensive. Jython is unlikely to approach the speed of cPython modules
+written in C any time soon.
+
+### IronPython
+
+Just as Jython is a compiled Python interpreter written in Java,
+IronPython is a compiled interpreter written in C#, making it compatible with
+the rest of the .NET ecosystem. Much like Jython, the `GIL` is rendered
+unneccesary due to the .NET DLR's garbage collector. Like Jython,
+IronPython benefits from a JIT compiler to acheive speedups in longer running
+programs.
+
+While IronPython programs can take full advantage of multi-core hardware,
+the drawbacks of IronPython are largely the same as those of Jython. C
+extensions are somewhat supported using "IronClad",
+a comercial tool developed by Resolver Systems. This support only extends to
+Python 2.6 extensions on (increasingly rare) 32-bit Windows systems, though,
+and no code has been committed to the project since 2011. I think it's fair
+to say that C extensions are basically unsupported (especially in the 2.7
+version of IronPython).
+
+Again, performance is a mixed bag. While the JIT compiler give IronPython a
+leg-up in certain areas, there are many areas in which IronPython is
+considerably slower than cPython (especially the built-in datastructures that
+are written in highly-optimized C for cPython). Whether or not your code
+will run faster or slower on IronPython depends heavily on your workload.
+
+### Missing the forest for the trees
+
+Our discussion of IronPython and Jython has focused on the fact that neither
+implementation has a `GIL`, but that's really of little interest to most.
+Both projects were created not to merely implement the cPython interpreter in
+another language, but to allow Python code to interact with other parts of
+each interpreters ecosystem. Calling Java code from Jython is straightforward.
+To companies and individual developers operating in a Java-centric
+environment, this is a huge win. Likewise, IronPython allows Python code to
+interact with the rest of the .NET ecosystem.
+
+So while neither is likely to become the reference implementation for Python,
+it wasn't the goal of either project to begin with. It's not fair to judge
+them on their speed or knock their compatability with C extensions. That was
+never their goal. Truly, they are both incredible projects that have been
+wildly successful at accomplishing what they set out to do. Most
+"vanilla" Python developers won't use alternate interpreters to increase
+performance of multi-threaded code, and that's just fine.
+
+## Third Party Libraries
+
+There are a number of libraries that extend the capabilities of the cPython
+interpreter in some way. **None, to my knowledge, does away with the GIL.**
+Many people are under the assumption that [Stackless Python](www.stackless.com)
+has somehow removed the `GIL` (it hasn't). The same goes for [eventlet] (http://eventlet.net),
+[greenlet](greenlet.readthedocs.org), [Twisted](http://twistedmatrix.com/trac/),
+[gevent](http://www.gevent.org), and [Tornado](http://www.tornadoweb.org/en/stable/)
+(all of which I've been mistakenly told at some point have no `GIL`). Some of
+these packages and frameworks help alleviate the pain associated with the
+`GIL`, but all are subject to its limitations.
+
+## In Summary
+
+When I originally wrote ["Python's Hardest Problem"](http://www.jeffknupp.com/blog/2012/03/31/pythons-hardest-problem/),
+my goal was to introduce Python novices to the `GIL`,  explain its function,
+discuss a bit of its history. "Hardest" in the title was meant to be
+interpreted as "most techincally challenging," not "most important" or "most
+interesting to everyday programmers," but it wasn't interpreted that way by a
+number of people. This is surely due to a lack of clarity on my part,
+but I hope that this post will help rectify that. There are likely a number
+of approaches/tools to dealing with the `GIL` I did not mention here. Feel
+free to point them out in the comments.
+
+My goal for this post is to enumerate a number of ways the community has
+dealt with the issues the `GIL` presents for novice Python programmers. If
+you feel any of the information above is incorrect or misleading,
+please let me know in the comments or [via email at jeff@jeffknupp.com](mailto: jeff@jeffknupp.com).
