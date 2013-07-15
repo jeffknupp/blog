@@ -80,3 +80,36 @@ will need to perform:
 
 That seems like a reasonably comprehensive list. If our program can perform the
 last step, it's essentially a spam filter.
+
+Let's begin with the functionality required during the learn phase. Though the
+program could be written as a series of !!!CHECK ME!!! unbound functions,
+creating a class responsible for managing our interaction with email messages
+"feels" right (especially considering the different ways we could extend this
+later). Let's start with a generic skeleton for the script. 
+
+Helpfully, I have a simple shell script to generate this skeleton for a new 
+Python file. I recommend this practice to avoid writing scripts the correct way
+because writing the boiler-plate code "takes too long".
+
+    #!py
+    """Simple naive-bayes spam filter"""
+
+    import sys
+
+    def main():
+        """Main entry point when called as script"""
+        pass
+
+    if __name__ == '__main__':
+        sys.exit(main())
+
+Of course, we'll likely need to alter this skeleton code, but it's a good start.
+Next let's write an outline for the class. The way I typically write *any* large
+portion of a program is to write the definition *and docstrings* of functions
+and classes I need. Writing the docstring before you implement the function is a
+gut-check to make sure you fully understand what a function will do. If you
+can't write the docstring, it's an early sign that you may need to rethink the
+structure of your program. Of course, we're not handcuffed to the choices we
+make now, but I find it to be a helpful way to organize my thoughts.
+
+Here is the class definition skeleton:
