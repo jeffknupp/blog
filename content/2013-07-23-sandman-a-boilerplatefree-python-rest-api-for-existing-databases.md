@@ -2,14 +2,12 @@ title: sandman: A Boilerplate-free Python REST API for Existing Databases
 date: 2013-07-23 00:28
 categories: python rest sandman
 
-# Meet `sandman`, My Weekend Project
-
 At work on Friday, I found myself wishing there was a simple way to
 automatically generate a HATEOAS-based service with a REST API from an existing
 database. I've lost count of the number of times I've "decided" to build a REST
 API for a legacy database only to give up when I realized just how much
 boilerplate ORM code I'd need to write.
-
+<!--more-->
 On Friday and Sunday I spent a few hours finally writing a tool that does exactly
 what I want. I knew that [SQLAlchemy](http://www.sqlalchemy.org) had database introspection 
 capabilities. I also knew that [flask](http://flask.pocoo.org) had an extension
