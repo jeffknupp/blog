@@ -19,49 +19,52 @@ usually intertwined.
 
 As are creation and **chaos.**
 
-On Thursday, July 25th, the creation of which I am most proud to have been apart
-of was released a bit earlier than planned. **Alexandra Grace Knupp**,
-originally due August 26th, was born at 7:20 AM, much to the surprise of her
+On Thursday, July 25th, the creation of which I am most proud to have been a part
+was released a bit earlier than planned. **Alexandra Grace Knupp**,
+originally due August 26th, was born Thursday morning at 7:20 AM, much to the surprise of her
 parents. Mother and baby are both doing exceptionally well.
 
-Alexandra's (Alex's) birth served as a reminder for a very important lesson:
-life happens. Nothing in life is guaranteed. It always seems as if there
+Alexandra's (Alex's) birth served as a reminder of sevral very important basic truths:
+life happens. Nothing in life is guaranteed. It always seems as though there
 will be more time. For example, I had planned to write a letter to my daughter
 before she was born. I was going to tell her all about the funny, interesting (to me), and poignant details 
 surrounding her birth and my wife's pregnancy. 
 
 And then life happened.
 
-The fact that you are given a due date gives you a false sense of security.
+The fact that pregnancy comes with a due date gives you a false sense of security.
 You are given, by a doctor you trust, an *exact date* on which you should expect
 the birth of your child. Sure, most due dates don't turn out to be accurate to the
-day, but surely one can expect to be within a few days or, at most, a few weeks
+day, but surely one can expect the birth to occur within a few days or, at most, a few weeks
 of that date, right?
 
 **Wrong.**
 
 Life has a funny way of disregarding human planning. It's always good to be
-reminded of that in situations that don't end badly so you can avoid
-experiencing one that does. Of course, it's not possible to never be surprised
+reminded of that in situations that don't end badly so you can minimize the risk
+of experiencing one that does. Of course, it's not possible to *never* be surprised
 by life, but it *is* possible to stop putting of for tomorrow those important
 things that can be done today.
 
-In fact, Alex's entire conception was an example of planning for the unexpected.
-My wife and I knew we wanted to start a family soon after our marriage in July
-of last year but differed on just how soon: she wanted to start immediately
-while I wanted to wait for our finances to even-out after the wedding. She
-agreed, but after a month I had a change of heart. 
+In fact, Alex's entire conception was an example of my wife and I trying to expect the unexpected.
+We knew we wanted to start a family soon after our wedding in July
+of last year but differed on just *how* soon: she wanted to start immediately;
+I wanted to wait for a few practical reasons. She agreed to wait, but after a 
+month I had a change of heart and asked if we could switch to her schedule. 
 
-I remembered that nothing in life is certain. We could have had problems conceiving, one of us may have had an unknown condition that would prevent it, it may have taken far longer than we had anticipated, etc.
-So, with the proper amount of respect for the unpredictability of life, we began trying to conceive. We were exceptionally lucky to have been able to do so relatively quickly.
+What changed my mind? Hurricane Sandy. I was reminded me that nothing in life is certain (I live in 
+Hoboken, an NJ city that was hit particularly hard by Sandy). So many things could have gone wrong in our attempt to conceive: one of us could have unknown medical condition, it may have 
+taken far longer than we had anticipated, etc.  So, with the proper amount of respect 
+for the unpredictability of life, we began "trying". We were exceptionally fortunate to 
+succeed relatively quickly.
 
-I should have kept that in mind when planning for her birth. 
+I should have kept that whole "unpredictability of life" thing in mind when preparing for her birth. 
 
-Creation and chaos are intertwined. But life, in general, is chaos. We were
-extraordinarily lucky to have made it through the surprising turn of events in
-good health and good spirits. We may not always be so lucky, and we can't change
-that. But we will redouble our efforts not to put off important things that can 
-be done today, regardless of how *certain* we are that there will be more time.
+Creation takes both order and chaos. But life, in general, seems to tend more
+towards chaos. We were extraordinarily lucky to have made it through the surprising 
+turn of events in good health and good spirits. We may not always be so lucky, and 
+we can't change that. But we will redouble our efforts not to put off important things 
+that can be done today, regardless of how *certain* we are that there will be more time.
 And we will remember that, "the best laid plans of mice and men often go awry."
 
 And plan accordingly.
