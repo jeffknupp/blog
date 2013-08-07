@@ -53,7 +53,7 @@ while I wanted to wait for our finances to even-out after the wedding. She
 agreed, but after a month I had a change of heart. 
 
 I remembered that nothing in life is certain. We could have had problems conceiving, one of us may have had an unknown condition that would prevent it, it may have taken far longer than we had anticipated, etc.
-So, with the proper amount of respect for the unpredicability of life, we began trying to conceive. We were exceptionally lucky to have been able to do so relatively quickly.
+So, with the proper amount of respect for the unpredictability of life, we began trying to conceive. We were exceptionally lucky to have been able to do so relatively quickly.
 
 I should have kept that in mind when planning for her birth. 
 
