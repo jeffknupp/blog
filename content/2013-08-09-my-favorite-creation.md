@@ -16,7 +16,7 @@ When you're in the creation business, the *release process* for a creation is
 important. Especially when the creation will be integrated into existing
 systems, ensuring those systems are ready to handle the new creation is vital. A
 premature release on unsuspecting systems may have negative consequences.
-
+<!--more-->
 But as someone who creates, you plan for this. In fact, you plan for everything:
 design, execution, release, and ongoing management. Creation and planning are
 usually intertwined.
