@@ -32,18 +32,12 @@ service up:
 
     class Artist(Model):
         __tablename__ = 'Artist'
-        endpoint = 'artists'
-        primary_key = 'ArtistId'
 
     class Album(Model):
         __tablename__ = 'Album'
-        endpoint = 'albums'
-        primary_key = 'AlbumId'
 
     class Playlist(Model):
         __tablename__ = 'Playlist'
-        endpoint = 'playlists'
-        primary_key = 'PlaylistId'
 
     register((Artist, Album, Playlist))
 
@@ -77,8 +71,7 @@ Here's what a request to the service looks like:
 There's clearly still a lot more work to do. To start, `application/json` is the
 only supported `Content-type`, so no real negotiation takes place (support for
 XML and HTML are coming). Links to related resources, as modeled in the
-database, should be added as well. Customization of HTTP methods a class
-supports and how it validates requests are next on my agenda.
+database, should be added as well. 
 
 ## Wrapping Up
 
