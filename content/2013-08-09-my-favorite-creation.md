@@ -1,6 +1,6 @@
 title: My Favorite Creation
 date: 2013-08-09 07:21
-categories: alex
+categories: alexandra personal
 
 There is an activity I enjoy more than any other. My profession is based on it,
 as are most of my hobbies. **Creation**. I love to make things that didn't
