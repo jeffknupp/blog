@@ -49,7 +49,7 @@ With that code, you'll get a set of HTTP endpoints for both collections (i.e.  '
 resources (i.e. '/artists/125'). Collection endpoints support HTTP `GET` and `POST`,
 while resource endpoints support HTTP `GET`, `POST`, `PATCH`, and `DELETE`. All
 HTTP status codes returned should be correct (i.e. `PATCH` on an existing
-resource returns `204`, but `201` on a non-existant resource). `PATCH` is idempotent, `POST` isn't, and `rel` and `uri` links are returned (though `rel: self` is the only one supported at the moment).
+resource returns `204`, but `201` on a non-existent resource). `PATCH` is idempotent, `POST` isn't, and `rel` and `uri` links are returned (though `rel: self` is the only one supported at the moment).
 
 Here's what a request to the service looks like:
 
