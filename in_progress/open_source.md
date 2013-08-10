@@ -40,7 +40,7 @@ installed in such a way that `pip install` correctly installs packages
 to the virtualenv rather than the system Python installation. Switching back 
 and forth between your virtualenv is a one-command process.
 
-A separate tool, virtualenvwrapper, makes creating and managing multiple 
+A separate tool, Doug Hellmann's virtualenvwrapper, makes creating and managing multiple 
 virtualenvs easier. Let's go ahead and install both now:
 
     #!bash
@@ -78,5 +78,46 @@ project. We can do this with a simple command:
 
 You'll notice your shell prompt is now prepended by the name of your virtualenv
 (which I called "ossproject", but obviously you can use whatever name you'd
-like). Now anything installed via 
+like). Now anything installed via `pip install` is installed to the
+`site-packages` of your virtualenv. 
+
+To stop working on your project and switch back to the system installation, use 
+the `deactivate` command. You should see the virtualenv name that was prepended 
+to your shell prompt dissapear. To resume work on your project, run `$ workon
+<project name>` and you'll be back in your virtualenv.
+
+## Source Control With Git
+
+In "Starting a Django Project The Right Way," I suggest either git
+and mercurial for version control. For a project meant to be both shared and
+contributed to, there's really only one choice: git. In fact, I'll go so far as
+to say that not only is the use of git necessary, you'll also need to use
+[GitHub](http://www.github.com) to maintain your project if you want people to
+actually use and contribute to it. 
+
+It's not meant to be an inflamitory statement (though no doubt many will 
+take issue with it). Rather, for better or worse, git
+and [GitHub](http://www.github.com) have become the de-facto standard for
+managing Open Source projects. GitHub is the site potential users and
+contributors are most likely to be registered at and most likely to be familiar
+with the workflow.
+
+#### A Sensible Git Workflow With Git-Flow
+
+To make things easier on both yourself and contributors, we'll be using the
+very popular [git-flow](http://nvie.com/posts/a-successful-git-branching-model/)
+model of branching. In short, the `develop` branch off of which branches for new features
+should be made. Once a feature is complete, the changes are merged back in to
+`develop` and the feature branch is deleted. Updating `master` is done through
+the creation of a `release`. Install git-flow by following the instructions for your platform [here](https://github.com/nvie/gitflow/wiki/Installation).
+
+Once installed, you can migrate your existing project with the command
+
+    #!bash
+    $ git flow init
+
+The default values suggested by git-flow are fine to use.
+
+#### Managing Your Project on GitHub
+
 
