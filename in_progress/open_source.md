@@ -118,6 +118,15 @@ Once installed, you can migrate your existing project with the command
 
 The default values suggested by git-flow are fine to use.
 
-#### Managing Your Project on GitHub
+## Open Source Project Essentials 
 
-
+There are a few differences between "personal" projects and public, open source
+projects. While always encouraged, *documentation* and *testing* are **crucial** for
+an open source project. Luckily, Python has some excellent tools to make
+creating great documentation and simple unit testing. We'll be using `sphinx`
+and `py.test` for documentation and testing respectively. All of this will be
+automated by another crucial aspect of successful open source projects:
+*continuous integration*. We'll use [TravisCI](https://travis-ci.org/) and
+[ReadTheDocs](https://readthedocs.org)
+Lastly, *issue tracking* becomes essential when there
+are others relying on your code (and waiting for bug fixes or new features).
