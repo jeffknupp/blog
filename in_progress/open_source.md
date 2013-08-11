@@ -1,35 +1,37 @@
-# Creating an Open Source Python Library The Right Way
+# Open Sourcing a Python Project The Right Way
 
 Most developers accumulate a personal library of tools they've written throughout 
 their career. They range from little scripts to not so little libraries, but are 
-generally things that the developer wrote because (ostensibly) nothing existed 
+generally things that the developer wrote (ostensibly) because nothing existed 
 to solve his or her particular problem. Many of these tools might be useful to
 other developers, but they never see the light of day. 
 
-I'd like to make the road to Open-Sourcing Python projects more clear. 
-I've released a few open source tools, many of which were Python-based. In doing
-so, I've noticed a series of steps common to those projects done in Python. In
-the vein of another popular series I've written, "Starting a Django Project The
-Right Way," I'll outline the steps I've found to be necessary when creating an
-Open Source Python project.
+I've released a few open source tools, many of which were Python-based. In doing so, 
+I've noticed a series of steps common to Python projects. I'd like to make more clear
+the steps to open-sourcing Python projects in a way that encourages both use and 
+contribution. In the vein of another popular series I've 
+written, "Starting a Django Project The Right Way," I'll outline the steps I've 
+found to be necessary when creating an open-sourcing a Python project.
 
 ## Tools and Concepts
 
-Successful open source Python projects are more than just code. They have an 
-entire ecosystem of tools and services all working together to provide useful
-information to both you, your users, and contributors to your project. 
-Below is a list of the concepts and technologies we'll be covering in this article:
+In particular, there are a number of things I've found necessary for
+successfully open-sourcing a Python project:
 
-* Project layout (directory structure)
-* [git](http://www.git-scm.com) for version control
-* [GitHub](http://www.github.com) for project management
-* [git-flow](http://nvie.com/posts/a-successful-git-branching-model/) for git workflow
-* `virtualenv` for managing project dependencies 
-* PyPI, `setuptools`, and the `setup.py` file
-* [Sphinx](http://www.sphinx-doc.org) for auto-generated HTML documentation
-* [TravisCI](https://travis-ci.org/) for continuous integration testing
-* [ReadTheDocs](https://readthedocs.org) for automated documentation deployment
-* [coverage.io](http://coverage.io) for test coverage continuous integration
+1. Project layout (directory structure)
+1. [git](http://www.git-scm.com) for version control
+1. [GitHub](http://www.github.com) for project management
+    1. GitHub's "Issues" for the following:
+        1. bug tracking
+        1. feature requests
+        1. planned features
+        1. release/version management
+1. [Sphinx](http://www.sphinx-doc.org) for auto-generated HTML documentation
+1. [py.test](http://www.pytest.org) for unit testing
+1. [TravisCI](https://travis-ci.org/) for continuous testing integration
+1. [ReadTheDocs](https://readthedocs.org) for continuous documentation integration
+1. [coverage.io](http://coverage.io) for test coverage continuous integration
+
 
 *Note: In this article, I'll assume you have an existing code base you're looking to open source (and I'll assume you're using Python 2.7.x, but the steps are largely the same if you're using Python 3.x).*
 
@@ -99,9 +101,10 @@ actually use and contribute to it.
 It's not meant to be an inflamitory statement (though no doubt many will 
 take issue with it). Rather, for better or worse, git
 and [GitHub](http://www.github.com) have become the de-facto standard for
-managing Open Source projects. GitHub is the site potential users and
-contributors are most likely to be registered at and most likely to be familiar
-with the workflow.
+managing Open Source projects. GitHub is the site potential contributors are 
+most likely to be registered on and familiar with. That, I believe, is not a
+trivial thing.
+
 
 #### Create a `README.md` File
 
@@ -132,14 +135,111 @@ very popular [git-flow](http://nvie.com/posts/a-successful-git-branching-model/)
 model of branching. In short, the `develop` branch off of which branches for new features
 should be made. Once a feature is complete, the changes are merged back in to
 `develop` and the feature branch is deleted. Updating `master` is done through
-the creation of a `release`. Install git-flow by following the instructions for your platform [here](https://github.com/nvie/gitflow/wiki/Installation).
+the creation of a `release`. 
+
+Install git-flow by following the instructions for your platform [here](https://github.com/nvie/gitflow/wiki/Installation).
 
 Once installed, you can migrate your existing project with the command
 
     #!bash
     $ git flow init
 
-The default values suggested by git-flow are fine to use.
+You'll be asked a number of configuration questions by the script. The default values suggested by 
+git-flow are fine to use. You may notice your default branch is set to `develop`. More 
+on that in a moment. Let's take a step back and describe the git-flow... erm, flow, in 
+a bit more detail. The easiest way to do so is to discuss the various branches
+and *types* of branches in the model.
+
+##### Master
+
+`master` is always "production ready" code. Commits are never made directly to `master`. Rather, 
+code on `master` only gets there after a production release branch is created
+and "finished" (more on that in a sec). Thus the code on `master` is always able
+to be released to production. Also, `master` is always in a predictable state,
+so you never need to worry if `master` (and thus production) has changes one of
+your other branches doesn't.
+
+##### Develop
+
+Most of your work is done on the `develop` branch. This branch contains all of the completed features and
+bugfixes yet to be released; nightly builds or continuous integration servers should target `develop`,
+as it represents the code that will be included in the next release.
+
+For one-off commits, feel free to commit to `develop` directly. 
+
+##### Feature
+
+For larger features, a `feature` branch should be created. `feature` branches are created off of
+`develop`. They can be small enhancements for the next release or further out
+changes that, nonetheless, need to be worked on now. To start work on a new
+feature, use:
+
+    #!bash
+    $ git flow feature start <feature name>
+
+This creates a new branch: `feature/<feature name>`. Commits are then made to this branch 
+as normal. When the feature is complete *and ready to be released to production*, it 
+should be merged back into develop using the following command:
+
+
+    #!bash
+    $ git flow feature finish <feature name>
+
+This merges the code into `develop` and deletes the `feature/<feature name>` branch.
+
+##### Release
+
+A `release` branch is created from `develop` when you're ready to begin a
+production release. Create one using the following command:
+
+    
+    #!bash
+    $ git flow release start <release number>
+
+Note that this is the first time a version number for the release is created.
+All completed and ready to be released features must already be on `develop`
+(and thus `feature finish`'ed). After your release branch is created, release
+your code. Any small bug fixes needed after the release are made directly to the
+`release/<release number>` branch. Once it has settled down and no more bug
+fixes seem necessary, run the following command:
+
+    #!bash
+    $ git flow release finish <release number>
+
+This merges your `release/<release number>` changes back into both `master`
+*and* `develop`, meaning you never need to worry about either of those branches
+lacking changes that are in production (perhaps as the result of a quick bug
+fix).
+
+##### Hotfix
+
+While potentially useful, `hotfix` branches are, I would guess, little used in
+the real world. A `hotfix` is like a `feature` branch off of `master`: if you've
+already closed a `release` branch but realize there are vital changes that need
+to be released, create a `hotfix` branch off of `master` (at the tag created
+during `$ git flow release finish <release number>`) like so:
+
+
+    #!bash
+    $ git flow hotfix start <release number>
+
+After you make your changes and bump your version number, finalize the `hotfix` via
+
+    #!bash
+    $ git flow hotfix finish <release number>
+
+This, like a `release` branch (since it essentially *is* a type of release
+branch), commits the changes to both `master` and `develop`.
+
+The reason I assume they're rarely used is because there is already a mechanism
+for making changes to released code: committing to an un-`finish`ed release
+branch. Sure, in the beginning, teams may `git flow release finish ...` too
+early, only to find they need to make some quick changes the next day. Over
+time, though, they'll settle on a reasonable amount of time for a `release`
+branch to remain open and, thus, won't have a need for `hotfix` branches. The
+only *other* time you would need a `hotfix` branch is if you needed a new
+"feature" in productioni immediately, without picking up the changes already in
+`develop`. That strikes me as something that happens (hopefully) very rarely.
 
 ## `virtualenv` and `virtualenvwrapper`
 
@@ -220,6 +320,8 @@ Commit `requirements.txt` to your git repo, as a number of tools/services we'll
 see later make use of it.
 
 ## PyPI and `setuptools`
+=======
+>>>>>>> Stashed changes
 
 TODO
 
@@ -305,3 +407,15 @@ is an example of running `sandman`
     Coverage HTML written to dir htmlcov
 
     =================================================== 23 passed in 1.14 seconds ====================================================
+=======
+
+### Documentation with *Sphinx*
+
+[Sphinx](http://www.sphinx-doc.org) is a tool by the [pocoo](http://www.pocoo.org/) folks. It's used to 
+generate the Python's official documentation and the documentation for almost all other popular Python 
+packages. It was written with idea of making auto-generation of HTML documentation from Python code as easy as possible.
+
+Be sure to install Sphinx *in your virtualenv*, since documentation will be a
+versioned artifact in your project and different versions of sphinx may generate
+different HTML output. By doing so, you can "upgrade" your documentation in a
+controlled manner.
