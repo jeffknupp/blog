@@ -6,11 +6,6 @@ generally things that the developer wrote because (ostensibly) nothing existed
 to solve his or her particular problem. Many of these tools might be useful to
 other developers, but they never see the light of day. 
 
-#Sometimes, especially when written at/for work, there are reasons outside the 
-#developer's control that prevent their tools from being open sourced. Other 
-#times, it's a matter of time committment or perceived value. But many times,
-#a developer 
-
 I'd like to make the road to Open-Sourcing Python projects more clear. 
 I've released a few open source tools, many of which were Python-based. In doing
 so, I've noticed a series of steps common to those projects done in Python. In
@@ -18,15 +13,15 @@ the vein of another popular series I've written, "Starting a Django Project The
 Right Way," I'll outline the steps I've found to be necessary when creating an
 Open Source Python project.
 
-## What We'll Cover
+## This Article Will Cover
 
-Successful Open Source Python projects are more than just code. They have an 
+Successful open source Python projects are more than just code. They have an 
 entire ecosystem of tools and services all working together to provide useful
 information to both you, your users, and contributors to your project. 
-Below is a list of the concepts and technologies I'll be covering in this article:
+Below is a list of the concepts and technologies we'll be covering in this article:
 
 * Project layout (directory structure)
-* PyPI and the `setup.py` file
+* PyPI, `setuptools`, and the `setup.py` file
 * `virtualenv` for managing project dependencies 
 * [git](http://www.git-scm.com) for version control
 * [GitHub](http://www.github.com) for project management
@@ -52,7 +47,9 @@ directories that *every* project should have:
 
 1. A `docs` directory containing project documentation
 1. A directory named with the project's name which stores the actual Python package
-1. A `test` directory under the package directory containing test code and resources
+1. A `test` directory in one of two places
+    1. Under the package directory containing test code and resources
+    1. As a stand-alone top level directory
 
 To get a better sense of how your files should be organized, here's a simplified snapshot
 of the layout for one of my projects, [sandman](http://www.github.com/jeffknupp/sandman):
@@ -90,11 +87,10 @@ As you can see, there are some top level files, a `docs` directory (`generated`
 is an empty directory where sphinx will put the generated documentation), a
 `sandman` directory, and a `test` directory under `sandman`.
 
-
 ## Testing With py.test
 
 In the Python automated testing ecosystem, there are two main alternatives to
-the (quite usable) standard library `unittest` package:
+the (quite usable) Python standard library `unittest` package:
 [nose](http://www.nosetest.org) and [py.test](http://www.pytest.org). Both 
 extend `unittest` to make it easier to work with while adding additional
 functionality. Truthfully, either is a fine choice. I happen to prefer
@@ -102,11 +98,12 @@ functionality. Truthfully, either is a fine choice. I happen to prefer
 relying on remembering all the jUnit-style assert functions. In addition,
 there's generally less boilerplate, support for multiple styles of test
 (`unittest`, `doctest`, and even nose tests), and support for testing
-setuptools/distutils projects (via `python setup.py test`).
+setuptools/distutils projects (i.e. `python setup.py test`).
 
 In the `test` directory under your main package, create a file called
 `test_<project_name>.py`. py.test's test discovery mechanism will treat any file
 with the `test_` prefix as a test file (unless told otherwise).
+
 
 #### virtualenv and virtualenvwrapper
 
