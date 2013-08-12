@@ -18,24 +18,36 @@ the vein of another popular series I've written, "Starting a Django Project The
 Right Way," I'll outline the steps I've found to be necessary when creating an
 Open Source Python project.
 
-## Before We Begin
+## What We'll Cover
 
-In this article, we'll assume you have an existing code base you're looking to 
-open source (I'll assume Python 2.7.x, but the steps are largely the same with 
-Python 3). With an existing code base, you'll need to do a bit of retro-fitting.
-Before we start, though, there are a few technologies you'll need to make yourself familiar
-with. 
+Successful Open Source Python projects are more than just code. They have an 
+entire ecosystem of tools and services all working together to provide useful
+information to both you, your users, and contributors to your project. 
+Below is a list of the concepts and technologies I'll be covering in this article:
+
+* Project layout (directory structure)
+* PyPI and the `setup.py` file
+* `virtualenv` for managing project dependencies 
+* [git](http://www.git-scm.com) for version control
+* [GitHub](http://www.github.com) for project management
+* [git-flow](http://nvie.com/posts/a-successful-git-branching-model/) for git workflow
+* [Sphinx](http://www.sphinx-doc.org) for auto-generated HTML documentation
+* [TravisCI](https://travis-ci.org/) for continuous integration testing
+* [ReadTheDocs](https://readthedocs.org) for automated documentation deployment
+* [coverage.io](http://coverage.io) for test coverage continuous integration
+
+*Note: In this article, I'll assume you have an existing code base you're looking to open source (and I'll assume you're using Python 2.7.x, but the steps are largely the same if you're using Python 3.x).*
 
 #### virtualenv and virtualenvwrapper
 
 Ian Bicking's virtualenv tool has become the de-facto standard mechanism for
 isolating Python environments. Its purpose is simple: if you have a number of
 Python projects on a single machine, each with different dependencies (perhaps
-on different versions of the same package), managing the dependencies in a
+with dependencies on different versions of the same package), managing the dependencies in a
 single Python installation is nigh impossible. 
 
 virtualenv creates "virtual" Python installations, each with their 
-own, segregated, `site-packages`.  `distribute` and `pip` are also 
+own, segregated, `site-packages`. `distribute` and `pip` are also 
 installed in such a way that `pip install` correctly installs packages 
 to the virtualenv rather than the system Python installation. Switching back 
 and forth between your virtualenv is a one-command process.
