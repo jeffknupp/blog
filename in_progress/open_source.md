@@ -38,6 +38,76 @@ Below is a list of the concepts and technologies I'll be covering in this articl
 
 *Note: In this article, I'll assume you have an existing code base you're looking to open source (and I'll assume you're using Python 2.7.x, but the steps are largely the same if you're using Python 3.x).*
 
+## Project Layout
+
+When setting up a project, the *layout* (or *directory structure*) is important
+to get right. A sensible layout means that potential contributors don't have to
+spend forever hunting for a piece of code; file locations are intuitive. Since
+we're dealing with an existing project, it means you'll probably need to move
+some stuff around.
+
+Let's start at the top. Most projects have a number of top-level files (like
+`setup.py`, `README.md`, `requirements.txt`, etc). There are then three
+directories that *every* project should have:
+
+1. A `docs` directory containing project documentation
+1. A directory named with the project's name which stores the actual Python package
+1. A `test` directory under the package directory containing test code and resources
+
+To get a better sense of how your files should be organized, here's a simplified snapshot
+of the layout for one of my projects, [sandman](http://www.github.com/jeffknupp/sandman):
+
+    #!bash
+    $ pwd
+    ~/code/sandman
+    $ tree
+    .
+    ├── LICENSE
+    ├── README.md
+    ├── TODO.md
+    ├── docs
+    │   ├── conf.py
+    │   ├── generated
+    │   ├── index.rst
+    │   ├── installation.rst
+    │   ├── modules.rst
+    │   ├── quickstart.rst
+    │   └── sandman.rst
+    ├── requirements.txt
+    ├── sandman
+    │   ├── __init__.py
+    │   ├── exception.py
+    │   ├── model.py
+    │   ├── sandman.py
+    │   └── test
+    │       ├── models.py
+    │       └── test_sandman.py
+    └── setup.py
+
+    4 directories, 17 files
+
+As you can see, there are some top level files, a `docs` directory (`generated`
+is an empty directory where sphinx will put the generated documentation), a
+`sandman` directory, and a `test` directory under `sandman`.
+
+
+## Testing With py.test
+
+In the Python automated testing ecosystem, there are two main alternatives to
+the (quite usable) standard library `unittest` package:
+[nose](http://www.nosetest.org) and [py.test](http://www.pytest.org). Both 
+extend `unittest` to make it easier to work with while adding additional
+functionality. Truthfully, either is a fine choice. I happen to prefer
+`py.test`'s support for using `assert` for testing assertions rather than
+relying on remembering all the jUnit-style assert functions. In addition,
+there's generally less boilerplate, support for multiple styles of test
+(`unittest`, `doctest`, and even nose tests), and support for testing
+setuptools/distutils projects (via `python setup.py test`).
+
+In the `test` directory under your main package, create a file called
+`test_<project_name>.py`. py.test's test discovery mechanism will treat any file
+with the `test_` prefix as a test file (unless told otherwise).
+
 #### virtualenv and virtualenvwrapper
 
 Ian Bicking's virtualenv tool has become the de-facto standard mechanism for
