@@ -214,6 +214,30 @@ there's generally less boilerplate, support for multiple styles of test
 (`unittest`, `doctest`, and even nose tests), and support for testing
 setuptools/distutils projects (i.e. `python setup.py test`).
 
+#### Note
+
+If you already have an automated testing solution, feel free to continue using
+it and skip this section. Be warned that later sections may assume testing is
+done using py.test, which may affect configuration values.
+
 In the `test` directory under your main package, create a file called
 `test_<project_name>.py`. py.test's test discovery mechanism will treat any file
 with the `test_` prefix as a test file (unless told otherwise).
+
+What you put in that file is largely up to you. Writing tests is a giant topic 
+and outside of the scope of this article. The important thing, however, is that the
+tests are useful to both you *and potential contributors*. It should be clear
+what functionality each test is exercising. Tests should be written in the same
+"style" so that a potential contributor doesn't have to guess which of the three
+styles of testing used in your project he/she should use.
+
+The main goal is for the tests to be easy to run. There should be a single
+command to run "all" of the tests. If you need to test against multiple
+interpreters, consider using [tox](http://tox.readthedocs.org/en/latest/)
+
+#### Test Coverage
+
+Automated test coverage is a contentious topic. Some believe it to be a
+meaningless number that gives false security. Others find it genuinely useful.
+At the very least, I would suggest if you already have tests and have *never*
+checked your test coverage, do so now as an exercise. 
