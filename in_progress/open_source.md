@@ -13,7 +13,7 @@ the vein of another popular series I've written, "Starting a Django Project The
 Right Way," I'll outline the steps I've found to be necessary when creating an
 Open Source Python project.
 
-## This Article Will Cover
+## Tools and Concepts
 
 Successful open source Python projects are more than just code. They have an 
 entire ecosystem of tools and services all working together to provide useful
@@ -102,6 +102,28 @@ and [GitHub](http://www.github.com) have become the de-facto standard for
 managing Open Source projects. GitHub is the site potential users and
 contributors are most likely to be registered at and most likely to be familiar
 with the workflow.
+
+#### Create a `README.md` File
+
+The project description for repos on GitHub is taken from a file in the root
+directory of the project: `README.md`. This file should contain the following
+pieces of information:
+
+* A description of your project
+* Links to the project's ReadTheDocs page
+* A TravisCI button showing the state of the build
+* A "quickstart" version of installing and using your project
+* A list of non-Python dependencies (if any) and how to install them
+
+It may sound silly, but this is an important file. It's quite likely to be the first
+thing both prospective users *and* contributors read about your project. Take
+some time to write a clear description and make use of GFM (GitHubFlavoredMarkdown)
+to make it look somewhat attractive. You can actually create/edit this 
+file right on GitHub with a live-preview editor if you're not comfortable 
+writing documents in raw Markdown.
+
+We haven't yet covered the second and third items in the list yet (ReadTheDocs
+and TravisCI). You'll find these discussed below.
 
 #### A Sensible Git Workflow With Git-Flow
 
@@ -208,11 +230,16 @@ the (quite usable) Python standard library `unittest` package:
 [nose](http://www.nosetest.org) and [py.test](http://www.pytest.org). Both 
 extend `unittest` to make it easier to work with while adding additional
 functionality. Truthfully, either is a fine choice. I happen to prefer
-`py.test`'s support for using `assert` for testing assertions rather than
-relying on remembering all the jUnit-style assert functions. In addition,
-there's generally less boilerplate, support for multiple styles of test
-(`unittest`, `doctest`, and even nose tests), and support for testing
-setuptools/distutils projects (i.e. `python setup.py test`).
+`py.test` for a few reasons:
+
+* Support for setuptools/distutils projects
+    * `python setup.py test` still works
+* Support for "normal" `assert` statements (rather than needing to remember all the jUnit-style assert functions)
+* Less boilerplate
+* Support for multiple testing styles
+    * `unittest`
+    * `doctest`
+    * nose tests
 
 #### Note
 
@@ -220,7 +247,9 @@ If you already have an automated testing solution, feel free to continue using
 it and skip this section. Be warned that later sections may assume testing is
 done using py.test, which may affect configuration values.
 
-In the `test` directory under your main package, create a file called
+#### Test Setup
+
+In the `test` directory, wherever you decided it should live, create a file called
 `test_<project_name>.py`. py.test's test discovery mechanism will treat any file
 with the `test_` prefix as a test file (unless told otherwise).
 
@@ -233,11 +262,46 @@ styles of testing used in your project he/she should use.
 
 The main goal is for the tests to be easy to run. There should be a single
 command to run "all" of the tests. If you need to test against multiple
-interpreters, consider using [tox](http://tox.readthedocs.org/en/latest/)
+interpreters, consider using [tox](http://tox.readthedocs.org/en/latest/).
 
 #### Test Coverage
 
 Automated test coverage is a contentious topic. Some believe it to be a
-meaningless number that gives false security. Others find it genuinely useful.
+meaningless metric that gives false security. Others find it genuinely useful.
 At the very least, I would suggest if you already have tests and have *never*
 checked your test coverage, do so now as an exercise. 
+
+With py.test, we can make use of Ned Bechteld ### FIXME #### [coverage](http://www.FIXME.com)
+tool. To do so, `pip install pytest-cov`. If you previously ran your tests like
+this:
+
+    #!bash
+    $ py.test
+
+you can generate test coverage reports by passing a few addtional flags. Below
+is an example of running `sandman`
+
+    #!bash
+    $ py.test --cov=path/to/package 
+    $ py.test --cov=path/to/package --cov-report=term --cov-report=html                              ⏎ ✭
+    ====================================================== test session starts =======================================================
+    platform darwin -- Python 2.7.5 -- pytest-2.3.5
+    plugins: cov
+    collected 23 items
+
+    sandman/test/test_sandman.py .......................
+    ---------------------------------------- coverage: platform darwin, python 2.7.5-final-0 -----------------------------------------
+    Name                           Stmts   Miss  Cover
+    --------------------------------------------------
+    sandman/__init__                   5      0   100%
+    sandman/exception                 10      0   100%
+    sandman/model                     48      0   100%
+    sandman/sandman                  142      0   100%
+    sandman/test/__init__              0      0   100%
+    sandman/test/models               29      0   100%
+    sandman/test/test_sandman        114      0   100%
+    --------------------------------------------------
+    TOTAL                            348      0   100%
+    Coverage HTML written to dir htmlcov
+
+    =================================================== 23 passed in 1.14 seconds ====================================================
