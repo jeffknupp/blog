@@ -190,6 +190,16 @@ places (`setup.py`, the package itself via `package.__version__`, and the
 documentation), we can always use the package's version to populate the
 `version` parameter in `setup`.
 
+`long_description` is the reStructured Text-formatted document used by PyPI as
+the description on your project's PyPI page. As there is another file,
+`README.md` with almost the exact same content, I use [pandoc](http://johnmacfarlane.net/pandoc/) to
+automatically convert `README.md` to `README.rst`. Thus, we can simply `read`
+the file `README.rst` and use that as the value for `long_description`.
+
+py.test (discussed below) has a special entry to allow `python setup.py test` to
+work correctly. That code snippet was taken directly from the `py.test`
+documentation.
+
 
 ## Source Control With Git, Project Management with GitHub
 
