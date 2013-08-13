@@ -18,6 +18,7 @@ In particular, there are a number of things I've found necessary for
 successfully open-sourcing a Python project:
 
 1. Project layout (directory structure)
+1. `setuptools` and the `setup.py` file
 1. [git](http://www.git-scm.com) for version control
 1. [GitHub](http://www.github.com) for project management
     1. GitHub's "Issues" for the following:
@@ -25,8 +26,9 @@ successfully open-sourcing a Python project:
         1. feature requests
         1. planned features
         1. release/version management
-1. [Sphinx](http://www.sphinx-doc.org) for auto-generated HTML documentation
+1. [git-flow](http://nvie.com/posts/a-successful-git-branching-model/) for git workflow
 1. [py.test](http://www.pytest.org) for unit testing
+1. [Sphinx](http://www.sphinx-doc.org) for auto-generated HTML documentation
 1. [TravisCI](https://travis-ci.org/) for continuous testing integration
 1. [ReadTheDocs](https://readthedocs.org) for continuous documentation integration
 1. [coverage.io](http://coverage.io) for test coverage continuous integration
@@ -124,14 +126,6 @@ contents of `setup.py` from [sandman](http://www.github.com/jeffknupp/sandman):
     def read(*parts):
         return codecs.open(os.path.join(here, *parts), 'r').read()
 
-    def find_version(*file_paths):
-        version_file = read(*file_paths)
-        version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]",
-                                version_file, re.M)
-        if version_match:
-            return version_match.group(1)
-        raise RuntimeError("Unable to find version string.")
-
     long_description = read('README.rst')
 
     class PyTest(TestCommand):
@@ -183,28 +177,31 @@ contents of `setup.py` from [sandman](http://www.github.com/jeffknupp/sandman):
 
 Most of the contents are straightforward and could be gleaned from the
 `setuptools` documentation, so I'll only touch on the "interesting" parts.
-`find_version` and `long_description` (taken from the `setup.py` of other
-projects, though I can't remember which ones) reduce the amount of boilerplate
-code we need to write. Instead of maintaining the project's version in three
+Using `sandman.__version__` and the method of getting `long_description` 
+(taken from the `setup.py` of other projects, though I can't remember 
+which ones) reduce the amount of boilerplate code we need to write. Instead 
+of maintaining the project's version in three
 places (`setup.py`, the package itself via `package.__version__`, and the
 documentation), we can always use the package's version to populate the
 `version` parameter in `setup`.
 
-`long_description` is the reStructured Text-formatted document used by PyPI as
-the description on your project's PyPI page. As there is another file,
-`README.md` with almost the exact same content, I use [pandoc](http://johnmacfarlane.net/pandoc/) to
-automatically convert `README.md` to `README.rst`. Thus, we can simply `read`
+`long_description` is the document used by PyPI as the description on your 
+project's PyPI page. As there is another file, `README.md` with almost the 
+exact same content, I use [pandoc](http://johnmacfarlane.net/pandoc/) to
+automatically generate `README.rst` from `README.md`. Thus, we can simply `read`
 the file `README.rst` and use that as the value for `long_description`.
 
-py.test (discussed below) has a special entry to allow `python setup.py test` to
-work correctly. That code snippet was taken directly from the `py.test`
-documentation.
+py.test (discussed below) has a special entry (`class PyTest`)
+to allow `python setup.py test` to work correctly. That code snippet 
+was taken directly from the `py.test` documentation.
 
+Everything else is in the file is simply setting values for the `setup` 
+parameters described in the documentation.
 
 ## Source Control With Git, Project Management with GitHub
 
-In "Starting a Django Project The Right Way," I suggest either git
-and mercurial for version control. For a project meant to be both shared and
+In ["Starting a Django Project The Right Way,"](http://www.jeffknupp.com/blog/2012/10/24/starting-a-django-14-project-the-right-way/) I suggest either git
+or mercurial for version control. For a project meant to be both shared and
 contributed to, there's really only one choice: git. In fact, I'll go so far as
 to say that not only is the use of git necessary, you'll also need to use
 [GitHub](http://www.github.com) to maintain your project if you want people to
@@ -213,26 +210,25 @@ actually use and contribute to it.
 It's not meant to be an inflamitory statement (though no doubt many will 
 take issue with it). Rather, for better or worse, git
 and [GitHub](http://www.github.com) have become the de-facto standard for
-managing Open Source projects. GitHub is the site potential contributors are 
+Open Source projects. GitHub is the site potential contributors are 
 most likely to be registered on and familiar with. That, I believe, is not a
-trivial thing.
-
+point to be taken likely.
 
 #### Create a `README.md` File
 
-The project description for repos on GitHub is taken from a file in the root
-directory of the project: `README.md`. This file should contain the following
+The project description for repos on GitHub is taken from a file in the project's
+root directory: `README.md`. This file should contain the following
 pieces of information:
 
 * A description of your project
 * Links to the project's ReadTheDocs page
 * A TravisCI button showing the state of the build
-* A "quickstart" version of installing and using your project
+* "Quickstart" documentation (how to quickly install and use your project)
 * A list of non-Python dependencies (if any) and how to install them
 
 It may sound silly, but this is an important file. It's quite likely to be the first
 thing both prospective users *and* contributors read about your project. Take
-some time to write a clear description and make use of GFM (GitHubFlavoredMarkdown)
+some time to write a clear description and make use of GFM (**G**itHub**F**lavored**M**arkdown)
 to make it look somewhat attractive. You can actually create/edit this 
 file right on GitHub with a live-preview editor if you're not comfortable 
 writing documents in raw Markdown.
@@ -240,14 +236,41 @@ writing documents in raw Markdown.
 We haven't yet covered the second and third items in the list yet (ReadTheDocs
 and TravisCI). You'll find these discussed below.
 
-#### A Sensible Git Workflow With Git-Flow
+#### Using the "Issues" Page
 
-To make things easier on both yourself and contributors, we'll be using the
+Like most things in life, the more you put into GitHub, the more you get out of
+it. Since users will be using it to file bug reports anyway, making use of 
+GitHub's "Issues" page to track feature requests and enhancements just makes
+sense. 
+
+More importantly, it allows potential contributors to both see a list of
+things they might implement and automatically manages the pull request workflow in
+a reasonably elegant manner. GitHub issues and their comments can be cross-linked
+with commits, other issues in your project, issues in *other* projects, etc.
+This makes the "Issues" page a good place to keep all of the information related
+to bugfixes, enhancements, and feature requests.
+
+Make sure to keep "Issues" up to date and to at least briefly respond to new
+issues in a timely manner. As a contributor, there's nothing more 
+demotivating than fixing a bug and watching as it languishes on the 
+issues page, waiting to be merged.
+
+## A Sensible git Workflow With git-flow
+
+To make things easier on both yourself and contributors, I suggest using the
 very popular [git-flow](http://nvie.com/posts/a-successful-git-branching-model/)
-model of branching. In short, the `develop` branch off of which branches for new features
-should be made. Once a feature is complete, the changes are merged back in to
-`develop` and the feature branch is deleted. Updating `master` is done through
+model of branching. 
+
+###### Quick Overview
+
+The `develop` is the branch you'll be 
+doing most of your work off of; it's also the branch that represents the code to
+be deployed in the next release. `feature` branches represent
+non-trivial features and fixes that have not yet been deployed (a completed
+`feature` branch is merged back into `develop`). Updating `master` is done through
 the creation of a `release`. 
+
+###### Installation
 
 Install git-flow by following the instructions for your platform [here](https://github.com/nvie/gitflow/wiki/Installation).
 
@@ -256,13 +279,15 @@ Once installed, you can migrate your existing project with the command
     #!bash
     $ git flow init
 
+##### Branch Details
+
 You'll be asked a number of configuration questions by the script. The default values suggested by 
 git-flow are fine to use. You may notice your default branch is set to `develop`. More 
 on that in a moment. Let's take a step back and describe the git-flow... erm, flow, in 
 a bit more detail. The easiest way to do so is to discuss the various branches
 and *types* of branches in the model.
 
-##### Master
+###### Master
 
 `master` is always "production ready" code. Commits are never made directly to `master`. Rather, 
 code on `master` only gets there after a production release branch is created
@@ -271,7 +296,7 @@ to be released to production. Also, `master` is always in a predictable state,
 so you never need to worry if `master` (and thus production) has changes one of
 your other branches doesn't.
 
-##### Develop
+###### Develop
 
 Most of your work is done on the `develop` branch. This branch contains all of the completed features and
 bugfixes yet to be released; nightly builds or continuous integration servers should target `develop`,
@@ -279,7 +304,7 @@ as it represents the code that will be included in the next release.
 
 For one-off commits, feel free to commit to `develop` directly. 
 
-##### Feature
+###### Feature
 
 For larger features, a `feature` branch should be created. `feature` branches are created off of
 `develop`. They can be small enhancements for the next release or further out
@@ -299,7 +324,7 @@ should be merged back into develop using the following command:
 
 This merges the code into `develop` and deletes the `feature/<feature name>` branch.
 
-##### Release
+###### Release
 
 A `release` branch is created from `develop` when you're ready to begin a
 production release. Create one using the following command:
@@ -323,7 +348,7 @@ This merges your `release/<release number>` changes back into both `master`
 lacking changes that are in production (perhaps as the result of a quick bug
 fix).
 
-##### Hotfix
+###### Hotfix
 
 While potentially useful, `hotfix` branches are, I would guess, little used in
 the real world. A `hotfix` is like a `feature` branch off of `master`: if you've
@@ -428,12 +453,11 @@ often change the '==' to '>=' in `requirements.txt` to say "any version of this
 package after the one I'm working on." Whether or not you should/need to do this
 is project specific, but I just thought I'd point it out.
 
-Commit `requirements.txt` to your git repo, as a number of tools/services we'll
-see later make use of it.
-
-## PyPI and `setuptools`
-=======
-TODO
+Commit `requirements.txt` to your git repo. In addition, you can now add the
+packages listed there as the value for the `install_requirements` argument to
+`distutils.setup` in `setup.py`. Doing that now will ensure that, when we later
+upload the package to PyPI. It can be `pip install`ed with automatically
+resolved dependencies.
 
 ## Testing With py.test
 
@@ -516,8 +540,17 @@ is an example of running `sandman`
     TOTAL                            348      0   100%
     Coverage HTML written to dir htmlcov
 
-    =================================================== 23 passed in 1.14 seconds ====================================================
-=======
+    =================================================== 23 passed in 1.14 seconds ===========================================================
+
+Certainly not all of my projects have 100% test coverage (in fact, as you read
+this, `sandman` might not have 100% coverage anymore). Getting to 100% was a
+useful exercise, though. It exposed bugs and opportunities for refactoring I
+wouldn't have otherwised noticed.
+
+Since, as for the tests themselves, test coverage reports can be generated
+automatically as part of your continuous integration. If you choose to do so,
+displaying a badge showing your current test coverage adds a bit of transparency
+to your project (and high numbers can sometimes encourage others to contribute).
 
 ## Documentation with *Sphinx*
 
@@ -593,3 +626,26 @@ raise this point at all is because the official Python documentation changed
 themes from `default` to `pydoctheme` between Python 2 and Python 3 (the latter
 theme is a custom theme only available in the cPython source). To some people,
 seeing the `default` theme makes a project seem "old".
+
+## PyPI
+
+[PyPI, the Python Package Index](http://pypi.python.org/pypi) (formerly known as
+"the Cheeseshop") is a central database of free-to-use Python packages. You'll
+be interacting with PyPI via `setuptools` and the `setup.py` script. If you've
+completed all of the steps in the previous sections, you're likely ready to
+create and distribute your package.
+
+If this is the first time the package is being uploaded to PyPI, you'll first need to
+*register* it:
+
+    $ python setup.py register
+
+After you've followed the prompts, you're ready to upload:
+
+    $ python setup.py sdist upload
+
+The command above builds a source distribution and uploads it to PyPI. If your
+package isn't pure Python, you'll need to do a binary distribution build. See
+the `setuptools` documentation for more info.
+
+
