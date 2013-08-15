@@ -5,8 +5,23 @@ generate the Python's official documentation and the documentation for almost al
 packages. It was written with idea of making auto-generation of HTML documentation from 
 Python code as easy as possible.
 
+#### Let the tool do the work
+
+Sphinx has no implicit knowledge of Python programs and how to extract
+documentation from them. It only operates on reStructured Text files, which
+means a reStructured Text version of your code's documentation needs to be
+available for Sphinx to do its work. But maintaining a reStructured Text 
+version of all of your `.py` files (minus the actual body of functions and
+classes) is clearly not doable. Luckily, Sphinx has a javadoc-like extensions
+which is able to create reStructured Text files from documentation extracted
+from your code's docstrings.
+
+!!!!!!!TODO!!!!!!!!!!
+
+#### Installation
+
 Be sure to install Sphinx *in your `virtualenv`*, since documentation will be a
-versioned artifact in your project. Different versions of sphinx may generate
+versioned artifact in your project. Different versions of Sphinx may generate
 different HTML output. By installing in your `virtualenv`, you can "upgrade" 
 your documentation in a controlled manner.
 
