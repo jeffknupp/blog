@@ -1,4 +1,4 @@
-## Revisiting "Python's Hardest Problem"
+## "Python's Hardest Problem" Revisited
 
 One of the first long-form articles I ever posted to this blog was a piece about
 Python's *Global Interpreter Lock (GIL)* entitled ["Python's Hardest Problem"](http://www.jeffknupp.com/blog/2012/03/31/pythons-hardest-problem/).
