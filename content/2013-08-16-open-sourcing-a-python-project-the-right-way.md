@@ -17,6 +17,8 @@ open-sourcing existing code that are common to *all* Python projects.
 In the vein of another popular series I've written, ["Starting a Django Project The Right Way,"](http://www.jeffknupp.com/blog/2012/10/24/starting-a-django-14-project-the-right-way/) I'll outline the steps I've 
 found to be necessary when open-sourcing a Python project.
 
+<!--more-->
+
 ## Tools and Concepts
 
 In particular, there are a number of tools and concepts I've found 
