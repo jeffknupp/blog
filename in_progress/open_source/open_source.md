@@ -1,21 +1,24 @@
-# Open Sourcing a Python Project The Right Way
+# Open-Sourcing a Python Project The Right Way
 
-Most developers accumulate a personal library of tools they've written throughout 
-their career. They range from little scripts to not so little libraries, but are 
-generally things that the developer wrote (ostensibly) because nothing existed 
-to solve his or her particular problem. Many of these tools might be useful to
-other developers, but they never see the light of day. 
+Most Python developers have written at least *one* tool, script, 
+library or framework that others would find useful. My goal in this article
+is to make the process of open-sourcing existing Python code as clear 
+and painless as possible. And I don't simply mean, "create GitHub repo,
+`git push`, post on Reddit, and call it a day." By the end of this article,
+you'll be able to take an existing code base and transform it into an open source 
+project that encourages both use *and* contribution.
 
-I've released a few open source tools. In doing so, I've noticed a series of steps 
-common to the Python projects. I'd like to make more clear the steps to open-sourcing 
-Python projects in a way that encourages both use of and contribution to the project. In the vein of 
-another popular series I've written, ["Starting a Django Project The Right Way,"](http://www.jeffknupp.com/blog/2012/10/24/starting-a-django-14-project-the-right-way/) I'll outline the steps I've 
-found to be necessary when creating an open-sourcing a Python project.
+While every project is different, there are some parts of the process of
+open-sourcing existing code that are common to *all* Python projects. 
+In the vein of another popular series I've written, ["Starting a Django Project The Right Way,"](http://www.jeffknupp.com/blog/2012/10/24/starting-a-django-14-project-the-right-way/) I'll outline the steps I've 
+found to be necessary when open-sourcing a Python project.
 
 ## Tools and Concepts
 
-In particular, there are a number of things I've found necessary for
-successfully open-sourcing a Python project:
+In particular, there are a number of tools and concepts I've found 
+useful or necessary. I'll cover each of the topics below, including the 
+precise commands you'll need to run and configuration values you'll need to
+set. The goal is to make the entire process clear and simple.
 
 1. Project layout (directory structure)
 1. `setuptools` and the `setup.py` file
@@ -31,7 +34,6 @@ successfully open-sourcing a Python project:
 1. [Sphinx](http://www.sphinx-doc.org) for auto-generated HTML documentation
 1. [TravisCI](https://travis-ci.org/) for continuous testing integration
 1. [ReadTheDocs](https://readthedocs.org) for continuous documentation integration
-1. [coverage.io](http://coverage.io) for test coverage continuous integration
 
 
 *Note: In this article, I'll assume you have an existing code base you're looking to open source (and I'll assume you're using Python 2.7.x, but the steps are largely the same if you're using Python 3.x).*
@@ -75,3 +77,15 @@ successfully open-sourcing a Python project:
 ## ReadTheDocs for Continuous Documentation Integration
 
 *include readthedocs.md*
+
+## Conclusion
+
+We've now covered all of the commands, tools, and services that go into open
+sourcing an existing Python package. Sure, you could have just thrown it on
+GitHub and said, "install it yourself," *but no one would have.* And you
+wouldn't *really* have Open Source Software; you'd simply have "free code."
+
+What's more, you likely never would have attracted outside contributors to your 
+project. By setting up your project in the manner outlined here, you've created 
+an easy to maintain Python package that encourages *both use and contribution*.
+And that, after all, is the true spirit of Open Source Software, is it not?
