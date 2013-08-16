@@ -2,28 +2,42 @@
 
 [PyPI, the Python Package Index](http://pypi.python.org/pypi) (formerly known as
 "the Cheeseshop") is a central database of publicly available Python packages. 
-PyPI is where your project's releases "live." One your package, and its
-associate meta-data, has been uploaded to PyPI, others can download and install
-it using `pip` or `easy_install`. This point bears repeating: even if your
-project is available on GitHub, it's not until a release is uploaded to PyPI
-that your project is useful. Sure, someone could clone your git repo and
+PyPI is where your project's releases "live." Once your package (and its
+associate meta-data) has been uploaded to PyPI, others can download and install
+it using `pip` or `easy_install`. This point bears repeating:
+*even if your project is available on GitHub, it's not until a release is uploaded to PyPI that your project is useful*.
+Sure, someone *could* clone your git repo and
 manually install it directly, but *far* more people just want to `pip install`
 it.
 
+#### One last step
+
+If you've completed all of the steps in the previous sections, you're likely 
+anxious to bundle up your package, upload it to PyPI, and make it available to the
+world! 
+
+Before you do so, however, there's a helpful tool called `cheesecake`
+that is helpful to run as the last step before distributing your package. It
+analyzes your package and assigns "scores" in a number of categories. It
+measures how easy/correct packaging and installing your package is, the quality
+of the code, and the quality and quantity of your documentation.
+
+As a coarse measure of "readiness", `cheesecake` is great for sanity checking.
+You'll quickly see if there's an issue with your `setup.py` file or if you
+forgot to document a file. I recommend running it before *each* upload to PyPI,
+not just the first one.
+
 #### Initial upload
 
-You'll be interacting with PyPI through `setuptools` and the `setup.py` script. 
-If you've completed all of the steps in the previous sections, you're likely 
-ready to bundle up your package, upload it to PyPI, and make it available to the
-world!
-
-If this is the first time this particular package is being uploaded to PyPI, you'll 
-first need to *register* it:
+Now that you've confirmed your code isn't crap and won't break when people try
+to install it, let's get your package on PyPI! You'll be interacting with PyPI 
+through `setuptools` and the `setup.py` script. If this is the first time this 
+particular package is being uploaded to PyPI, you'll first need to *register* it:
 
     $ python setup.py register
 
-*Note: if you don't yet have a free PyPI account, you'll need to make one now to be
-able to register the package.* After you've followed `register` prompts, you're ready 
+*Note: if you don't yet have a free PyPI account, you'll need to make one now to be able to register the package.*
+After you've followed `register` prompts, you're ready 
 to create your distributable package and upload it to PyPI:
 
     $ python setup.py sdist upload
@@ -34,12 +48,12 @@ need to do a binary distribution. See the `setuptools` documentation for more in
 
 #### Releases and version numbers
 
-PyPI uses a *release version* model to decide which version (if you've uploaded
-more than one) of your package should be available by default. After the initial
+PyPI uses a *release version* model to decide which version 
+of your package should be available by default. After the initial
 upload, you'll need to create a *release* with a new *version number* each time you
 want your updated package to be made available on PyPI. Managing your 
 version number can actually be a faily complex topic (I
-would highly suggest *semmantic versioning*). I'll leave the *how* up to you, but 
+would highly suggest [semmantic versioning](http://semver.org/)). I'll leave the *how* up to you, but 
 the `version` used in `setup.py` **must** be "higher" than what's currently 
 on PyPI for PyPI to consider the package a new version.
 

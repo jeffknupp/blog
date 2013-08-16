@@ -68,4 +68,10 @@ successfully open-sourcing a Python project:
 
 *include pypi.md*
 
-## ReadTheDocs
+## Continuous Integration with TravisCI
+
+*include travisci.md*
+
+## ReadTheDocs for Continuous Documentation Integration
+
+*include readthedocs.md*
