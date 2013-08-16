@@ -2,8 +2,6 @@ title: Open Sourcing a Python Project the Right Way
 date: 2013-08-16 19:21
 categories: python oss git sphinx git-flow ci pytest
 
-# Open-Sourcing a Python Project The Right Way
-
 Most Python developers have written at least *one* tool, script, 
 library or framework that others would find useful. My goal in this article
 is to make the process of open-sourcing existing Python code as clear 
@@ -70,30 +68,28 @@ of the layout for one of my projects, [sandman](http://www.github.com/jeffknupp/
     ~/code/sandman
     $ tree
     .
-    ├── LICENSE
-    ├── README.md
-    ├── TODO.md
-    ├── docs
-    │   ├── conf.py
-    │   ├── generated
-    │   ├── index.rst
-    │   ├── installation.rst
-    │   ├── modules.rst
-    │   ├── quickstart.rst
-    │   └── sandman.rst
-    ├── requirements.txt
-    ├── sandman
-    │   ├── __init__.py
-    │   ├── exception.py
-    │   ├── model.py
-    │   ├── sandman.py
-    │   └── test
-    │       ├── models.py
-    │       └── test_sandman.py
-    └── setup.py
-
-    4 directories, 17 files
-
+    |- LICENSE
+    |- README.md
+    |- TODO.md
+    |- docs
+    |   |-- conf.py
+    |   |-- generated
+    |   |-- index.rst
+    |   |-- installation.rst
+    |   |-- modules.rst
+    |   |-- quickstart.rst
+    |   |-- sandman.rst
+    |- requirements.txt
+    |- sandman
+    |   |-- __init__.py
+    |   |-- exception.py
+    |   |-- model.py
+    |   |-- sandman.py
+    |   |-- test
+    |       |-- models.py
+    |       |-- test_sandman.py
+    |- setup.py
+    
 As you can see, there are some top level files, a `docs` directory (`generated`
 is an empty directory where sphinx will put the generated documentation), a
 `sandman` directory, and a `test` directory under `sandman`.
@@ -559,7 +555,7 @@ is an example of running `sandman`
 
     #!bash
     $ py.test --cov=path/to/package 
-    $ py.test --cov=path/to/package --cov-report=term --cov-report=html                              ⏎ ✭
+    $ py.test --cov=path/to/package --cov-report=term --cov-report=html
     ====================================================== test session starts =======================================================
     platform darwin -- Python 2.7.5 -- pytest-2.3.5
     plugins: cov
