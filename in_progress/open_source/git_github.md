@@ -7,7 +7,7 @@ to say that not only is the use of git necessary, you'll also need to use
 [GitHub](http://www.github.com) to maintain your project if you want people to
 actually use and contribute to it. 
 
-It's not meant to be an inflamitory statement (though no doubt many will 
+It's not meant to be an inflammatory statement (though no doubt many will 
 take issue with it). Rather, for better or worse, git
 and [GitHub](http://www.github.com) have become the de-facto standard for
 Open Source projects. GitHub is the site potential contributors are 
@@ -48,7 +48,7 @@ things they might implement and automatically manages the pull request workflow 
 a reasonably elegant manner. GitHub issues and their comments can be cross-linked
 with commits, other issues in your project, issues in *other* projects, etc.
 This makes the "Issues" page a good place to keep all of the information related
-to bugfixes, enhancements, and feature requests.
+to bug fixes, enhancements, and feature requests.
 
 Make sure to keep "Issues" up to date and to at least briefly respond to new
 issues in a timely manner. As a contributor, there's nothing more 

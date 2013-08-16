@@ -52,8 +52,8 @@ PyPI uses a *release version* model to decide which version
 of your package should be available by default. After the initial
 upload, you'll need to create a *release* with a new *version number* each time you
 want your updated package to be made available on PyPI. Managing your 
-version number can actually be a faily complex topic (I
-would highly suggest [semmantic versioning](http://semver.org/)). I'll leave the *how* up to you, but 
+version number can actually be a fairly complex topic (I
+would highly suggest [semantic versioning](http://semver.org/)). I'll leave the *how* up to you, but 
 the `version` used in `setup.py` **must** be "higher" than what's currently 
 on PyPI for PyPI to consider the package a new version.
 

@@ -53,7 +53,7 @@ this:
     #!bash
     $ py.test
 
-you can generate test coverage reports by passing a few addtional flags. Below
+you can generate test coverage reports by passing a few additional flags. Below
 is an example of running `sandman`
 
     #!bash
@@ -84,7 +84,7 @@ is an example of running `sandman`
 Certainly not all of my projects have 100% test coverage (in fact, as you read
 this, `sandman` might not have 100% coverage anymore). Getting to 100% was a
 useful exercise, though. It exposed bugs and opportunities for refactoring I
-wouldn't have otherwised noticed.
+wouldn't have otherwise noticed.
 
 Since, as for the tests themselves, test coverage reports can be generated
 automatically as part of your continuous integration. If you choose to do so,

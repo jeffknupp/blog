@@ -42,7 +42,7 @@ your other branches doesn't.
 ###### Develop
 
 Most of your work is done on the `develop` branch. This branch contains all of the completed features and
-bugfixes yet to be released; nightly builds or continuous integration servers should target `develop`,
+bug fixes yet to be released; nightly builds or continuous integration servers should target `develop`,
 as it represents the code that will be included in the next release.
 
 For one-off commits, feel free to commit to `develop` directly. 
@@ -118,7 +118,7 @@ early, only to find they need to make some quick changes the next day. Over
 time, though, they'll settle on a reasonable amount of time for a `release`
 branch to remain open and, thus, won't have a need for `hotfix` branches. The
 only *other* time you would need a `hotfix` branch is if you needed a new
-"feature" in productioni immediately, without picking up the changes already in
+"feature" in production immediately, without picking up the changes already in
 `develop`. That strikes me as something that happens (hopefully) very rarely.
 
 

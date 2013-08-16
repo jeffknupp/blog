@@ -8,7 +8,7 @@ As you can imagine, this is an incredibly valuable practice. There's no more
 that breaks the tests, you'll get an email telling you so.
 
 [TravisCI](http://www.travis-ci.org) is a service that makes continuous
-integration for GitHub projects embarassingly easy. Head over there and create
+integration for GitHub projects embarrassingly easy. Head over there and create
 an account if you don't yet have one. Once you're done, we'll need to create
 one simple file before we're swimming in CI goodness.
 
@@ -38,16 +38,16 @@ file from [sandman](http://www.github.com/jeffknupp/sandman):
     after_success:
         coveralls
 
-After listing the lanugage and version, we tell Travis how to install our
+After listing the language and version, we tell Travis how to install our
 package. Under `install:`, make sure you have the line:
 
     #!yml
     - "pip install -r requirements.txt --use-mirrors"
 
-This `pip install`s our projects requirments (and uses PyPI mirrors if
+This `pip install`s our projects requirements (and uses PyPI mirrors if
 necessary). The other two lines in `install` are specific to [sandman](http://www.github.com/jeffknupp/sandman).
 It's using an additional service ([coveralls.io](http://coveralls.io)) to continuously monitor 
-test case coverage, but that's not neccessary for all projects.
+test case coverage, but that's not necessary for all projects.
 
 `script:` lists the command needed to run the project's tests. Again, [sandman](http://www.github.com/jeffknupp/sandman)
 is doing some extra stuff. All your project needs is `python setup.py test`.
@@ -64,5 +64,5 @@ how often a particular developer breaks the build...
 You should also receive an email letting you know the build was successful.
 Though you can probably configure it otherwise, you'll get emails only when the
 build is broken or fixed, but not if a commit has the same outcome as the build
-that preceeded it. This is incredibly useful, as your not inundated by useless
+that preceded it. This is incredibly useful, as your not inundated by useless
 "the build passed!" emails but are still alerted when something changes.

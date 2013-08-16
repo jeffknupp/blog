@@ -5,7 +5,7 @@ The `setup.py` file you've likely seen in other packages is used by the
 file for any project, as it contains information on versioning, package
 requirements, the project description that will be used on PyPI, and your
 name and contact information, among many other things. It allows packages to be
-searched for an installed in a programatic way, providing meta-data and
+searched for an installed in a programmatic way, providing meta-data and
 instructions to tools that do so.
 
 The [`setuptools`](https://pythonhosted.org/setuptools/setuptools.html) package 
