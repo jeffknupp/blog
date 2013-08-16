@@ -36,11 +36,11 @@ your project's root directory:
 This will create a `docs` directory with a number of documentation files. In
 addition, it creates a `conf.py` file, which is responsible for configuration
 of your documentation. You'll also see a `Makefile`, handy for building
-html documentation in one command (`make html`).
+HTML documentation in one command (`make html`).
 
 Before you actually generate your documentation, be sure you've installed your
 package locally (`$ python setup.py develop` is the easiest way to keep it up
-to date, though you can use `pip` as well) or else `sphix-apidoc` won't be able
+to date, though you can use `pip` as well) or else `sphinx-apidoc` won't be able
 to find your package.
 
 #### Configuration: `conf.py`
