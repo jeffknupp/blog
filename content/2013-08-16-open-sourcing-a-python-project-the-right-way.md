@@ -17,6 +17,12 @@ found to be necessary when open-sourcing a Python project.
 
 <!--more-->
 
+**Update:** Thanks to [@pydanny](http://www.twitter.com/pydanny) for alerting me
+about the existence of [Cookiecutter](https://github.com/audreyr/cookiecutter-pypackage), 
+an awesome project by [@audreyr](https://twitter.com/audreyr). I've added a
+section on it to the end of this article. Be sure to check out Audrey's awesome
+project!
+
 ## Tools and Concepts
 
 In particular, there are a number of tools and concepts I've found 
@@ -38,7 +44,7 @@ set. The goal is to make the entire process clear and simple.
 1. [Sphinx](http://www.sphinx-doc.org) for auto-generated HTML documentation
 1. [TravisCI](https://travis-ci.org/) for continuous testing integration
 1. [ReadTheDocs](https://readthedocs.org) for continuous documentation integration
-
+1. [Cookiecutter](https://github.com/audreyr/cookiecutter-pypackage) to automate these steps when starting your next project
 
 *Note: In this article, I'll assume you have an existing code base you're looking to open source (and I'll assume you're using Python 2.7.x, but the steps are largely the same if you're using Python 3.x).*
 
@@ -876,6 +882,20 @@ values you should use which might not be immediately obvious:
 * Use `virtualenv`: (checked)
 * Requirements file: `requirements.txt`
 * Documentation Type: Sphinx HTML
+
+## Don't Repeat Yourself
+
+Now that you've done all that hard work to open-source an existing code base,
+you likely don't want to have to repeat it all when starting a *new* project.
+Luckily, you don't have to. Audrey Roy's [Cookiecutter](https://github.com/audreyr/cookiecutter-pypackage)
+tool (I've linked to the Python version, though there are versions for numerous
+languages in [the main repo](https://github.com/audreyr/cookiecutter)).
+
+Cookiecutter is a command line tool that automates the process of starting a
+project in a way that makes doing the stuff discussed in this article easy.
+Daniel Greenfeld ([@pydanny](http://www.twitter.com/pydanny)) wrote a great
+blog post about it and how it relates to the practices discussed in this article.
+You should check it out: [Cookiecutter: Project Templates Made Easy](http://pydanny.com/cookie-project-templates-made-easy.html).
 
 ## Conclusion
 
