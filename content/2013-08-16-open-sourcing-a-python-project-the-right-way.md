@@ -248,7 +248,7 @@ take issue with it). Rather, for better or worse, git
 and [GitHub](http://www.github.com) have become the de-facto standard for
 Open Source projects. GitHub is the site potential contributors are 
 most likely to be registered on and familiar with. That, I believe, is not a
-point to be taken likely.
+point to be taken lightly.
 
 #### Create a `README.md` File
 
@@ -869,7 +869,7 @@ Configuring your project should be a straightforward affair. There are a few
 things to remember, though. Here's a list of configuration fields and the
 values you should use which might not be immediately obvious:
 
-* Repo: https://github.com/<github_username>/<project_name>.git
+* Repo: https://github.com/*github_username*/*project_name*.git
 * Default Branch: `develop`
 * Default Version: `latest`
 * Python configuration file: (leave blank)
