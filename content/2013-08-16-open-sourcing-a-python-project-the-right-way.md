@@ -1024,10 +1024,11 @@ different versions of every Python package they have installed.
 
 *Continuous Integration* refers to the process of continuously integrating all
 changes for a project (rather than periodic bulk updates). For our purposes, it
-means that *each time we push a commit to GitHub, our tests our run to tell us if the commit broke something.*
-As you can imagine, this is an incredibly valuable practice. There's no more
-"forgetting to run the tests" before committing/pushing. If you push a commit
-that breaks the tests, you'll get an email telling you so.
+means that *each time we push a commit to GitHub our tests run, telling us 
+if the commit broke something.* As you can imagine, this is an incredibly 
+valuable practice. There's no more "forgetting to run the tests" before 
+committing/pushing. If you push a commit that breaks the tests, you'll get 
+an email telling you so.
 
 [TravisCI](http://www.travis-ci.org) is a service that makes continuous
 integration for GitHub projects embarrassingly easy. Head over there and create
