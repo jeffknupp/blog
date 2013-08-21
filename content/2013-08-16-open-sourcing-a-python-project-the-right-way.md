@@ -17,11 +17,15 @@ found to be necessary when open-sourcing a Python project.
 
 <!--more-->
 
-**Update:** Thanks to [@pydanny](http://www.twitter.com/pydanny) for alerting me
+**Update (Aug 17):** Thanks to [@pydanny](http://www.twitter.com/pydanny) for alerting me
 about the existence of [Cookiecutter](https://github.com/audreyr/cookiecutter-pypackage), 
 an awesome project by [@audreyr](https://twitter.com/audreyr). I've added a
 section on it to the end of this article. Be sure to check out Audrey's awesome
 project!
+
+**Update 2 (Aug 18):** Thanks to [@ChristianHeimes](http://www.twitter.com/ChristianHeimes) (and others) for
+suggesting a section on `tox`. Christian also reminded me about PEP 440 and had some great suggestions
+for other minor improvements, all of which have been implemented.
 
 ## Tools and Concepts
 
@@ -138,8 +142,8 @@ contents of `setup.py` from [sandman](http://www.github.com/jeffknupp/sandman):
         sep = kwargs.get('sep', '\n')
         buf = []
         for filename in filenames:
-        with io.open(filename, encoding=encoding) as f:
-            buf.append(f.read())
+            with io.open(filename, encoding=encoding) as f:
+                buf.append(f.read())
         return sep.join(buf)
     
     long_description = read('README.txt', 'CHANGES.txt')
