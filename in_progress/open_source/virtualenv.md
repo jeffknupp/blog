@@ -55,7 +55,7 @@ like). Now anything installed via `pip install` is installed to the
 
 To stop working on your project and switch back to the system installation, use 
 the `deactivate` command. You should see the `virtualenv` name that was prepended 
-to your shell prompt dissapear. To resume work on your project, run `$ workon
+to your shell prompt disappear. To resume work on your project, run `$ workon
 <project name>` and you'll be back in your `virtualenv`.
 
 Aside from simply creating the `virtualenv` for your project, you'll use it to

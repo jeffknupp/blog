@@ -28,6 +28,10 @@ was released a bit earlier than planned. **Alexandra Grace Knupp**,
 originally due August 26th, was born Thursday morning at 7:20 AM, much to the surprise of her
 parents. Mother and baby are both doing exceptionally well.
 
+Here's a picture of my daughter (taken a week ago):
+
+<img src="http://www.jeffknupp.com/images/alex.jpg">
+
 Alexandra's (Alex's) birth served as a reminder of sevral very important basic truths:
 life happens. Nothing in life is guaranteed. It always seems as though there
 will be more time. For example, I had planned to write a letter to my daughter
@@ -69,6 +73,6 @@ towards chaos. We were extraordinarily lucky to have made it through the surpris
 turn of events in good health and good spirits. We may not always be so lucky, and 
 we can't change that. But we will redouble our efforts not to put off important things 
 that can be done today, regardless of how *certain* we are that there will be more time.
-And we will remember that, "the best laid plans of mice and men often go awry."
+And we will remember that, "the best laid schemes of mice and men often go awry."
 
 And plan accordingly.

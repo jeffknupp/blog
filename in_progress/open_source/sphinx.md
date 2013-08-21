@@ -8,15 +8,50 @@ Python code as easy as possible.
 #### Let the tool do the work
 
 Sphinx has no implicit knowledge of Python programs and how to extract
-documentation from them. It only operates on reStructured Text files, which
+documentation from them. It can only translate reStructured Text files, which
 means a reStructured Text version of your code's documentation needs to be
 available for Sphinx to do its work. But maintaining a reStructured Text 
 version of all of your `.py` files (minus the actual body of functions and
-classes) is clearly not doable. Luckily, Sphinx has a javadoc-like extensions
-which is able to create reStructured Text files from documentation extracted
-from your code's docstrings.
+classes) is clearly not doable. 
 
-!!!!!!!TODO!!!!!!!!!!
+Luckily, Sphinx has a javadoc-like extension, called `autodoc`, which is
+able to extracted reStructured Text from your code's docstrings. To be able
+to fully utilize the power of Sphinx and `autodoc`, you'll need to format your
+docstrings in a particular manner. In particular, you should make use of
+Sphinx's Python directives. Here's an example of a function documented using
+reStructured Text directives, making the resulting HTML documentation much
+nicer:
+
+    #!python
+    def _validate(cls, method, resource=None):
+    """Return ``True`` if the the given *cls* supports the HTTP *method* found
+    on the incoming HTTP request.
+
+    :param cls: class associated with the request's endpoint
+    :type cls: :class:`sandman.model.Model` instance
+    :param string method: HTTP method of incoming request
+    :param resource: *cls* instance associated with the request
+    :type resource: :class:`sandman.model.Model` or None
+    :rtype: bool
+
+    """
+    if not method in cls.__methods__:
+        return False
+
+    class_validator_name = 'validate_' + method
+
+    if hasattr(cls, class_validator_name):
+        class_validator = getattr(cls, class_validator_name)
+        return class_validator(resource)
+
+    return True
+
+Documentation becomes a bit more work, but the payoff is worth it for your
+users. Good, accessible documentation sets a usable project apart from a
+frustrating one.
+
+Sphinx's `autodoc` extension gives you access to a number of directives that
+automatically generate documentation from your docstrings.
 
 #### Installation
 
@@ -36,11 +71,11 @@ your project's root directory:
 This will create a `docs` directory with a number of documentation files. In
 addition, it creates a `conf.py` file, which is responsible for configuration
 of your documentation. You'll also see a `Makefile`, handy for building
-html documentation in one command (`make html`).
+HTML documentation in one command (`make html`).
 
 Before you actually generate your documentation, be sure you've installed your
 package locally (`$ python setup.py develop` is the easiest way to keep it up
-to date, though you can use `pip` as well) or else `sphix-apidoc` won't be able
+to date, though you can use `pip` as well) or else `sphinx-apidoc` won't be able
 to find your package.
 
 #### Configuration: `conf.py`

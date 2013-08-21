@@ -1,4 +1,6 @@
-# Open-Sourcing a Python Project The Right Way
+title: Open Sourcing a Python Project the Right Way
+date: 2013-08-16 19:21
+categories: python oss git sphinx git-flow ci pytest
 
 Most Python developers have written at least *one* tool, script, 
 library or framework that others would find useful. My goal in this article
@@ -12,6 +14,18 @@ While every project is different, there are some parts of the process of
 open-sourcing existing code that are common to *all* Python projects. 
 In the vein of another popular series I've written, ["Starting a Django Project The Right Way,"](http://www.jeffknupp.com/blog/2012/10/24/starting-a-django-14-project-the-right-way/) I'll outline the steps I've 
 found to be necessary when open-sourcing a Python project.
+
+<!--more-->
+
+**Update (Aug 17):** Thanks to [@pydanny](http://www.twitter.com/pydanny) for alerting me
+about the existence of [Cookiecutter](https://github.com/audreyr/cookiecutter-pypackage), 
+an awesome project by [@audreyr](https://twitter.com/audreyr). I've added a
+section on it to the end of this article. Be sure to check out Audrey's awesome
+project!
+
+**Update 2 (Aug 18):** Thanks to [@ChristianHeimes](http://www.twitter.com/ChristianHeimes) (and others) for
+suggesting a section on `tox`. Christian also reminded me about PEP 440 and had some great suggestions
+for other minor improvements, all of which have been implemented.
 
 ## Tools and Concepts
 
@@ -31,12 +45,11 @@ set. The goal is to make the entire process clear and simple.
         1. release/version management
 1. [git-flow](http://nvie.com/posts/a-successful-git-branching-model/) for git workflow
 1. [py.test](http://www.pytest.org) for unit testing
+1. [tox](http://tox.readthedocs.org/en/latest/) for testing standardization
 1. [Sphinx](http://www.sphinx-doc.org) for auto-generated HTML documentation
 1. [TravisCI](https://travis-ci.org/) for continuous testing integration
 1. [ReadTheDocs](https://readthedocs.org) for continuous documentation integration
-
-
-*Note: In this article, I'll assume you have an existing code base you're looking to open source (and I'll assume you're using Python 2.7.x, but the steps are largely the same if you're using Python 3.x).*
+1. [Cookiecutter](https://github.com/audreyr/cookiecutter-pypackage) to automate these steps when starting your next project
 
 ## Project Layout
 
@@ -64,30 +77,28 @@ of the layout for one of my projects, [sandman](http://www.github.com/jeffknupp/
     ~/code/sandman
     $ tree
     .
-    ├── LICENSE
-    ├── README.md
-    ├── TODO.md
-    ├── docs
-    │   ├── conf.py
-    │   ├── generated
-    │   ├── index.rst
-    │   ├── installation.rst
-    │   ├── modules.rst
-    │   ├── quickstart.rst
-    │   └── sandman.rst
-    ├── requirements.txt
-    ├── sandman
-    │   ├── __init__.py
-    │   ├── exception.py
-    │   ├── model.py
-    │   ├── sandman.py
-    │   └── test
-    │       ├── models.py
-    │       └── test_sandman.py
-    └── setup.py
-
-    4 directories, 17 files
-
+    |- LICENSE
+    |- README.md
+    |- TODO.md
+    |- docs
+    |   |-- conf.py
+    |   |-- generated
+    |   |-- index.rst
+    |   |-- installation.rst
+    |   |-- modules.rst
+    |   |-- quickstart.rst
+    |   |-- sandman.rst
+    |- requirements.txt
+    |- sandman
+    |   |-- __init__.py
+    |   |-- exception.py
+    |   |-- model.py
+    |   |-- sandman.py
+    |   |-- test
+    |       |-- models.py
+    |       |-- test_sandman.py
+    |- setup.py
+    
 As you can see, there are some top level files, a `docs` directory (`generated`
 is an empty directory where sphinx will put the generated documentation), a
 `sandman` directory, and a `test` directory under `sandman`.
@@ -117,6 +128,7 @@ contents of `setup.py` from [sandman](http://www.github.com/jeffknupp/sandman):
     from __future__ import print_function
     from setuptools import setup, find_packages
     from setuptools.command.test import test as TestCommand
+    import io
     import codecs
     import os
     import sys
@@ -124,11 +136,17 @@ contents of `setup.py` from [sandman](http://www.github.com/jeffknupp/sandman):
     import sandman
 
     here = os.path.abspath(os.path.dirname(__file__))
-
-    def read(*parts):
-        return codecs.open(os.path.join(here, *parts), 'r').read()
-
-    long_description = read('README.rst')
+    
+    def read(*filenames, **kwargs):
+        encoding = kwargs.get('encoding', 'utf-8')
+        sep = kwargs.get('sep', '\n')
+        buf = []
+        for filename in filenames:
+            with io.open(filename, encoding=encoding) as f:
+                buf.append(f.read())
+        return sep.join(buf)
+    
+    long_description = read('README.txt', 'CHANGES.txt')
 
     class PyTest(TestCommand):
         def finalize_options(self):
@@ -138,8 +156,8 @@ contents of `setup.py` from [sandman](http://www.github.com/jeffknupp/sandman):
 
         def run_tests(self):
             import pytest
-            errno = pytest.main(self.test_args)
-            sys.exit(errno)
+            errcode = pytest.main(self.test_args)
+            sys.exit(errcode)
 
     setup(
         name='sandman',
@@ -176,6 +194,8 @@ contents of `setup.py` from [sandman](http://www.github.com/jeffknupp/sandman):
             'testing': ['pytest'],
         }
     )
+
+*(thanks to Christian Heimes for the suggestion to make `read` more idiomatic. I'll in turn let whichever project I stole this code from know...)*
 
 Most of the contents are straightforward and could be gleaned from the
 `setuptools` documentation, so I'll only touch on the "interesting" parts.
@@ -246,7 +266,7 @@ take issue with it). Rather, for better or worse, git
 and [GitHub](http://www.github.com) have become the de-facto standard for
 Open Source projects. GitHub is the site potential contributors are 
 most likely to be registered on and familiar with. That, I believe, is not a
-point to be taken likely.
+point to be taken lightly.
 
 #### Create a `README.md` File
 
@@ -530,10 +550,6 @@ what functionality each test is exercising. Tests should be written in the same
 "style" so that a potential contributor doesn't have to guess which of the three
 styles of testing used in your project he/she should use.
 
-The main goal is for the tests to be easy to run. There should be a single
-command to run "all" of the tests. If you need to test against multiple
-interpreters, consider using [tox](http://tox.readthedocs.org/en/latest/).
-
 #### Test Coverage
 
 Automated test coverage is a contentious topic. Some believe it to be a
@@ -553,7 +569,7 @@ is an example of running `sandman`
 
     #!bash
     $ py.test --cov=path/to/package 
-    $ py.test --cov=path/to/package --cov-report=term --cov-report=html                              ⏎ ✭
+    $ py.test --cov=path/to/package --cov-report=term --cov-report=html
     ====================================================== test session starts =======================================================
     platform darwin -- Python 2.7.5 -- pytest-2.3.5
     plugins: cov
@@ -585,6 +601,228 @@ Since, as for the tests themselves, test coverage reports can be generated
 automatically as part of your continuous integration. If you choose to do so,
 displaying a badge showing your current test coverage adds a bit of transparency
 to your project (and high numbers can sometimes encourage others to contribute).
+
+## Standardized Testing With Tox
+
+One issue all Python project maintainers face is *compatibility*. If your goal
+is to support both Python 2.x and Python 3.x (and, if you currently only
+support Python 2.x, it should be), how do you make sure your project actually
+works against all the versions you say you support? After all, when you run 
+your tests, you're only testing the specific interpreter version used to run the 
+tests. It's quite possible that a change you made works fine in Python 2.7.5
+but breaks in 2.6 and 3.3.
+
+Luckily, there's a tool dedicated to solving this exact problem. 
+[tox](http://tox.readthedocs.org/en/latest/) provides "standardized testing in 
+Python," and it goes beyond merely running your tests with more than one version 
+of the interpreter. It creates a fully sandboxed environment in which your
+package and its requirements are installed and tested. If you made a change
+that works fine when tested directly but the change inadvertently broke your
+*installation*, you'll discover that with tox.
+
+`tox` is configured via an `.ini` file: `tox.ini`. It's a very simple file to
+set up. Here's a minimal `tox.ini` file taken from the tox documentation:
+
+    #!ini
+    # content of: tox.ini , put in same dir as setup.py
+    [tox]
+    envlist = py26,py27
+    [testenv]
+    deps=pytest       # install pytest in the venvs
+    commands=py.test  # or 'nosetests' or ...
+
+By setting `py26` and `py27` in the `envlist`, `tox` knows that it should run
+your tests against those versions of the interpreter. There are about a dozen
+"default" environments that `tox` supports out of the box, including
+`jython` and `pypy`. `tox` makes testing against different versions and
+configurations it would be a crime *not* to support multiple versions, if only
+to get to use such an awesome tool.
+
+`deps` is a list of dependencies for your package. You can even tell `tox` to 
+install all or some of your dependencies from an alternate PyPI URL. Clearly, 
+quite a bit of thought and work has gone into the project.
+
+Actually running your all of your tests against all of your environments now
+takes four keystrokes:
+
+    #!bash
+    $ tox
+
+#### A more complicated setup
+
+My book, ["Writing Idiomatic Python"](http://www.jeffknupp.com/writing-idiomatic-python-ebook/), is
+actually written as a series of Python modules and docstrings. This is done to make 
+sure all the code samples work as intended. As part of my build process, I run
+`tox` to make sure the code in any new idioms works correctly. I also
+occasionally check my test coverage to make sure there are no idioms
+inadvertently being skipped during testing. As such, my `tox.ini` is a bit more
+complicated than the one above. Take a look:
+
+    #!ini
+    [tox]
+    envlist=py27, py34
+
+    [testenv]
+    deps=
+        pytest
+        coverage
+        pytest-cov
+    setenv=
+        PYTHONWARNINGS=all
+
+    [pytest]
+    adopts=--doctest-modules
+    python_files=*.py
+    python_functions=test_
+    norecursedirs=.tox .git
+
+    [testenv:py27]
+    commands=
+        py.test --doctest-module
+
+    [testenv:py34]
+    commands=
+        py.test --doctest-module
+
+    [testenv:py27verbose]
+    basepython=python
+    commands=
+        py.test --doctest-module --cov=. --cov-report term
+
+    [testenv:py34verbose]
+    basepython=python3.4
+    commands=
+        py.test --doctest-module --cov=. --cov-report term
+
+Even this config file is pretty straightforward. And the result?
+
+    #!bash
+    (idiom)~/c/g/idiom git:master >>> tox
+    GLOB sdist-make: /home/jeff/code/github_code/idiom/setup.py
+    py27 inst-nodeps: /home/jeff/code/github_code/idiom/.tox/dist/Writing Idiomatic Python-1.0.zip
+    py27 runtests: commands[0] | py.test --doctest-module
+    /home/jeff/code/github_code/idiom/.tox/py27/lib/python2.7/site-packages/_pytest/assertion/oldinterpret.py:3: DeprecationWarning: The compiler package is deprecated and removed in Python 3.x.
+    from compiler import parse, ast, pycodegen
+    =============================================================== test session starts ================================================================
+    platform linux2 -- Python 2.7.5 -- pytest-2.3.5
+    plugins: cov
+    collected 150 items 
+    ...
+    ============================================================ 150 passed in 0.44 seconds ============================================================
+    py33 inst-nodeps: /home/jeff/code/github_code/idiom/.tox/dist/Writing Idiomatic Python-1.0.zip
+    py33 runtests: commands[0] | py.test --doctest-module
+    =============================================================== test session starts ================================================================
+    platform linux -- Python 3.3.2 -- pytest-2.3.5
+    plugins: cov
+    collected 150 items 
+    ...
+    ============================================================ 150 passed in 0.62 seconds ============================================================
+    _____________________________________________________________________ summary ______________________________________________________________________
+    py27: commands succeeded
+    py33: commands succeeded
+    congratulations :)
+
+(I cut out the list of all the tests it runs from the output). If I want to
+see the coverage of my tests for an environment, I simply run:
+
+    #!bash
+    $ tox -e py33verbose
+    -------------------------------------------------- coverage: platform linux, python 3.3.2-final-0 --------------------------------------------------
+    Name                                                                                           Stmts   Miss  Cover
+    ------------------------------------------------------------------------------------------------------------------
+    control_structures_and_functions/a_if_statement/if_statement_multiple_lines                       11      0   100%
+    control_structures_and_functions/a_if_statement/if_statement_repeating_variable_name              10      0   100%
+    control_structures_and_functions/a_if_statement/make_use_of_pythons_truthiness                    20      3    85%
+    control_structures_and_functions/b_for_loop/enumerate                                             10      0   100%
+    control_structures_and_functions/b_for_loop/in_statement                                          10      0   100%
+    control_structures_and_functions/b_for_loop/use_else_to_determine_when_break_not_hit              31      0   100%
+    control_structures_and_functions/functions/2only/2only_use_print_as_function                       4      0   100%
+    control_structures_and_functions/functions/avoid_list_dict_as_default_value                       22      0   100%
+    control_structures_and_functions/functions/use_args_and_kwargs_to_accept_arbitrary_arguments      39     31    21%
+    control_structures_and_functions/zexceptions/aaa_dont_fear_exceptions                              0      0   100%
+    control_structures_and_functions/zexceptions/aab_eafp                                             22      2    91%
+    control_structures_and_functions/zexceptions/avoid_swallowing_exceptions                          17     12    29%
+    general_advice/dont_reinvent_the_wheel/pypi                                                        0      0   100%
+    general_advice/dont_reinvent_the_wheel/standard_library                                            0      0   100%
+    general_advice/modules_of_note/itertools                                                           0      0   100%
+    general_advice/modules_of_note/working_with_file_paths                                            39      1    97%
+    general_advice/testing/choose_a_testing_tool                                                       0      0   100%
+    general_advice/testing/separate_tests_from_code                                                    0      0   100%
+    general_advice/testing/unit_test_your_code                                                         1      0   100%
+    organizing_your_code/aa_formatting/constants                                                      16      0   100%
+    organizing_your_code/aa_formatting/formatting                                                      0      0   100%
+    organizing_your_code/aa_formatting/multiple_statements_single_line                                17      0   100%
+    organizing_your_code/documentation/follow_pep257                                                   6      2    67%
+    organizing_your_code/documentation/use_inline_documentation_sparingly                             13      1    92%
+    organizing_your_code/documentation/what_not_how                                                   24      0   100%
+    organizing_your_code/imports/arrange_imports_in_a_standard_order                                   4      0   100%
+    organizing_your_code/imports/avoid_relative_imports                                                4      0   100%
+    organizing_your_code/imports/do_not_import_from_asterisk                                           4      0   100%
+    organizing_your_code/modules_and_packages/use_modules_where_other_languages_use_object             0      0   100%
+    organizing_your_code/scripts/if_name                                                              22      0   100%
+    organizing_your_code/scripts/return_with_sys_exit                                                 32      2    94%
+    working_with_data/aa_variables/temporary_variables                                                12      0   100%
+    working_with_data/ab_strings/chain_string_functions                                               10      0   100%
+    working_with_data/ab_strings/string_join                                                          10      0   100%
+    working_with_data/ab_strings/use_format_function                                                  18      0   100%
+    working_with_data/b_lists/2only/2only_prefer_xrange_to_range                                      14     14     0%
+    working_with_data/b_lists/3only/3only_unpacking_rest                                              16      0   100%
+    working_with_data/b_lists/list_comprehensions                                                     13      0   100%
+    working_with_data/ca_dictionaries/dict_dispatch                                                   23      0   100%
+    working_with_data/ca_dictionaries/dict_get_default                                                10      1    90%
+    working_with_data/ca_dictionaries/dictionary_comprehensions                                       21      0   100%
+    working_with_data/cb_sets/make_use_of_mathematical_set_operations                                 25      0   100%
+    working_with_data/cb_sets/set_comprehensions                                                      12      0   100%
+    working_with_data/cb_sets/use_sets_to_remove_duplicates                                           34      6    82%
+    working_with_data/cc_tuples/named_tuples                                                          26      0   100%
+    working_with_data/cc_tuples/tuple_underscore                                                      15      0   100%
+    working_with_data/cc_tuples/tuples                                                                12      0   100%
+    working_with_data/classes/2only/2only_prepend_private_data_with_underscore                        43     43     0%
+    working_with_data/classes/2only/2only_use_str_for_human_readable_class_representation             18     18     0%
+    working_with_data/classes/3only/3only_prepend_private_data_with_underscore                        45      2    96%
+    working_with_data/classes/3only/3only_use_str_for_human_readable_class_representation             18      0   100%
+    working_with_data/context_managers/context_managers                                               16      7    56%
+    working_with_data/generators/use_generator_expression_for_iteration                               16      0   100%
+    working_with_data/generators/use_generators_to_lazily_load_sequences                              44      1    98%
+    ------------------------------------------------------------------------------------------------------------------
+    TOTAL                                                                                            849    146    83%
+
+    ============================================================ 150 passed in 1.73 seconds ============================================================
+    _____________________________________________________________________ summary ______________________________________________________________________
+    py33verbose: commands succeeded
+    congratulations :)
+
+That's pretty damn awesome.
+
+#### `setuptools` integration
+
+`tox` can be integrated with `setuptools` so that `python setup.py test` runs
+your `tox` tests. The following snippet should be put in your `setup.py` file
+and is taken directly from the `tox` documentation:
+
+    #!python
+    from setuptools.command.test import test as TestCommand
+    import sys
+
+    class Tox(TestCommand):
+        def finalize_options(self):
+            TestCommand.finalize_options(self)
+            self.test_args = []
+            self.test_suite = True
+        def run_tests(self):
+            #import here, cause outside the eggs aren't loaded
+            import tox
+            errcode = tox.cmdline(self.test_args)
+            sys.exit(errcode)
+
+    setup(
+        #...,
+        tests_require=['tox'],
+        cmdclass = {'test': Tox},
+        )
+
+Now `python setup.py test` will download `tox` and run `tox`. Seriously cool.
+And a serious time saver.
 
 ## Documentation with *Sphinx*
 
@@ -765,10 +1003,11 @@ PyPI uses a *release version* model to decide which version
 of your package should be available by default. After the initial
 upload, you'll need to create a *release* with a new *version number* each time you
 want your updated package to be made available on PyPI. Managing your 
-version number can actually be a fairly complex topic (I
-would highly suggest [semantic versioning](http://semver.org/)). I'll leave the *how* up to you, but 
-the `version` used in `setup.py` **must** be "higher" than what's currently 
-on PyPI for PyPI to consider the package a new version.
+version number can actually be a fairly complex topic, so much so that there's
+a PEP for it: [PEP 440 -- Version Identification and Dependency Specification](http://www.python.org/dev/peps/pep-0440/). I'd definitely suggest following the guidelines in PEP 400 (obviously), but
+if you choose to use a different versioning scheme, the `version` used in `setup.py` 
+**must** be "higher" than what's currently on PyPI for PyPI to consider the package 
+a new version.
 
 ##### Workflow
 
@@ -789,10 +1028,11 @@ different versions of every Python package they have installed.
 
 *Continuous Integration* refers to the process of continuously integrating all
 changes for a project (rather than periodic bulk updates). For our purposes, it
-means that *each time we push a commit to GitHub, our tests our run to tell us if the commit broke something.*
-As you can imagine, this is an incredibly valuable practice. There's no more
-"forgetting to run the tests" before committing/pushing. If you push a commit
-that breaks the tests, you'll get an email telling you so.
+means that *each time we push a commit to GitHub our tests run, telling us 
+if the commit broke something.* As you can imagine, this is an incredibly 
+valuable practice. There's no more "forgetting to run the tests" before 
+committing/pushing. If you push a commit that breaks the tests, you'll get 
+an email telling you so.
 
 [TravisCI](http://www.travis-ci.org) is a service that makes continuous
 integration for GitHub projects embarrassingly easy. Head over there and create
@@ -867,13 +1107,27 @@ Configuring your project should be a straightforward affair. There are a few
 things to remember, though. Here's a list of configuration fields and the
 values you should use which might not be immediately obvious:
 
-* Repo: https://github.com/<github_username>/<project_name>.git
+* Repo: https://github.com/*github_username*/*project_name*.git
 * Default Branch: `develop`
 * Default Version: `latest`
 * Python configuration file: (leave blank)
 * Use `virtualenv`: (checked)
 * Requirements file: `requirements.txt`
 * Documentation Type: Sphinx HTML
+
+## Don't Repeat Yourself
+
+Now that you've done all that hard work to open-source an existing code base,
+you likely don't want to have to repeat it all when starting a *new* project.
+Luckily, you don't have to. Audrey Roy's [Cookiecutter](https://github.com/audreyr/cookiecutter-pypackage)
+tool (I've linked to the Python version, though there are versions for numerous
+languages in [the main repo](https://github.com/audreyr/cookiecutter)).
+
+Cookiecutter is a command line tool that automates the process of starting a
+project in a way that makes doing the stuff discussed in this article easy.
+Daniel Greenfeld ([@pydanny](http://www.twitter.com/pydanny)) wrote a great
+blog post about it and how it relates to the practices discussed in this article.
+You should check it out: [Cookiecutter: Project Templates Made Easy](http://pydanny.com/cookie-project-templates-made-easy.html).
 
 ## Conclusion
 
