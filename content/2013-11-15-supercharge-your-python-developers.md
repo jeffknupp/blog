@@ -15,6 +15,8 @@ project's inception, these python beginners were writing beautiful, idiomatic
 code? That code reviews were simple, straightforward, and usually took almost
 no time? The answer may surprise you.
 
+<!--more-->
+
 ## Enabling Your Developers
 
 Continuous integration with deep integration with Python testing and
