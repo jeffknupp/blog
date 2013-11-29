@@ -1,6 +1,6 @@
 title: Improve Your Python: 'yield' and Generators Explained
 date: 2013-04-07 20:23
-categories: python yield generators tutorial explained
+categories: python yield generators tutorial improveyourpython
 
 Prior to beginning tutoring sessions, I ask new students to fill out a brief
 self-assessment where they rate their understanding of various Python concepts. Some 

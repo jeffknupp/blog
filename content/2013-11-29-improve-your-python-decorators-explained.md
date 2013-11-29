@@ -1,14 +1,14 @@
 title: Improve Your Python: Decorators Explained
-date: 2013-11-05 10:49
+date: 2013-11-29 12:21
 categories: python decorator improveyourpython
 
 I've previously written about ["yield" and generators.](http://www.jeffknupp.com/blog/2013/04/07/improve-your-python-yield-and-generators-explained/) In that article, I mention it's a topic that novices find confusing. The purpose and creation of **decorators** is another such topic (using them, however, is rather easy). In this post, you'll learn what decorators are, how they're created, and why they're so useful.
 
 <!--more-->
 
-## A Brief Aside...
+### A Brief Aside...
 
-### Passing Functions
+#### Passing Functions
 
 Before we get started, recall that *everything* in Python is an object that can
 be treated like a value (e.g. functions, classes, modules). You can bind names
