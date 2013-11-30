@@ -74,7 +74,7 @@ demonstrates how that might be useful:
         return result
 
     markdown_string = 'My name is Jeff Knupp and I like Python but I do not own a Python'
-    markdown_string_italicized = transform_words(markdown_string, ['Jeff'],
+    markdown_string_italicized = transform_words(markdown_string, ['Python', 'Jeff'],
             surround_with('*'))
     print(markdown_string_italicized)
 
@@ -129,11 +129,11 @@ This is exactly what decorators do. The function below is used to show the
 
         def price_with_tax(self, tax_rate_percentage):
             """Return the price with *tax_rate_percentage* applied.
-            *tax_rate_percentage* is the tax rate expressed as a float, like "7"
-            for a 7% tax rate."""
-            return price * (1 + (tax * .01))
+            *tax_rate_percentage* is the tax rate expressed as a float, like
+            "7.0" for a 7% tax rate."""
+            return price * (1 + (tax_rate_percentage * .01))
 
-How can we mark this function so that the return value has a "$" prepended?
+How can use the language to augment this function so that the return value has a "$" prepended?
 We create a `decorator` function, which has a useful shorthand notation: `@`.
 To create our `decorator`, we create a function which takes a function (the
 function to be decorated) and returns a new function (the original function
@@ -165,9 +165,9 @@ With `currency` defined, we can now use the `decorator` notation to decorate our
         @currency
         def price_with_tax(self, tax_rate_percentage):
             """Return the price with *tax_rate_percentage* applied.
-            *tax_rate_percentage* is the tax rate expressed as a float, like "7"
+            *tax_rate_percentage* is the tax rate expressed as a float, like "7.0"
             for a 7% tax rate."""
-            return price * (1 + (tax * .01))
+            return price * (1 + (tax_rate_percentage * .01))
 
 Now, to other code, it seems as though `price_with_tax` is a function that
 returns the price with tax prepended by a dollar sign. Notice, however, that we
