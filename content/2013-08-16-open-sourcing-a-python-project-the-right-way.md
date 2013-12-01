@@ -110,7 +110,7 @@ The `setup.py` file you've likely seen in other packages is used by the
 file for any project, as it contains information on versioning, package
 requirements, the project description that will be used on PyPI, and your
 name and contact information, among many other things. It allows packages to be
-searched for an installed in a programmatic way, providing meta-data and
+searched for and installed in a programmatic way, providing meta-data and
 instructions to tools that do so.
 
 The [`setuptools`](https://pythonhosted.org/setuptools/setuptools.html) package 
@@ -1004,7 +1004,7 @@ of your package should be available by default. After the initial
 upload, you'll need to create a *release* with a new *version number* each time you
 want your updated package to be made available on PyPI. Managing your 
 version number can actually be a fairly complex topic, so much so that there's
-a PEP for it: [PEP 440 -- Version Identification and Dependency Specification](http://www.python.org/dev/peps/pep-0440/). I'd definitely suggest following the guidelines in PEP 400 (obviously), but
+a PEP for it: [PEP 440 -- Version Identification and Dependency Specification](http://www.python.org/dev/peps/pep-0440/). I'd definitely suggest following the guidelines in PEP 440 (obviously), but
 if you choose to use a different versioning scheme, the `version` used in `setup.py` 
 **must** be "higher" than what's currently on PyPI for PyPI to consider the package 
 a new version.
@@ -1100,7 +1100,7 @@ While PyPI has an official documentation site ([pythonhosted.org](http://www.pyt
 [ReadTheDocs](https://readthedocs.org/) provides a better experience. Why?
 ReadTheDocs has great integration with GitHub. Once you register on
 ReadTheDocs, you'll see all of your GitHub repos. Select the appropriate repo,
-do some minor configuration, and you're documentation will be automatically
+do some minor configuration, and your documentation will be automatically
 regenerated after each commit to GitHub.
 
 Configuring your project should be a straightforward affair. There are a few
