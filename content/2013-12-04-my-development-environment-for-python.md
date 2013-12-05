@@ -40,7 +40,7 @@ In no particular order, here are the packages I use:
     Use `.` to repeat much more than simple inserts or deletes
 * [ctrlp.vim](http://www.github.com/kien/ctrlp.vim)
     A buffer/file/mru/tag explorer with fuzzy text matching
-* [vim-markdown](http://www.github.com/plasticboy/vim-markdown')
+* [vim-markdown](http://www.github.com/plasticboy/vim-markdown)
     Markdown syntax highlighting for Vim
 * [gundo.vim](http://www.github.com/sjl/gundo.vim)
     Visualize and traverse your undo tree. A must
