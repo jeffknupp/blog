@@ -215,8 +215,6 @@ methods state explicitly exactly what is being asserted by the test (e.g. it is
 clear what `assertIsInstance` is saying about its argument just by glancing at 
 the method name).
 
-### `unittest` is Tricksy...
-
 Each test should test a single, specific property of the code and be named
 accordingly. To be found by the `unittest` test discovery mechanism (present in Python
 2.7+ and 3.2+), test methods should be prepended by `test_` (this is configurable, but 
@@ -291,8 +289,6 @@ method `test_is_five_prime` (since clearly it will now always pass)? **No**.
 tested that the syntax of `is_prime` is valid and, at least in one case, it
 returns the proper result. Our goal is to build a *suite* (a logical grouping 
 of `unit tests`) of tests that all pass, though some may fail at first.
-
-### Going Further
 
 `test_is_five_prime` worked for an "un-special" prime number. Let's make sure it
 works for non-primes as well. Add the following method to the `PrimesTestCase`
@@ -444,7 +440,7 @@ which gives the following output:
 
     FAILED (failures=1)
 
-### Helpful Error Messages
+### Fixing Code *Properly*
 
 We see that the failing negative number was the first tested: `-1`. To fix this,
 we could add yet another special check for negative numbers, but the purpose of
@@ -468,7 +464,6 @@ this case, rather than adding an additional `if`:
 
         return True
 
-
 the following should be preferred:
 
     #!py
@@ -483,8 +478,6 @@ the following should be preferred:
                 return False
 
         return True
-
-### Fixing Code *Properly*
 
 In the latter, we recognize that the two `if` statements can be merged into a
 single statement that returns `False` if the argument is less than 1. This is
@@ -535,5 +528,5 @@ and *how* to write them. That said, be aware we've merely scratched the surface
 of the topic of testing methodologies. More advanced topics such as *test case organization, continuous integration,*
 and *test case management* are good subjects for readers interested in further studying testing in Python.
 
-[^1] Reorganizing/cleaning up code without changing functionality
-[^2] Code that does not expose its internal data or functions and does not make use of the internal data or functions of other code
+[^1]: Reorganizing/cleaning up code without changing functionality
+[^2]: Code that does not expose its internal data or functions and does not make use of the internal data or functions of other code
