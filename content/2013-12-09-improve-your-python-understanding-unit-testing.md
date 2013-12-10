@@ -1,5 +1,5 @@
 title: Improve Your Python: Understanding Unit Testing
-date: 2013-12-08 09:14
+date: 2013-12-09 23:45
 categories: python testing unit-testing improveyourpython
 
 One frequent source of confusion for novice developers is the subject of
