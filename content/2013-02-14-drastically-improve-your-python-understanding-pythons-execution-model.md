@@ -1,6 +1,6 @@
 title: Drastically Improve Your Python: Understanding Python's Execution Model
 date: 2013-02-14 00:48
-categories: python execution binding name scope block
+categories: python execution binding name scope block improveyourpython
 
 Those new to Python are often surprised by the behavior of their own code. They
 expect *A* but, seemingly for no reason, *B* happens instead.

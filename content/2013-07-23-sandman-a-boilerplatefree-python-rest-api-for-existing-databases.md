@@ -32,18 +32,12 @@ service up:
 
     class Artist(Model):
         __tablename__ = 'Artist'
-        endpoint = 'artists'
-        primary_key = 'ArtistId'
 
     class Album(Model):
         __tablename__ = 'Album'
-        endpoint = 'albums'
-        primary_key = 'AlbumId'
 
     class Playlist(Model):
         __tablename__ = 'Playlist'
-        endpoint = 'playlists'
-        primary_key = 'PlaylistId'
 
     register((Artist, Album, Playlist))
 
@@ -53,11 +47,22 @@ service up:
 
 With that code, you'll get a set of HTTP endpoints for both collections (i.e.  'artists') and 
 resources (i.e. '/artists/125'). Collection endpoints support HTTP `GET` and `POST`,
-while resource endpoints support HTTP `GET`, `POST`, `PATCH`, and `DELETE`. All
+while resource endpoints support HTTP `GET`, `POST`, `PATCH`, `PUT`, and `DELETE`. All
 HTTP status codes returned should be correct (i.e. `PATCH` on an existing
-resource returns `204`, but `201` on a non-existant resource). `PATCH` is idempotent, `POST` isn't, and `rel` and `uri` links are returned (though `rel: self` is the only one supported at the moment).
+resource returns `204`, but `201` on a non-existent resource). `PATCH` is idempotent, `POST` isn't, and `rel` and `uri` links are returned (though `rel: self` is the only one supported at the moment).
 
-Here's what a request to the service looks like:
+## But wait, there's more! (Updated 8/21)
+
+Want a Django-style admin interface? You got it. Simply add a single line
+(`model.activate_admin_classes`) to get the smooth sweetness you see here:
+
+![sandman admin screenshot](/images/admin_tracks_improved.jpg)
+
+There's also support for user-defined validation on a per-HTTP method basis, the
+ability to choose supported HTTP methods on a per-resource basis, and custom
+endpoints.
+
+Here's what a simple HTTP request to the service looks like:
 
     #!bash
 
@@ -74,11 +79,15 @@ Here's what a request to the service looks like:
     ]
 ## Towards a Level 3 RESTful API
 
-There's clearly still a lot more work to do. To start, `application/json` is the
-only supported `Content-type`, so no real negotiation takes place (support for
-XML and HTML are coming). Links to related resources, as modeled in the
-database, should be added as well. Customization of HTTP methods a class
-supports and how it validates requests are next on my agenda.
+There's clearly still a lot more work to do, but far less than when this post
+was originally written. A very useful skeleton is in place, and there are only
+two pieces of functionality I consider essential before I would recommend using
+sandman in production: support for authentication and automatic generation of
+`rel` links to related resources (by finding foreign keys via introspection,
+which I've already done for the admin interface). 
+
+I've already begun work on HTTP authentication, so hopefully a true beta release 
+isn't that far off.
 
 ## Wrapping Up
 
