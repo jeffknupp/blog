@@ -17,7 +17,7 @@ minute to define *what* `unit testing` actually is. "Testing", in general progra
 terms, is the practice of writing code (separate from your actual application
 code) that invokes the code it tests to help determine if there are any
 errors. It **does not** prove that code is correct (which is only possible under
-very restricted circumstances). It merely if the conditions the tester thought
+very restricted circumstances). It merely reports if the conditions the tester thought
 of are handled correctly.
 
 *Note: when I use the term "testing", I'm always referring to "automated testing", where the tests are run by the machine. "Manual testing", where a human runs the program and interacts with it to find bugs, is a separate subject.* 
