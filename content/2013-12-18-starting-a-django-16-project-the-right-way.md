@@ -1,15 +1,16 @@
 title: Starting a Django 1.6 Project the Right Way
 date: 2013-12-18 12:50
-categories:
+categories: python django git hg south fabric
 
 *Back in February of 2012, I wrote an article titled ['Starting a Django Project the Right Way'](http://www.jeffknupp.com/blog/2012/02/09/starting-a-django-project-the-right-way/), and later followed up with ['Starting a Django 1.4 Project the Right Way'](http://www.jeffknupp.com/blog/2012/10/24/starting-a-django-14-project-the-right-way/).  Both of these articles still draw a consistent audience and are referenced in numerous StackOverflow answers, corporate wikis, and tweets. With 1.5 *and* 1.6 already out, now seems like an appropriate time to update the article again.*
 
-The beginning of a project is a critical time. Choices are made that have long
+The beginning of a project is a critical time, when choices are made that have long
 term consequences. There are a number of tutorials about how to get started with
 the Django framework, but few that discuss how to use Django in a professional
-way, using industry accepted best practices to make sure your project *development* 
-scales as your application grows. A small bit of planning goes a *long* way
-towards making your life easier in the future.
+way, using industry accepted best practices to make sure your project's
+development practices scale as your application grows. 
+A small bit of planning goes a *long* way towards making your life (and the lives of any coworkers)
+easier in the future.
 
 By the end of this post, you will have
 
@@ -23,7 +24,7 @@ By the end of this post, you will have
 
 None of these steps, except for perhaps the first, are covered in the
 official tutorial. **They should be**. If you're looking to start a new,
-production ready Django 1.4 project, look no further.
+production ready Django 1.6 project, look no further.
 
 <!--more-->
 
@@ -45,11 +46,10 @@ problem with installing packages directly to your current site-packages
 area is that, if you have more than one project or use Python on your
 machine for things other than Django, you may run into dependency
 issues between your applications and the installed packages. For this
-reason, we'll be using
-[virtualenv](http://pypi.python.org/pypi/virtualenv) and the excellent
+reason, we'll be using [virtualenv](http://pypi.python.org/pypi/virtualenv) and the excellent
 extension [virtualenvwrapper](http://virtualenvwrapper.readthedocs.org/en/latest/) to manage our
-Django installation. This is common, and recommended, practice among
-Python and Django users.
+Django installation. This is common, recommended practice among
+Python and Django users alike.
 
 If you're using pip to install packages (and I can't see why you wouldn't), you
 can get both virtualenv and virtualenvwrapper by simply installing the latter.
@@ -67,7 +67,7 @@ After it's installed, add the following lines to your shell's start-up file
 
 Reload your start up file (e.g. `source .zshrc`) and you're ready to go.
 
-## Creating a new environment
+## Creating a New Environment
 
 Creating a virtual environment is simple. Just type
 
@@ -78,7 +78,7 @@ where `django_project` is whatever name you give to your project.
 
 You'll notice a few things happen right away:
 
-* Your shell is prepended by "(django_project)"
+* Your shell is prepended by `(django_project)`
 * distribute and pip were automatically installed
 
 This is an extremely helpful part of virtualenvwrapper: it automatically
@@ -106,13 +106,13 @@ virtualenv area. You can confirm this by doing:
     $ which django-admin.py
 
 Which should point to your `$HOME/.virtualenvs/` directory. If it doesn't,
-make sure you see "(django_project)" before your prompt. If you don't, activate
+make sure you see `django_project` before your prompt. If you don't, activate
 the virtualenv using `workon django_project`.
 
 ## Setting Up The Project
 
 Before we actually start the project, we need to have a little talk. 
-I've consulted on a number of Django projects and spoken to numerous developers
+I've consulted on a number of Django/Python projects and spoken to numerous developers
 in the last few years. Overwhelmingly, the ones having the most difficulty are
 those that do not use any form of version control. It may sound unbelievable
 (considering the popularity of [GitHub](http://www.github.com)), but
@@ -177,11 +177,11 @@ needing to access or make changes to your main project.
 Like many things in software development, it takes a bit of effort up-front 
 but pays huge dividends later.
 
-## Setting up our repos
+## Setting Up Our Repos
 
 Since we have some "code" in our project now (really just some stock scripts and
 empty config files, but bear with me), now is as good a time as any to
-initialize our repositories in source control. Below are the steps to do this in
+initialize our repositories in source control. Here's how to do that in
 git and Mercurial.
 
 #### git
@@ -317,7 +317,7 @@ Let's stage and commit our settings.py and requirements.txt files to be committe
     $ (git/hg) add django_project/settings.py requirements.txt
     $ (git/hg) commit -m 'Added South for database migrations'
 
-### New-Style Settings
+## New-Style Settings
 
 As developers become more comfortable with Django and Python, they realize that
 the `settings.py` file is simply a Python script, and can thus be "programmed".
@@ -339,7 +339,7 @@ following:
 
     #!py
 
-   `INSTALLED_APPS`= DEFAULT_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+    INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 Otherwise, Django will complain about not having `INSTALLED_APPS` defined.
 
@@ -379,7 +379,7 @@ This will inspect the models in `myapp` and automatically add, delete,
 or modify the database tables accordingly. Changes can then be applied to the
 database using the migrate command as above.
 
-### Our Development Area
+## Our Development Area
 
 A good habit to get into is to write and test your code separately from where
 you're serving your files from, so that you don't accidentally bring down your
@@ -420,7 +420,7 @@ choice. Here, I use a named branch, which is probably the safest and most
 informative style of branching. Any commits after the branch command are done on
 the <branchname> branch.
 
-### Using Fabric for Deployment
+## Using Fabric for Deployment
 
 So we have the makings of a Django application. How do we deploy it?
 **[Fabric](http://www.fabfile.org)**. For a reasonable sized project, discussing anything else is a 
@@ -485,7 +485,7 @@ Technically, these could be combined into a single command, but I find
 it's better to explicitly prepare your deployment and then deploy as it
 makes you focus a bit more on what you're doing.
 
-### Setting Up Unit Tests
+## Setting Up Unit Tests
 
 If you know anything about me, you probably know I'm crazy about automated
 tests. Too many Django projects are written without *any* tests whatsoever. This
