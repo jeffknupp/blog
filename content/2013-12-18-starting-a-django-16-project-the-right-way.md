@@ -143,10 +143,10 @@ and allows automated construction of environments (without your having to `pip
 install` everything again).
 
 Let's go ahead and create our project directory. Use the `startproject`
-command supplied by `django_admin.py` to get it set up.
+command supplied by `django-admin.py` to get it set up.
 
     #!bash
-    $ django_admin.py startproject django_project
+    $ django-admin.py startproject django_project
 
 We'll see a single directory created: `django_project`. Within the
 `django_project` directory, we'll see *another* `django_project` directory

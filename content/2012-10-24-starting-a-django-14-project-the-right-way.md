@@ -2,6 +2,9 @@ title: Starting a Django 1.4 Project the Right Way
 date: 2012-10-24 09:09
 categories: django pip virtualenv fabric python deployment south
 
+# Using Django 1.6? 
+
+**[Check out the new, updated version of this post with Django 1.6 specific changes and updates](http://www.jeffknupp.com/blog/2013/12/18/starting-a-django-16-project-the-right-way/).** 
 
 *Back in February, I wrote a post titled ['Starting a Django Project the Right
 Way'](http://www.jeffknupp.com/blog/2012/02/09/starting-a-django-project-the-right-way/),
