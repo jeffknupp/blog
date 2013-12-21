@@ -2,6 +2,8 @@ title: Your Database Just Got Its Own Website
 date: 2013-12-20 14:20
 categories: python sandman database rest
 
+**Update 12/21: Sandman can now activate the REST API and admin interface without your listing your database tables! With five lines of code, you get those two services, plus your browser will automatically open to the admin interface when you start `sandman`. This means that by simply inserting your DB host, username and password and running sandman, you get the admin interface and a RESTful service. There is literally nothing more that you need to do.** 
+
 I briefly posted about my [sandman](https://www.github.com/jeffknupp/sandman)
 library before, but today it got even cooler. To recap, `sandman` is a service that sits
 in front of an existing, legacy database and provides a REST API for it, all
