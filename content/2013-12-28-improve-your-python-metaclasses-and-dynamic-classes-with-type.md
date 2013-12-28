@@ -1,5 +1,4 @@
 title: Improve Your Python: Metaclasses and Dynamic Classes With Type
-
 date: 2013-12-28 10:02
 categories: python type metaclass
 
