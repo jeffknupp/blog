@@ -176,7 +176,7 @@ must define a few methods, one of which is `__next__()`.
 To get the next value from a `generator`, we use the same built-in function as
 for `iterators`: `next()`.
 
-This point bear repeating: **to get the next value from a `generator`, we use the same built-in function as for `iterators`: `next()`**.
+This point bears repeating: **to get the next value from a `generator`, we use the same built-in function as for `iterators`: `next()`**.
 
     
 (`next()` takes care of calling the generator's `__next__()` method). Since a
