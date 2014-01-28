@@ -15,16 +15,16 @@ a naive Bayesian spam filter.
 Our mission is to write a script capable of classifying an email as either "ham" or "spam".
 So, how do we get a stupid Python script to detect spam email? 
 
-It takes two steps.
+It requires two phases.
 
 #### The Learn Phase
 
-The first step is called "supervised learning". In it, we feed the program email for 
+The first phase is called "supervised learning". In this phase, we feed the program email for 
 which we already know the classification (i.e. "Here's a spam email I got
-before. Here's one that's not spam ("ham"). Here's another spam email." etc.). The
+yesterday. Here's one that's not spam ("ham"). Here's another spam email." etc.). The
 program will take note of various properties of the email (which we'll discuss
 in a bit). It records data for every email we feed to it, building up a sort
-of knowledge-base of spam/ham email properties.
+of knowledge-base of spam email properties.
 
 In the second phase, the program will use this refer back to this data
 to determine the *most likely* classification of an unknown email. That is, it
@@ -32,19 +32,23 @@ uses what it has "learned" on a new, previously unseen email message.
 
 To begin, we'll record a very simple set of properties: the frequency of words that appear in
 the body of the email. Later, we'll make it a bit more robust by considering
-properties like the subject line and sender. At a high level, we'll be using two identical dictionary-like structures (one for ham and one for spam). The spam data structure will contain every word we've seen in spam email and the number of times we've seen it (i.e. `{'vacation': 87, 'viagra': 19, ...}`). The same goes for the ham data structure.
+properties like the subject line and sender. At a high level, we'll be using two 
+identical dictionary-like structures (one for ham and one for spam). The spam 
+data structure will contain every word we've seen in spam email and the number 
+of times we've seen it (i.e. `{'vacation': 87, 'viagra': 19, ...}`). The same goes 
+for the ham data structure.
 
 ## Classification
 
 The classification of an unknown email is then relatively
 straightforward to determine: 
 
-* Keep a "spam score" and a "ham score", both starting at `0`
-* For each word in the email, if it appears in the spam dictionary, add the
+1. Keep a "spam score" and a "ham score", both starting at `0`
+1. For each word in the email, if it appears in the spam dictionary, add the
 number of times that word has been seen to the spam score
-* Do the same for the ham score
-* Divide by number of messages seen in learning to get the "relative scores"
-* Choose the largest score as the most likely classification
+1. Do the same for the ham score
+1. Divide by number of messages seen during learning to get the "relative scores"
+1. Choose the largest score as the most likely classification
 
 We calculate "relative" scores to even the playing field between our two data sets. 
 For example, we may have seen the word "vacation" 8 times in ham
@@ -56,7 +60,7 @@ since 30% of the spam we saw had this word while only 4% of the ham email did.
 
 To account for this, we'll give each word a relative score
 equal to the frequency in each class of email divided by the number of messages
-seen in the learn phase for that class. In our example, those values would be `.3`
+seen in the learn phase for that class. In the last example, those values would be `.3`
 for spam and `.04` for ham.
 
 ## Finally, Some Code
@@ -102,24 +106,24 @@ because writing the boiler-plate code "takes too long".
 Of course, we'll likely need to alter this skeleton code, but it's a good start.
 Next let's write an outline for the class. The way I typically write *any* large
 portion of a program is to write the definition *and docstrings* of functions
-and classes I need. Writing the docstring before you implement what it documents
-is a gut-check to make sure you fully understand what that piece of code will do. If you
-can't write the docstring (or use the word "and" fifty times), it's an early sign 
-that you may need to rethink the structure of your program. Of course, we're not 
-handcuffed to the choices we make now, but I find it to be a helpful way to 
-organize my thoughts.
+and classes I need, but not the implementation. Writing the docstring before you 
+implement what it documents is a gut-check to make sure you fully understand 
+what that piece of code will do. If you can't write the docstring 
+(or use the word "and" fifty times), it's an early sign that you may need to rethink 
+the structure of your program. Of course, we're not handcuffed to the choices 
+we make now, but I find it to be a helpful way to organize my thoughts.
 
 Here is the class definition skeleton:
 
     #!py
     class EmailClassifier(object):
-        """Manage learning from and classification of email messages"""
+        """Manage learning/classification of email messages"""
 
         def __init__(self):
             pass
 
-        def parse_message(self, message):
-            """Return a list containing every word found in message"""
+        def _parse_message(self, message):
+            """Return a list containing every word found in *message*"""
             pass
 
         def process_classified_message(self, message, classification):
@@ -138,3 +142,43 @@ Here is the class definition skeleton:
         def load(self):
             """Load previously saved clasification data to disk."""
             pass
+
+This outline looks like it meets all of our previously enumerated requirements.
+Specifically, it will:
+ 
+* Parse an email
+* Record salient properties of the parsed message
+* Add those properties to a persistent data store
+* Load classification data from the data store
+* Compare the unkown email's properties to those of already-classified email
+* Decide the most likely classification
+
+Let's now begin the implementation. Though I'm not often a Test-Driven Design
+practitioner, this project seems like a good fit for it, so let's begin by
+writing a test (which we know will fail). Here's the test file and the
+implementation of the first test:
+
+    """Tests for EmailClassifier"""
+
+    import spam_filter
+
+    HAM = """Jeff,
+    I think your book is terrible and, by extension, you
+    are terrible.
+
+    Kindly,
+    Anonymous"""
+
+    SPAM = """Dear Sir,
+    You Have alredy one a FREE trip to tropical I-land!!!! Kindly open the file and
+    fill owt your info and male me it.
+
+    Sincerely,
+    Anonymous, Director of Prize Distribution
+    """
+
+    def test_parse_email():
+        """Test that a single email is parsed correctly"""
+        classifier = spam_filter.EmailClassifier()
+        assert len(classifier._parse_message(HAM)) == 15
+
