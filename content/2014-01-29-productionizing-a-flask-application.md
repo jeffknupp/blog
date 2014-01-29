@@ -341,7 +341,7 @@ application logic. The final `models.py` became the following:
             return True
 
         def get_id(self):
-            """Return the email address to satify Flask-Login's requirements."""
+            """Return the email address to satisfy Flask-Login's requirements."""
             return self.email
 
         def is_authenticated(self):
@@ -626,7 +626,7 @@ file `test_bull.py` that lives in a `tests` directory at the top level of our pr
                 assert purchase.email == 'foo@bar.com'
 
         def test_download_file(self):
-            """Given an exisitng purchase, does visiting the purchase's url allow us
+            """Given an existing purchase, does visiting the purchase's url allow us
             to download the file?."""
             purchase_url = '/' + self.purchase_uuid
             response = self.app.get(purchase_url)
@@ -667,7 +667,7 @@ file `test_bull.py` that lives in a `tests` directory at the top level of our pr
                     )
 
         def test_user_authentication(self):
-            """Do the authencation methods for the User model work as expected?"""
+            """Do the authentication methods for the User model work as expected?"""
             with app.app_context():
                 user = User.query.get('admin@foo.com')
                 response = self.app.get('/reports')
