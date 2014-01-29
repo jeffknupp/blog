@@ -2,7 +2,7 @@ title: Python and Flask Are Ridiculously Powerful
 date: 2014-01-18 13:09
 categories: python flask
 
-As a developer, I sometimes forget the power I yield. It's easy to forget that,
+As a developer, I sometimes forget the power I wield. It's easy to forget that,
 when something doesn't work the way I'd like, I have the power to change it.
 Yesterday, I was reminded of this fact as I finally got fed up with the way
 payments are processed for [my book](http://www.jeffknupp.com/writing-idiomatic-python-ebook/).
@@ -174,12 +174,11 @@ Here's the code I came up with:
     def download_file(uuid):
         purchase = Purchase.query.get(uuid)
         if purchase:
-            purchase.downloads_left -= 1
             if purchase.downloads_left <= 0:
                 return """<html><body><h1>No downloads left!</h1><p>You have
                 exceeded the allowed number of downloads for this file. Please email
                 jeff@jeffknupp.com with any questions.</p></body></html>"""
-            db.session.add(purchase)
+            purchase.downloads_left -= 1
             db.session.commit()
             return send_from_directory(directory='files',
                     filename=purchase.product.file_name, as_attachment=True)

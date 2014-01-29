@@ -1,6 +1,6 @@
 title: Need a Project Idea? Scratch Your Own Itch
 date: 2014-01-28 12:15
-categories: python blug sandman
+categories: python bull sandman
 
 I'm often contacted by readers who are proficient in Python and would like to
 create an open source project/start-up but can't think of a good project. Picking
@@ -8,6 +8,8 @@ an idea, indeed, just *getting an idea*, seems like a luck-of-the-draw type
 deal. Some people just happen to get great ideas, and the rest of us don't.
 
 **That's garbage.**
+
+<!--more-->
 
 Almost all projects/companies exist because someone noticed that others (or,
 more likely, they themselves) had a need that wasn't being fulfilled. After all,
