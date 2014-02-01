@@ -212,7 +212,7 @@ the completed function in its entirety:
         """Return the number of new mentions found on Twitter."""
         statuses = []
         for query in QUERIES:
-            response = client.api.search.tweets.get(q='jeffknupp.com', count=100)
+            response = client.api.search.tweets.get(q=query, count=100)
             statuses += response.data.statuses
         session = Session()
         twitter = session.query(Source).get(1)
