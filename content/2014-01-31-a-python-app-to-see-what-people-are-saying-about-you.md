@@ -165,7 +165,7 @@ multiple query terms are supported).
     #!py
     statuses = []
     for query in QUERIES:
-        response = client.api.search.tweets.get(q='jeffknupp.com', count=100)
+        response = client.api.search.tweets.get(q=query, count=100)
         statuses += response.data.statuses
 
 I'm happy with how easy `birdy` is to use, although this is an admittedly simple
