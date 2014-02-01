@@ -481,7 +481,7 @@ React tutorial code...):
 
 That gives me this:
 
-<img src="/static/img/eavesdropper.jpeg" />
+<img src="https://www.jeffknupp.com/images/eavesdropper.jpg" />
 
 I decided to call the project "eavesdropper" as it's constantly listening to
 what others are saying :). In the next post about this project, I'll show you
