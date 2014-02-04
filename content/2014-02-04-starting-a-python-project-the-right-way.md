@@ -1,7 +1,6 @@
 title: Starting A Python Project The Right Way
-
 date: 2014-02-04 09:00
-categories: python
+categories: python virtualenv git
 
 If you're like most novice Python programmers, you likely are able to envision
 entire applications in your head but, when it comes time to begin writing code
