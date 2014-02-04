@@ -8,7 +8,7 @@ and a blank editor window is staring you in the face, you feel lost and
 overwhelmed. In today's article, I'll discuss the method *I* use to get myself
 started when beginning a program from scratch. By the end of the article, you
 should have a good plan of attack for starting development for any application.
-
+<!--more-->
 ## Setup
 
 Before a line of code is ever written, the first thing I do is create a *virtual environment*.
@@ -156,7 +156,7 @@ Let's implement `get_keywords_for_movie` first:
 
 We're using both `requests` and `BeautifulSoup`, so we need to install them with
 pip. Now would be a good time to list the project's requirements via `pip freeze
-> requirements.txt` and commit them. This way, we can always create a virtual
+requirements.txt` and commit them. This way, we can always create a virtual
 environment and install exactly the packages and versions we need to run the
 application.
 
@@ -242,4 +242,4 @@ Hopefully, you now have a plan of attack when faced with starting a Python proje
 from scratch. While everyone has their own method of starting a project, mine is
 just as likely to work for you as any other, so give it a try. As always, if you
 have any questions, feel free to ask in the comments or email me at 
-<a href="mailto:jeff@jeffknupp.com>jeff@jeffknupp.com</a>.
+[jeff@jeffknupp.com](mailto:jeff@jeffknupp.com).
