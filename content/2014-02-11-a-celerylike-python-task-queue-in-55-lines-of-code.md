@@ -2,6 +2,8 @@ title: A Celery-like Python Task Queue in 55 Lines of Code
 date: 2014-02-11 10:00
 categories: python celery brokest
 
+*Update: you can check this out on GitHub [here](http://www.github.com/jeffknupp/brokest).*
+
 [Celery](http://docs.celeryproject.org/en/latest/) is probably the best known
 task queuing Python package around. It makes asynchronous execution of Python
 code both possible and reasonably straightforward. It does, however, come with a
