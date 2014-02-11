@@ -32,6 +32,7 @@ if the results are ready.
 So what's the absolute simplest way we could do this?
 I submit to you, `brokest.py`:
 
+    #!py
     """Broker-less distributed task queue."""
     import pickle
 
