@@ -47,7 +47,7 @@ Also, *if you'd like a free review copy of the book*, please [let me know](mailt
 are ideally followed up by a review, either on your site, on Amazon, or
 elsewhere. Please include where your review would appear in your email.
 
-## Isn't the Book *Already* Published
+## Isn't the Book *Already* Published?
 
 Yes, in a manner of speaking. It is self-published, meaning that I used a
 number of services to get the book on the virtual shelves of Amazon, Google
