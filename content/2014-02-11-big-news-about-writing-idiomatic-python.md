@@ -14,8 +14,7 @@ friends, family, and all of you, I was able complete enough of the book to be
 comfortable selling it as a beta version. Today, I think, is the beginning 
 of the last leg of the journey.
 
-**I'm happy to announce that the final version of *Writing Idiomatic Python* will be 
-published by [No Starch Press](http://www.nostarch.com). 
+**I'm happy to announce that the final version of *Writing Idiomatic Python* will be published by [No Starch Press](http://www.nostarch.com).**
 
 <!--more-->
 
@@ -35,13 +34,16 @@ agreeing to this. If you want a digital version of the book, you can either buy
 it through the site or from various online retailers (Amazon, Google Play Books, iBooks, etc),
 sold by No Starch. 
 
+### Testimonials
+
 Lastly, in preparation for the marketing campaign that will accompany the book's
 launch, **I'm asking for testimonials about the book.** If you've read it and
-have something to say about it, *please [email me](mailto:jeff@jeffknupp.com) with a few sentences containing your thoughts on the book and whether others should read it*. The book has sold as well as it has to date thanks to
-word of mouth, and I'm relying again those of you who supported me by asking for
-testimonials.
+have something to say about it, *please [email me](mailto:jeff@jeffknupp.com) with a few sentences containing your thoughts on the book and whether others should read it*. The book has sold as well as it has thanks to
+word of mouth. I'm again relying on your support by asking for testimonials.
 
-Also, *if you'd like a free review copy of the book*, please let me know. Review copies
+### Review Copies
+
+Also, *if you'd like a free review copy of the book*, please [let me know](mailto:jeff@jeffknupp.com). Review copies
 are ideally followed up by a review, either on your site, on Amazon, or
 elsewhere. Please include where your review would appear in your email.
 
