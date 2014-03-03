@@ -1,7 +1,7 @@
 # Step 0
 
 Web applications frameworks, or just "web frameworks", are the de facto way to
-build web-enabled applications. From simple blogs complex AJAX-y applications, every
+build web-enabled applications. From simple blogs to complex AJAX-y applications, every
 application on the web was created by writing code. I've recently found that
 many developers interested in learning a web framework like Flask or Django
 don't really understand what a web framework *is*, their purpose, and how they
@@ -166,7 +166,7 @@ content of the response is included. Note that this can be encoded as a string
 or binary object (in the case of files). The `Content-type` header lets the
 client know how to interpret the response.
 
-### Request-Response Fatigue
+### Web Server Fatigue
 
 If we were going to continue building on the example above as the basis for a
 web application, there are a number of problems we'd need to solve:
@@ -202,8 +202,8 @@ to do the same. *MVC*, or "Model-View-Controller" is simply a way of logically
 separating the different responsiblities of the application. Resources like
 database tables are represented by *models* (in much the same way a `class` in
 Python often models some real-world object). *controllers* contain the business
-logic of the application and operate on the models. The *view* is given all of
-the information it needs to dynamically generate the HTML representation of the page.
+logic of the application and operate on models. *Views* are given all of
+the information they needs to dynamically generate the HTML representation of the page.
 
 Somewhat confusingly, in Django, *controllers* are called *views* and *views*
 are called *templates*. Other than naming weirdness, Django is a pretty
@@ -214,14 +214,14 @@ straightforward implementation of an *MVC* architecture.
 *Routing* is the process of mapping a requested URL to the code responsible for
 generating the associated HTML. In the simplest case, *all* requests are handled
 by the same code (as was the case in our earlier example). Getting a little more
-complex: every URL could map 1:1 to a `view function`. For example, we could
+complex, every URL could map 1:1 to a `view function`. For example, we could
 record somewhere that if the URL `www.foo.com/bar` is requested, the function
 `handle_bar()` is responsible for generating the response. We could build up
 this mapping table until all of the URLs our application supports are enumerated
 with their associated functions.
 
 However, this approach falls flat when the URLs contain useful data, such as the
-ID of a resource, as is the case in `www.foo.com/users/3/`. How do we map that
+ID of a resource (as is the case in `www.foo.com/users/3/`). How do we map that
 URL to a view function, and at the same time make use of the fact that we want
 to display the user with ID `3`? 
 
@@ -245,10 +245,10 @@ above:
     def display_user(id):
         # ...
 
-As you can see, the decorator users an almost simplified form of regular expression
-to identify URLs. Arguments are captured by including a `<name:type>` directive
-in the URL. Routing to static urls like `/info/about_us.html` are handled as you
-would expect: `@app.route('/info/about_us.html')`
+As you can see, the decorator uses an almost simplified form of regular expression
+to map URLs to arguments. Arguments are captured by including a `<name:type>` directive
+in the URL passed to `route()`. Routing to static urls like `/info/about_us.html` is
+handled as you would expect: `@app.route('/info/about_us.html')`
 
 ### HTML Generation Through Templates
 
@@ -258,5 +258,13 @@ allows web designers to hand-craft portions of it? For both Django and Flask,
 the answer is through *HTML templating*.
 
 *HTML Templating* is similar to using `str.format()`: the output is written as
-it should be displayed with specific callouts to dynamic values that should be
-replaced.
+desired minus dynamic values that should be replaced by the arguments to format.
+Imagine writing an entire web page as a single string, marking dynamic data with
+braces, and calling `str.format()` at the end. Both *Django templates* and 
+[jinja2](http://jinja.pocoo.org), the template engine Flask uses,
+are designed to be used in this way.
+
+However, not all templating engines are created equal. While Django has
+rudimentary support for programming in templates, Jinja2 basically lets you execute
+arbitrary code (it doesn't *really*, but close enough). Your templates can be
+arbitrarily complex with 
