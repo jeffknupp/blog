@@ -3,7 +3,7 @@ date: 2014-03-03 21:27
 categories: python web flask django
 
 
-Web applications frameworks, or simply "web frameworks", are the de facto way to
+Web application frameworks, or simply "web frameworks", are the de facto way to
 build web-enabled applications. From simple blogs to complex AJAX-rich applications, every
 page on the web was created by writing code. I've recently found that
 many developers interested in learning a web framework like Flask or Django
