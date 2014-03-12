@@ -3,6 +3,11 @@ import os.path
 import sys
 
 DOCUMENT_ROOT = '/tmp'
+RESPONSE_TEMPLATE = """HTTP/1.1 200 OK
+Content-Length: {}
+Content-Type: text/html
+
+{}"""
 
 def send_error(connection):
     connection.sendall(
@@ -24,15 +29,7 @@ while True:
     else:
         with open(path) as file_handle:
             file_contents = file_handle.read()
-            response = """HTTP/1.1 200 OK
-Content-Length: {}
-Content-Type: text/html
-
-{}""".format(
-                    len(file_contents),
-                    file_contents)
-            print response
-            print file_contents
+            response = RESPONSE_TEMPLATE.format( len(file_contents), file_contents)
             connection.sendall(response)
     connection.close()
 
