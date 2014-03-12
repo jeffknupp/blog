@@ -110,4 +110,87 @@ break them down in detail. One difference, however, is the inclusion of a
 *status code*, a three-digit code used to indicate what action the web server
 took and how to interpret the message-body.
 
+### A functional web server
 
+While our first attempt at a web server barely qualifies as one, we can use what
+we now know about HTTP requests and responses to improve upon the implementation
+a bit:
+
+    #!py Version 2
+    """A web server capable of serving files from a given directory."""
+
+    import socket
+    import os.path
+    import sys
+
+    DOCUMENT_ROOT = '/tmp'
+    RESPONSE_TEMPLATE = """HTTP/1.1 200 OK
+    Content-Length: {}
+
+    {}"""
+
+    def main():
+        """Main entry point for script."""
+        listen_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        listen_socket.bind(('', int(sys.argv[1])))
+        listen_socket.listen(1)
+
+        while True:
+            connection, address = listen_socket.accept()
+            request = connection.recv(1024)
+            start_line = request.split('\n')[0]
+            method, uri, version = start_line.split()
+            path = DOCUMENT_ROOT + uri
+            if not os.path.exists(path):
+                connection.sendall('HTTP/1.1 404 Not Found\n')
+            else:
+                with open(path) as file_handle:
+                    file_contents = file_handle.read()
+                    response = RESPONSE_TEMPLATE.format(
+                        len(file_contents), file_contents)
+                    connection.sendall(response)
+            connection.close()
+
+    if __name__ == '__main__':
+        sys.exit(main())
+
+In this version, I've cleaned the code up a bit, added some documentation, and
+included the ability to server files from a directory of your choosing. To run
+this and see something in your browser, open a Terminal session (or whatever the equivalent is on Windows)
+and navigate to the directory you saved this file in. Once there, create a text file
+named `hello.txt` with with "hello" as the contents. Save it in the `/tmp` (or another 
+directory of your choosing). Run the script by typing `python <name_of_file.py> 8080 /tmp`.
+Open your browser and navigate to
+[http://localhost:8080](http://localhost:8080/hello.txt). Behold! Your message appears in
+your browser, from only 34 lines of Python!
+
+### What's missing
+
+So we can now serve files from a given directory, but that's about all we can
+do. What's more, we're not using *status codes* properly. We send `404 Not
+Found` if *anything* goes wrong. We *should* be sending the status code that
+matches what the problem actually is.
+
+We're also not dealing with headers in any way. If a client sends a request and
+indicates, through the `Accept` header, that it can only receive JSON responses,
+we don't honor that request. Similarly, browsers have gotten quite good at
+caching content and displaying pages directly from the local cache. There are a
+number of headers used to determine caching, but we're not setting any of them.
+
+Lastly, we have no way of letting *another* application (i.e. a web app) handle
+requests. Web servers use various means to accomplish this, but, fundamentally,
+the web server receives the request, recognizes it as one it's supposed to
+forward, and hands it off to the application to deal with.
+
+In part two, we'll address these issues.
+
+# Summary
+
+In part one, we learned about HTTP requests and responses, their format, and the
+purposes of the different parts of each message. We used this knowledge to
+improve our simple web server, making it capable of actually serving files based
+on the URI requested.
+
+In part two, we'll address many of the shortcomings of the current approach,
+plus discuss some of the more esoteric responsibilities web servers have taken
+on over the years and how they're used.
