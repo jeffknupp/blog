@@ -16,7 +16,7 @@ want to launch it. I'm not a Linux sysadmin. **Now what?**" If you decide
 to pay for a service to take care of all the details for you, you learn nothing in the
 process. Worse, when stuff goes sideways (and it always does), you're totally
 reliant on said service to fix things. You, yourself, don't have any power to
-fix issues outside of your OS. If you need to scale, you better hope the service
+fix issues outside of your application. If you need to scale, you better hope the service
 you chose scales with you.
 
 On the other hand, if you rent a VPS, you're essentially dumped to the command
@@ -29,16 +29,16 @@ PostgreSQL config files.
 Why doesn't a third option exist? In home repair, for example, there *is* an
 option between "hire someone" and "buy the materials and do it from
 scratch": many chains (like Home Depot) offer classes taught by professionals
-wherein you'll learn enough to complete your project, while still having total
+wherein you'll learn enough to complete your project, while still maintaining total
 control over it. Why doesn't something like that exist for web hosting?
 
-## straphost: The Solution
+## `straphost`: The Solution
 
-When I was first learning to deploy web applications, I would have thrown money at 
-someone who offered to set up my application while at the same time
+When I was first learning to deploy web applications, I would have **thrown money** at 
+someone offering to set up my application while at the same time
 explaining *what* they were doing and *why*. **I think there's a real need for a service that sets up your web app according to up-to-date best practices while at the same time teaching you how to do so.**
 I would also have appreciated someone teaching me how to solve common
-maintenance issues as well.
+maintenance issues, so let's include that as well.
 
 That's why I'm announcing the creation of [straphost](http://www.straphost.com) ("bootstrapped hosting"). Think of it as 
 both a VPS provider and a tutoring service. I'll teach you how to set up your Python web application
