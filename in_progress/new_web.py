@@ -50,9 +50,11 @@ def main():
         method, uri, version = start_line.split()
         path = document_root + uri
         extension = os.path.splitext(path)[1][1:]
+        print headers
+        print headers['user-agent']
         if 'accept' not in headers or not is_content_type_negotiable(
                 headers['accept'], extension):
-            connection.sendall('HTTP/1.1 409 !!!\n')
+            connection.sendall('HTTP/1.1 406 Not Acceptable\n')
         elif not os.path.exists(path):
             connection.sendall('HTTP/1.1 404 Not Found\n')
         else:
