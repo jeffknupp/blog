@@ -1,6 +1,6 @@
 title: What Is A Web Server?
 date: 2014-03-12 09:09
-categories: #python #flask #web #webserver
+categories: python flask web webserver
 
 A recent post, titled ["What Is A Web Framework"](http://jeffknupp.com/blog/2014/03/03/what-is-a-web-framework/) received quite a positive
 response. A number of readers, though, wanted me to do a deeper dive into web
