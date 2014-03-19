@@ -9,7 +9,7 @@ Jump to other posts in this series
 In [part one](http://jeffknupp.com/blog/2014/03/12/what-is-a-web-server/) we created a super-simple web server capable of handling a
 simple subset of HTTP requests. In this post, we'll flesh out our web server a
 bit more, adding support for header parsing, content negotiation, and cookies.
-
+<!--more-->
 ## Parsing headers
 
 Recall that HTTP *headers* are Key => Value pairs that contain
