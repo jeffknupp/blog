@@ -2,10 +2,10 @@ title: What Is A Web Server?
 date: 2014-03-12 09:09
 categories: #python #flask #web #webserver
 
-A recent post, titled ["What Is A Web Framework"](!!) received quite a positive
+A recent post, titled ["What Is A Web Framework"](http://jeffknupp.com/blog/2014/03/03/what-is-a-web-framework/) received quite a positive
 response. A number of readers, though, wanted me to do a deeper dive into web
-servers themselves. You may have heard of *web servers* like Apache(!!) or
-[nginx](!!). Ever wondered how they work? In this post, we'll cover what a web
+servers themselves. You may have heard of *web servers* like Apache(http://httpd.apache.org) or
+[nginx](http://www.nginx.com). Ever wondered how they work? In this post, we'll cover what a web
 server is, why they exist, and how to build your own.
 <!--more-->
 
@@ -34,7 +34,7 @@ does more with the incoming message to craft its response.
 
 ## The simplest web server
 
-In [the previous post](!!), I described the simplest possible web server.
+In [the previous post](http://jeffknupp.com/blog/2014/03/03/what-is-a-web-framework/) I described the simplest possible web server.
 Much like an echo server, its reply to messages is fixed. Rather than echoing
 back the input message, however, it always responds with a static, stock
 message. The code for such a server follows:
