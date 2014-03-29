@@ -4,7 +4,7 @@ categories: mozilla eich
 
 [Brendan Eich was appointed CEO of Mozilla this week.](http://techcrunch.com/2014/03/28/after-supporting-prop-8-brendan-eich-comes-under-fire-from-mozilla-employees-upon-ceo-appointment/) Normally, I don't pay attention when corporate executive 
 roles are filled, but this one caught my attention. You see, 
-[Eich donated $1,000 in support of Prop 8](http://projects.latimes.com/prop8/donation/8930/) back in 2008, putting Mozilla's name right next to his own. Since then, he has not, to my knowledge, mentioned anything new about his views on gay marriage, so it's safe to presume they are the same as they were in 2008.
+[Eich donated $1,000 in support of Prop 8](http://projects.latimes.com/prop8/donation/8930/) back in 2008. Since then, he has not, to my knowledge, mentioned anything new about his views on gay marriage, so it's safe to presume they are the same as they were in 2008.
 
 Eich doesn't believe that gay people should be afforded the right to marry. 
 I've decided I'm not comfortable using the products of the company of such a
