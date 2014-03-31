@@ -14,7 +14,7 @@ have all my settings and special templates. That repo is the one that sees the
 most love (and I'm *long* overdue for a sync between the private code and the
 public). But more importantly than `blug` being tuned for how I work, `blug` gives
 me something other blogging platforms don't: **control**.
-
+<!--more-->
 If I were to try and replace `blug`, I'd basically have two options: static site
 generators and blogging platforms. The former are attractive because I have more
 control over the infrastructure of the blog. The latter are attractive because

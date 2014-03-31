@@ -94,7 +94,7 @@ This is easily achieved by setting attributes of Foo, like so:
 We could have done it all in one go with the following:
 
     #!py
-    Foo = type('Foo', (), {'always_false', always_false}
+    Foo = type('Foo', (), {'always_false': always_false})
 
 Of course, the `bases` parameter is a list of base classes of `Foo`. We've been
 leaving it empty, but it's perfectly valid to create a new class derived from
