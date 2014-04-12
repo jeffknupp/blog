@@ -14,7 +14,8 @@ be that guy; it's terribly annoying) instead of the guy meekly hitting the
 wanted to be "Internet Famous".
 
 What follows is an account of how I did.
-<!-- more -->
+
+<!--more-->
 
 ## Some Caveats and Qualifications
 
