@@ -6,8 +6,9 @@ import socket
 import sys
 
 RESPONSE_TEMPLATE = """HTTP/1.1 200 OK
+{headers}
 
-{}"""
+{content}"""
 
 LOGGER = logging.getLogger(__name__)
 
@@ -42,9 +43,12 @@ def main():
     listen_socket.listen(1)
     document_root = sys.argv[2]
 
+    REQUESTS = 0
     while True:
         connection, address = listen_socket.accept()
         request = connection.recv(1024)
+        REQUESTS += 1
+        print REQUESTS
         headers = parse_headers(request)
         start_line = request.split('\n')[0]
         method, uri, version = start_line.split()
@@ -60,7 +64,8 @@ def main():
         else:
             with open(path) as file_handle:
                 file_contents = file_handle.read()
-                response = RESPONSE_TEMPLATE.format(file_contents)
+                content_length = len(file_contents)
+                response = RESPONSE_TEMPLATE.format(headers='Content-Length: {}'.format(content_length), content=file_contents)
                 connection.sendall(response)
         connection.close()
 

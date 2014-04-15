@@ -31,7 +31,7 @@ sauce.
 
 Except Google *did* have a Web Search API (and Bing currently has one). It is
 rate limited (to prevent the situation mentioned above) and deprecated, but it
-still exists. Given this fact, "scraping" Google search reults for my search
+still exists and works. Given this fact, "scraping" Google search reults for my search
 term became much more straightforward.
 
 I decided to use [scrapy]](http://www.scrapy.org) as the engine for my
@@ -44,4 +44,8 @@ For this project (again because I'd never used it and wanted an excuse
 to do so), I chose to save the results of the "scraping" to S3. This choice is
 practical because we want to store the results in a central location. That
 allows us to separate the crawling portion of the project from the web
-interface.
+interface. Interfacing with *any* Amazon web service can/should be done with
+[boto](http://FIXME). It's a handy tool if you're ever writing Python code that
+needs to interact with an Amazon web service.
+
+###

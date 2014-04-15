@@ -17,7 +17,8 @@ type of data it contains. Later we'll see how they work and when to use them.
 
 * Dictionary
     * AKA: "Associate Array", "Map", "Hash Map", "Unordered Map"
-    * Contains a series of key->value mappings where the "key" is of any type
+    * Library: built-in
+    * Description: Contains a series of key->value mappings where the "key" is of any type
       that is *hashable* (meaning it has both a `__eq__()` and a `__hash__()` method).
       The "value" may be of any type and value types need not be homogenous
     * What Makes it Special: The underlying implementation is that of a hash
@@ -36,9 +37,16 @@ type of data it contains. Later we'll see how they work and when to use them.
           argument. This is silly. Why would you want this?
     * Mutability: `mutable`
     * Ordering: `undefined`
+    * When to Use It: When describing what you want to do, if you use the word
+      "map" (or "match"), chances are good you need a dictionary. Use whenver a
+      mapping from a key to a value is required. 
+    * Example Usage: `state_captials={'New York': 'Albany'}` "New York" is a *key*
+      and "Albany" is a *value*. This allows us to retrieve a state's captial if
+      we have the state's name by doing `captial = state_captials[state]`
 * List
     * AKA: "Array", "Vector"
-    * Contains a series of (possibly) heterogeneous values
+    * Library: built-in
+    * Description: Contains a series of (possibly) heterogeneous values
     * What Makes it Special: A work-horse data structure, the `list` is notable
       for its overall utility. It provides storage for a mutable sequence of
       values and iteration order is well-defined. Appending to the end of a
@@ -50,23 +58,52 @@ type of data it contains. Later we'll see how they work and when to use them.
         * `[element for element in interable]`: as list comprehension over
           existing iterable
         * `list()`: using `list()` to create an empty list
-        * `list(sequence)`: using list with a sequence to be used as the initial
+        * `list(iterable)`: using `list()` with an iterable to be used as the initial
           series of values 
     * Mutability: `mutable`
     * Ordering: `defined`
+    * When to Use It: Whenever a list of values is needed, especially if the ordering 
+      of values is important.
+    * Example Usage: `stooges = ['Larry', 'Moe', 'Curly']` Each element can be
+      retrieved using its zero-based index in the list (i.e. "Moe" is index `1`). 
 * Set
     * AKA: "Hash Set", "Unordered Set"
-    * Contains a series of (possibly) heterogeneous non-duplicated elements. Attempts to insert a 
-      duplicate element are ignored
+    * Library: built-in
+    * Description: Contains a series of non-duplicated elements. Attempts to insert a duplicate element are ignored
     * What Makes it Special: Each element is hashed as it is added, making *existence checks* 
       quite fast. This also prevents multiple copies of the same element from
       being added.
     * Construction
-        * `set(sequence)`: using `set()` to create a set comprised of the
-          elements of `sequence`. Duplicate elements contained in `sequence` are
+        * `set(iterable)`: using `set()` to create a set comprised of the
+          elements of `iterable`. Duplicate elements contained in `sequence` are
           silently removed.
+        * `{1, 2}`: comma-separated list of initital values surrounded by braces
     * Mutability: `mutable`
     * Ordering: `undefined`
 * Tuple
     * AKA: "N-Tuple"
-    * An immutable sequence of values with a defined iteration order
+    * Library: built-in
+    * Description: An immutable sequence of values with a defined iteration order
+    * What Makes it Special: The `tuple` is behind a number of common Python
+    idioms including multiple assignment and returning multiple values from a
+    function.
+    * Construction
+        * `element, element`: comma separated list of elements with or without
+          enclosing parenthesis. Note the comma is the operator in this case
+          (not the parentheses)
+        * `tuple(iterable)`: using `tuple()` to construct a tuple from an
+          iterable
+    * Mutability: `immutable`
+ * Frozenset
+    * AKA: "Immutable Set"
+    * Library: built-in
+    * Description: Contains a series of non-duplicated elements. Attempts to insert a duplicate element are ignored
+    * What Makes it Special: Like the `set` element is hashed as it is added, making *existence checks* 
+      quite fast. `frozenset`s, however, are *immutable* (hence the "frozen" prefix).
+    * Construction
+        * `frozenset(iterable)`: using `frozenset()` to create a set comprised of the
+          elements of `iterable`. Duplicate elements contained in `sequence` are
+          silently removed.
+    * Mutability: `immutable`
+    * Ordering: `undefined`
+* Queue
