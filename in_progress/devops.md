@@ -45,7 +45,29 @@ And here's what really sucks: most good developers can almost pull this off.
 
 Good developers are smart people. I know I'm going to get a ton of hate
 mail, but there *is* a hierarchy of usefulness of technology roles in an
-organization. Devloper is at the top, followed by sysadmin and DBA each of
-QA teams, "operations", release coordinators and the like are at the bottom 
-of the totem pole. Why is it arranged like this? Becuase each role can do the
-job of any/all of the roles below it if absolutely neccessary. 
+organization. Devloper is at the top, followed by sysadmin and DBA. QA 
+teams, "operations" people, release coordinators and the like are at the bottom 
+of the totem pole. Why is it arranged like this? 
+
+**Becuase each role can do the job of any/all of the roles below it if absolutely neccessary.**
+
+Start-ups taught us this. Good developers can be passable DBAs if need be. They
+make decent testers, "deployment engineers", and whatever other ridiculous term you'd
+like to use. *Their job requires them to know much of the domain of "lower"
+roles.* There's one big problem with this, and hopefully by now you see it:
+
+**It doesn't work in the opposite direction.**
+
+A QA person can't just do the job of a developer in a pinch, nor can a
+build-engineer do the job of a DBA. *They never acquired the specialized
+knowledge to perform the role.* And that's fine. Like it or not, there are
+hierarchies in every organization, and people have different skill sets and
+levels of ability. However, *when you make developers take on other roles, you
+don't have anyone to take on the role of development!*
+
+And this is the crux of the issue. All of the positions previously held by
+people of various levels of ability are made redundant by the "full-stack"
+engineer. Large companies love this, as it means they can hire far fewer people
+to do the same amount of work. In the process, though, *actual development becomes a
+vanishingly small part of a developer's job*. This is why we see so many
+developers that can't pass FizzBuzz: they never really had to write any code.
