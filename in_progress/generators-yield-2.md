@@ -186,5 +186,5 @@ said task can not call yield until *after* it has gotten the data it needs).
 How can we allow for tasks to yield when performing asynchronous I/O? More
 importantly, how would we know exactly *what* I/O a task is waiitng for? That
 is, if I schedule a task that is willing to wait until the socket it opened is
-readable, how do I store and check that informatino to know when to restart the
+readable, how do I store and check that information to know when to reschedule the
 task?

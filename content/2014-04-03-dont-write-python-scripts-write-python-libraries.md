@@ -4,7 +4,7 @@ categories: python
 
 When someone asks why the `if __name__ == '__main__'` idiom should be used, I
 say it's because it makes turning your "script" into a "library" a seamless
-thing. Novices often write a series of one-off Python scripts that exist only as
+act. Novices often write a series of one-off Python scripts that exist only as
 long as it takes to finish and run them. More seasoned developers have accumulated a set of *libraries* they've written over
 the years.
 
@@ -27,16 +27,20 @@ thing and write a small library. Second, because it's a general enough task,
 I wanted to make it available to others so that they didn't need to keep solving
 a problem that's already been solved.
 
+## Solved Problems
+
 As developers, we waste *a ton* of time on solved problems. Whether it's due to
 "Not Invented Here"-itis or general ignorance, I've seen entire systems
 duplicated by different teams in the same organization. I would argue that being 
 able to sense when a problem likely has an open source solution is an integral
 part of being a "good" developer. 
 
-So in the interest of saving everyone a bunch of time, I wrote it, released it,
+So in the interest of saving everyone a bunch of time, I wrote the package, released it,
 and am happy to accept bug reports (and will fix them). What's more, the library
 becomes another tool in my tool belt rather than a few random functions in a
-script I'll never use again. As developers, we should be working together
+script I'll never use again. 
+
+As developers, we should be working together
 on the mundane stuff so that we can all go off and work on the cool stuff.
 Please, don't make other people solve your problem over and over again. Do it
 once, make a library, and release it to the world. You'll save all of us a lot

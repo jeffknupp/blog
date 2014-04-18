@@ -6,8 +6,9 @@ import socket
 import sys
 
 RESPONSE_TEMPLATE = """HTTP/1.1 200 OK
+{headers}
 
-{}"""
+{content}"""
 
 LOGGER = logging.getLogger(__name__)
 
@@ -20,10 +21,10 @@ def parse_headers(request):
     headers = {}
     for line in request.split('\n')[1:]:
         # blank line separates headers from content
-        if not line:
+        if line == '\r':
             break
-        header_line = line.split(':')
-        headers[header_line[0].lower()] = ''.join(header_line[1:]).strip()
+        header_line = line.partition(':')
+        headers[header_line[0].lower()] = header_line[2].strip()
     return headers
 
 def is_content_type_negotiable(accepts, extension):
@@ -34,6 +35,10 @@ def is_content_type_negotiable(accepts, extension):
     # header, or that Accepts is "*/*"
     return extension in accepts or accepts == '*/*'
 
+
+def response_with_cookies(content):
+    return RESPONSE_TEMPLATE.format(headers='Set-Cookie: HasVisited = 1;',
+            content=content)
 
 def main():
     """Main entry point for script."""
@@ -46,6 +51,9 @@ def main():
         connection, address = listen_socket.accept()
         request = connection.recv(1024)
         headers = parse_headers(request)
+        if 'cookie' in headers:
+            cookies = {e.split('=')[0]: e.split('=')[1] for e in headers['cookie'].split(';')}
+        print cookies
         start_line = request.split('\n')[0]
         method, uri, version = start_line.split()
         path = document_root + uri
@@ -61,7 +69,7 @@ def main():
             with open(path) as file_handle:
                 file_contents = file_handle.read()
                 response = RESPONSE_TEMPLATE.format(file_contents)
-                connection.sendall(response)
+                connection.sendall(response_with_cookies())
         connection.close()
 
 if __name__ == '__main__':
