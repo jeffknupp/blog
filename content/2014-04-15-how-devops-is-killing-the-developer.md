@@ -1,9 +1,15 @@
+title: How 'DevOps' is Killing the Developer
+date: 2014-04-15 11:21
+categories: python devops
+
+
 There are two recent trends I really hate: DevOps and the notion of the
 "full-stack" developer. The DevOps movement is so popular that I may as well say
 I hate the x86 architecture or monolithic kernels. But it's true: I can't stand
 it. The underlying cause of my pain? This fact: *not every company is a start-up, though it appears that every company must act as though they were.*
+<!--more-->
 
-# DevOps
+## DevOps
 
 "DevOps" is meant to denote a close collaboration and cross-pollination between what were previously purely
 development roles, purely operations roles, and purely QA roles. Because

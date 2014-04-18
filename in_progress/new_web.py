@@ -47,9 +47,12 @@ def main():
     listen_socket.listen(1)
     document_root = sys.argv[2]
 
+    REQUESTS = 0
     while True:
         connection, address = listen_socket.accept()
         request = connection.recv(1024)
+        REQUESTS += 1
+        print REQUESTS
         headers = parse_headers(request)
         if 'cookie' in headers:
             cookies = {e.split('=')[0]: e.split('=')[1] for e in headers['cookie'].split(';')}
@@ -68,8 +71,9 @@ def main():
         else:
             with open(path) as file_handle:
                 file_contents = file_handle.read()
-                response = RESPONSE_TEMPLATE.format(file_contents)
-                connection.sendall(response_with_cookies())
+                content_length = len(file_contents)
+                response = RESPONSE_TEMPLATE.format(headers='Content-Length: {}'.format(content_length), content=file_contents)
+                connection.sendall(response)
         connection.close()
 
 if __name__ == '__main__':
