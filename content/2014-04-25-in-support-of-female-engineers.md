@@ -2,7 +2,6 @@ title: In Support of Female Engineers
 date: 2014-04-25 09:37
 categories: python stem women
 
-**tl;dr: Female engineers are entitled to a free copy of *Writing Idiomatic Python* and two hour-long private tutoring sessions. Further tutoring sessions are discounted.**
 
 My last post, 
 [How DevOps is Killing the Developer](http://jeffknupp.com/blog/2014/04/15/how-devops-is-killing-the-developer/),
@@ -10,6 +9,10 @@ received quite a bit of attention on social media and technology news sites. The
 and negative, but the negative reactions were *really* negative. I've been wondering 
 what I can do to harness the article's popularity and turn that negative energy into
 something positive. 
+
+**tl;dr: Female engineers are now entitled to a free copy of *Writing Idiomatic Python* and two hour-long private tutoring sessions. Further tutoring sessions are discounted.**
+
+<!--more-->
 
 That's why this post is about women in STEM. It's an issue
 that has received a good deal of attention lately (and rightfully so), but
