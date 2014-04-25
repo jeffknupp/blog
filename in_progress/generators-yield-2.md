@@ -197,7 +197,7 @@ away if no data is available.
 So the big question becomes: how can we make tasks yield when performing synchronous I/O
 ? More importantly, how would we know exactly *what* I/O a task is waiitng for? That
 is, if I schedule a task that is willing to wait until the socket it opened is
-readable, how do I store and check that information to know when I should restart the
+readable, how do I store and check that information to know when to reschedule the
 task?
 
 ## `select`, `poll`, and Event Loops
