@@ -9,7 +9,7 @@ it's not an actual repo. In fact, the directory itself is empty at the moment
 (which is why I currently value it so much). 
 
 The directory's name is `whizbang`.
-
+<!--more-->
 `whizbang` is currently less a project and more an idea. It *will* contain a
 project at some point, however, and the project it will contain
 will be considered my mangum opus, one that delights and amazes. It will
