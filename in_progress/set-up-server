@@ -1,0 +1,96 @@
+One of the questions I'm asked time and again by tutoring clients is, "Now that
+I've finished my Django project, should I host it myself or use a service like
+[Heroku](http://www.heroku.com) or [Google App Engine](https://developers.google.com/appengine/)." 
+I invariably tell them the latter option is probably best, as they likely don't
+have experience setting up and, more importantly, administering a server.
+
+I, however, run tons of projects off of various servers I have with various
+companies: [Linode](https://www.linode.com/?r=ae1808f234f8e219de24842336fada09ef81d52f) (link has my referral code),
+[RackSpace](http://www.rackspace.com), and a few other *ultra cheap* VPS's. I
+love the level of control a *VPS* (Virtual Private Server) affords me. I've been
+using Arch Linux for years, so I'm not afraid to get my hands dirty. And I want
+you to get your hands dirty, too.
+
+In this article, I'll show you how to set up a server for Django (although it's
+basically the same for all web frameworks). With this knowledge, you won't have
+to rely on PaaS offerings like Google App Engine or Heroku and can run your
+application with more power for less money.
+
+<!-- more -->
+
+## In which we arrive at a prompt
+
+I'll be using [Linode](https://www.linode.com/?r=ae1808f234f8e219de24842336fada09ef81d52f) (again, 
+link has my referral code) to create a server from scratch. Well, I'm actually
+just re-imaging an existing one, but the steps are the same. I chose **64-bit Ubuntu 13.10** as my
+OS, and you should probably choose Ubuntu too. The sole reason is that when
+things go sideways, there are *way* more articles about fixing Ubuntu issues
+than for any other distro.
+
+I've allocated all of my disk to the OS and am running with the default swap partition
+created by Linode's configuration.
+Once our machine has been provisioned and is listed as "Ready", boot that puppy
+up. When booting has finished, we can grab the IP address (from the "Remote Access" tab)
+and `ssh` into it as the `root` user. If you're on Linux or a Mac, simply type 
+`ssh root@<your machine's ip address>`. Windows users will need to download Putty in order to
+use `ssh`. Entering the root password you gave during setup brings us to a shell
+prompt.
+
+Kind of exhilarating, isn't it? A pristine server sitting there, waiting for us 
+to muck it up. So let's do so. First we'll get an updated list of packages via
+`apt-get update` (we don't need to use `sudo`, which you may be used to, because
+we're already running as `root`). Next, to get the latest version of all
+packages, run an `apt-get upgrade`. Now we'll create a user.
+
+## Your new home
+
+To create the user that you'll log in with going forward, we turn to the
+`useradd` command. Typing `useradd -h` shows us the options available.
+Since we want this account to have `sudo` access, but not be able to run
+commands without typing a password, we'll create a new group called 'admin'
+first. Do that thusly `groupadd admin`. `sudo` uses the file `/etc/sudoers` to
+determine who is eligible to use sudo, and the default configuration allows
+anyone in the `admin` group to do so. Since no `admin` group existed yet on the
+machine, we simply created one.
+
+Now we'll actually create our user. `useradd -g users -G admin -m <username>`
+should do the trick. We made our primary group `users` and also added ourselves
+to the `admin` group. Set the password on the account by running `passwd
+<username>` and following the prompts. When you've finished that, it's time to
+log out of the `ssh` session as `root` and log in with your new account. Exit by
+typing `exit`, then `ssh` back in using `ssh <username>@<ip address>`. You
+should now be logged in to your new account!
+
+## apt-get going
+
+You might want to change your shell (which defaults to `sh`) before going any
+further. `chsh -s /bin/bash <username> will get you the bash shell. I prefer
+`zshell`, so I'm going to install that. Log out again and `ssh` back in to be
+presented with your new shell.
+
+You're probably going to want to install `git` (or however you're managing your
+code). Do so by typing `sudo apt-get install git`. `sudo apt-get install <package name>` 
+is the mechanism you'll use to install packages, though you could also 
+use `aptitude`. I'm too used to using the former. When we want
+to search for a package, `apt-cache search <search pattern>` can be used.
+With `apt-get install`, you'll need to prepend the command with `sudo`, since
+changing the system requires super user priveledges (searching doesn't). 
+
+After you've gotten `git` installed (or used `scp` to get your code to the
+server), check which version of Python is installed. `Python -V` reports Python
+2.7.5+, which, based on your project, may or may not be OK. If it's not, one
+option is building the cPython interpreter from source, using the tag of the
+version you need. 
+
+Next we'll install `pip` (whose package name is `python-pip`), which will trigger 
+a cascade of other packages to be installed. This is fine (and expected) so
+continue the installation. Once `pip` is installed, I also like to install
+`virtualenvwrapper` so that I can start using virtual environments right away.
+`sudo pip install virtualenvwrapper` will do the trick. Add `source
+/usr/local/bin/virtualenvwrapper.sh` to your `.bashrc` (or equivalent) file and
+`source .bashrc` to load the new commands.
+
+Create a virtualenv for your project and install the dependencies. After you're
+done, it's time to install the database. I'll be installing postgreSQL, but the
+process for installing MySQL (MariaDB) is largely the same. `sudo apt-get install postgresql` will 
+install and start the database, as well as the client binaries and libraries

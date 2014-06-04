@@ -1,12 +1,3 @@
-Thought experiment: You and your technical co-founder just finished your MVP and
-got some angel investors. You need to further build out your product. For your
-next *technical* hire, do you hire a) a sysadmin, b) a DBA, c) a release
-engineer, or d) a developer. I can probably count on one hand the number of
-startups that have more DBAs than developers. Why? Because, while it's possible
-for a developer to do a passable job as a part-time DBA from the moment they're hired,
-the reverse is simply not true.
-
-
 ### I never said "Developers are better than everyone else"
 
 Nor did I say they are *more important*, or valuable somehow. I merely said they have higher *utility* than other positions 
@@ -71,5 +62,21 @@ do with my current job**.
     
 It came about as I was wandering around the PyCon job fair, looking at the requirements for various positions. I saw the term
 "full-stack developer" often enough to notice it, and tried to determine where this ridiculous notion came from. 
-The article was a description of my guess.
+The article was a description of my guess. Here is a tl;dr version of the events
+I proposed have happened:
+
+* DevOps movement is born, encouraging closer collaboration between teams and
+  treating the environment as an artifact
+* Start-ups attempt to use some of the tools/ideas borne of the DevOps movement
+* Being constantly understaffed/underfunded, this results in developers at
+  start-ups essentially taking on the other roles in a perversion of the
+  original purpose
+* Some start-ups grow larger. Seeing that developers were able to do a
+  passable job of some other roles, they decide developers will *take over*
+  those roles in accordance with "DevOps principles"
+* Development teams are treated as tiny-silos where each team owns the entire
+  stack their system runs on and is responsible for maintaining it
+* This fails miserably as developers can't do nearly as good a job as qualified
+  professionals. Rather than hire said professionals, **employers look for *more* qualified developers.**
+* The mythical "full-stack" engineer is born
 
