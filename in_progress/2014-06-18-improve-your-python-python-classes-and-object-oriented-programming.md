@@ -248,7 +248,7 @@ the instance as the first parameter (i.e. `self` on "normal" methods), the
         def make_car_sound():
             print 'VRooooommmm!'
 
-### Class methods
+### Class Methods
 
 A variant of the static method is the *class method*. Instead of receiving the
 *instance* as the first parameter, it is passed the *class*. It, too, is defined
@@ -377,6 +377,8 @@ to the concrete: `Car`s and `Truck`s are real things, tangible objects that make
 intuitive sense as classes. However, they share so much data and functionality
 in common that it seems there must be an *abstraction* we can introduce here.
 Indeed there is: the notion of `Vehicle`s.
+
+### Abstract Classes
 
 A `Vehicle` is not a real-world object. Rather, it is a *concept* that some
 real-world objects (like cars, trucks, and motorcycles) embody. We would like to
@@ -517,3 +519,132 @@ example, the Vehicle class may be defined as follows:
             """"Return a string representing the type of vehicle this is."""
             pass
 
+Now, since `vehicle_type` is an `abstractmethod`, we can't directly create an
+instance of `Vehicle`. As long as `Car` and `Truck` inherit from `Vehicle`
+**and** define `vehicle_type`, we can instantiate those classes just fine.
+
+Returning to the repitition in our `Car` and `Truck` classes, let see if we
+can't remove that by hoisting up common functionality to the base class,
+`Vehicle`:
+
+    #!py
+    from abc import ABCMeta, abstractmethod
+    class Vehicle(object)
+        """A vehichle for sale by Jeffco Car Dealership.
+        
+
+        Attributes:
+            wheels: An integer representing the number of wheels the vehicle has.
+            miles: The integral number of miles driven on the vehicle.
+            make: The make of the vehicle as a string.
+            model: The model of the vehicle as a string.
+            year: The integral year the vehicle was built.
+            sold_on: The date the vehicle was sold.
+        """
+
+        __metaclass__ = ABCMeta
+
+        base_sale_price = 0
+        wheels = 0
+
+        def __init__(self, miles, make, model, year, sold_on):
+            self.miles = miles
+            self.make = make
+            self.model = model
+            self.year = year
+            self.sold_on = sold_on
+
+        def sale_price(self, amount):
+            """Return the sale price for this vehicle as a float amount."""
+            if sold_on is not None:
+                return 0.0  # Already sold
+            return 5000.0 * self.wheels
+
+        def purchase_price(self, amount):
+            """Return the price for which we would pay to purchase the vehicle."""
+            if sold_on is None:
+                return 0.0  # Not yet sold
+            return self.base_sale_price - (.10 * self.miles)
+
+        @abstractmethod
+        def vehicle_type(self):
+            """"Return a string representing the type of vehicle this is."""
+            pass
+
+
+Now the `Car` and `Truck` classes become:
+
+
+    #!py
+    class Car(Vehicle):
+        """A car for sale by Jeffco Car Dealership."""
+
+        base_sale_price = 8000
+        wheels = 4
+
+        def vehicle_type(self):
+            """"Return a string representing the type of vehicle this is."""
+            return 'car'
+
+    class Truck(Vehicle):
+        """A truck for sale by Jeffco Car Dealership."""
+
+        base_sale_price = 10000
+        wheels = 4
+
+        def vehicle_type(self):
+            """"Return a string representing the type of vehicle this is."""
+            return 'truck'
+
+This fits perfectly with our intuition: as far as our system is concerned, the
+only difference between a car and truck is the base sale price. Defining a
+`Motorcycle` class, then, is similarly simple:
+
+    #!py
+    class Motorcycle(Vehicle):
+        """A motorcycle for sale by Jeffco Car Dealership."""
+
+        base_sale_price = 4000
+        wheels = 2
+
+        def vehicle_type(self):
+            """"Return a string representing the type of vehicle this is."""
+            return 'motorcycle'
+
+### Ineritance and the LSP
+
+Even though it seems like we used inheritance to get rid of duplication, what we
+were *really* doing was simply providing the proper level of abstraction. And
+*abstraction* is the key to understanding inheritance. We've seen how one
+side-effect of using inheritance is that we reduce duplicated code, but what
+about from the *caller's perspective*. How does using inheritance change that code?
+
+Quite a bit, it turns out. Imagine we have two classes, `Dog` and `Person`, and
+we want to write a funciton that takes either type of object and prints out
+whether or not the instance in question can speak (a dog can't, a person can).
+We might write code like the following:
+
+    #!py
+    def can_speak(animal):
+        if isinstance(animal, Person):
+            return True
+        elif isinstance(animal, Dog):
+            return False
+        else:
+            raise RuntimeError('Unknown animal!')
+
+That works when we only have two types of animals, but what if we have twenty,
+or *two hundred*? That `if...elif` chain is going to get quite long.
+
+The key insight here is that `can_speak` shouldn't care what type of animal it's
+dealing with, the animal class itself should tell *us* if it can speak. By
+introducing a common base class, `Animal`, that defines `can_speak`, we relieve
+the function of it's type-checking burden. Now, as long as it knows it was an
+`Animal` that was passed in, determining if it can speak is trivial:
+
+    #!py
+    def can_speak(animal):
+        return animal.can_speak()
+ 
+This works becuase `Person` and `Dog` (and whatever other classes we crate to
+derive from `Animal`)
