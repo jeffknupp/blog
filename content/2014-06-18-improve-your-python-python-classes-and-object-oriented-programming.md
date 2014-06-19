@@ -28,7 +28,7 @@ like `HTTPRequest` or `Owner`.
 Regardless, classes are a *modeling* technique; a way of thinking about
 programs. When you think about and implement your system in this way, you're said to be
 performing *Object-Oriented Programming*. "Classes" and "objects" are words that are 
-often used interchangably, but they're not really the same thing. Understanding
+often used interchangeably, but they're not really the same thing. Understanding
 what makes them different is the key to understanding what they are and how they
 work.
 
@@ -64,7 +64,7 @@ objects. Let's look at the following example code:
             return self.balance
 
         def deposit(self, amount):
-            """Return the balance remaining after despositing *amount*
+            """Return the balance remaining after depositing *amount*
             dollars."""
             self.balance += amount
             return self.balance
@@ -156,7 +156,7 @@ Imagine for a moment we had defined the `Customer` class slightly differently:
             return self.balance
 
         def deposit(self, amount):
-            """Return the balance remaining after despositing *amount*
+            """Return the balance remaining after depositing *amount*
             dollars."""
             self.balance += amount
             return self.balance
@@ -236,7 +236,7 @@ The following would be a valid static method on the `Car` class:
             print 'VRooooommmm!'
 
 No matter what kind of car we have, it always makes the same sound (or so I tell
-my ten month old daughter). To make it clear that this method should not recieve
+my ten month old daughter). To make it clear that this method should not receive
 the instance as the first parameter (i.e. `self` on "normal" methods), the
 `@staticmethod` decorator is used, turning our definition into:
 
@@ -385,8 +385,8 @@ real-world objects (like cars, trucks, and motorcycles) embody. We would like to
 use the fact that each of these objects can be considered a vehicle to remove
 repeated code. We can do that by creating a `Vehicle` class:
 
-    class Vehichle(object):
-        """A vehichle for sale by Jeffco Car Dealership.
+    class Vehicle(object):
+        """A vehicle for sale by Jeffco Car Dealership.
 
         Attributes:
             wheels: An integer representing the number of wheels the vehicle has.
@@ -455,7 +455,7 @@ We can now define `Car` and `Truck` in a very straightforward way:
             self.base_sale_price = 10000
 
 This works, but has a few problems. First, we're still repeating a lot of code.
-We'd ultimately like to get rid of **all** repitition. Second, and more
+We'd ultimately like to get rid of **all** repetition. Second, and more
 problematically, we've introduced the `Vehicle` class, but should we really
 allow people to create `Vehicle` objects (as opposed to `Car`s or `Truck`s)?
 A `Vehicle` is just a concept, not a real thing, so what does it mean to say the
@@ -480,13 +480,13 @@ behavior. So how do we make a class an ABC? Simple! The `abc` module contains a
 metaclass called `ABCMeta` (metaclasses are a bit outside the scope of this
 article). Setting a class's metaclass to `ABCMeta` and making one of its methods
 *virtual* makes it an ABC. A *virtual* method is one that the ABC says must
-exist in child classes, but doesn't necessarily actually implememnt. For
+exist in child classes, but doesn't necessarily actually implement. For
 example, the Vehicle class may be defined as follows:
 
     #!py
     from abc import ABCMeta, abstractmethod
     class Vehicle(object)
-        """A vehichle for sale by Jeffco Car Dealership.
+        """A vehicle for sale by Jeffco Car Dealership.
         
 
         Attributes:
@@ -523,14 +523,14 @@ Now, since `vehicle_type` is an `abstractmethod`, we can't directly create an
 instance of `Vehicle`. As long as `Car` and `Truck` inherit from `Vehicle`
 **and** define `vehicle_type`, we can instantiate those classes just fine.
 
-Returning to the repitition in our `Car` and `Truck` classes, let see if we
+Returning to the repetition in our `Car` and `Truck` classes, let see if we
 can't remove that by hoisting up common functionality to the base class,
 `Vehicle`:
 
     #!py
     from abc import ABCMeta, abstractmethod
     class Vehicle(object)
-        """A vehichle for sale by Jeffco Car Dealership.
+        """A vehicle for sale by Jeffco Car Dealership.
         
 
         Attributes:
@@ -611,7 +611,7 @@ only difference between a car and truck is the base sale price. Defining a
             """"Return a string representing the type of vehicle this is."""
             return 'motorcycle'
 
-### Ineritance and the LSP
+### Inheritance and the LSP
 
 Even though it seems like we used inheritance to get rid of duplication, what we
 were *really* doing was simply providing the proper level of abstraction. And
@@ -620,7 +620,7 @@ side-effect of using inheritance is that we reduce duplicated code, but what
 about from the *caller's perspective*. How does using inheritance change that code?
 
 Quite a bit, it turns out. Imagine we have two classes, `Dog` and `Person`, and
-we want to write a funciton that takes either type of object and prints out
+we want to write a function that takes either type of object and prints out
 whether or not the instance in question can speak (a dog can't, a person can).
 We might write code like the following:
 
@@ -646,5 +646,26 @@ the function of it's type-checking burden. Now, as long as it knows it was an
     def can_speak(animal):
         return animal.can_speak()
  
-This works becuase `Person` and `Dog` (and whatever other classes we crate to
-derive from `Animal`)
+This works because `Person` and `Dog` (and whatever other classes we crate to
+derive from `Animal`) follow the *Liskov Substitution Principle*. This states that
+we should be able to use a child class (like `Person` or `Dog`) wherever a
+parent class (`Animal`) is expected an everything will work fine. This sounds
+simple, but it is the basis for a powerful concept we'll discuss in a future
+article: *interfaces*.
+
+## Summary
+
+Hopefully, you've learned a lot about what Python classes are, why they're
+useful, and how to use them. The topic of classes and Object-oriented
+Programming are insanely deep. Indeed, they reach to the core of computer science.
+This article is not meant to be an exhaustive study of classes, nor should it be
+your only reference. There are literally thousands of explanations of OOP and
+classes available online, so if you didn't find this one suitable, certainly a
+bit of searching will reveal one better suited to you.
+
+As always, corrections and arguments are welcome in the comments. Just try to
+keep it civil.
+
+Lastly, it's not too late to see me speak at the
+upcoming [Wharton Web Conference](https://www.sas.upenn.edu/wwc/) at UPenn!
+Check the site for info and tickets.
