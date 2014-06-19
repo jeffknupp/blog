@@ -34,7 +34,7 @@ work.
 
 ## ..So Everything Has A Class?
 
-Classes can be thought of a *blueprints for creating objects*. When I *define* a
+Classes can be thought of as *blueprints for creating objects*. When I *define* a
 Customer class using the `class` keyword, I haven't actually created a customer.
 Instead, what I've created is a sort of instruction manual for constructing "customer"
 objects. Let's look at the following example code:
@@ -182,7 +182,7 @@ methods. It goes without saying, then, that an object should *start* in a valid
 state as well, which is why it's important to initialize everything in the
 `__init__` method.
 
-## Instance Attributes
+## Instance Attributes and Methods
 
 An function defined in a class is called a "method". Methods have access to all the
 data contained on the instance of the object; they can access and modify
@@ -191,12 +191,12 @@ an instance of the class in order to be used. For this reason, they're often
 referred to as "instance methods".
 
 If there are "instance methods", then surely there are other types of methods as
-well, right? Yes, there are, but these methods are a bit more esoteric. 
+well, right? Yes, there are, but these methods are a bit more esoteric. We'll
 cover them briefly here, but feel free to research these topics in more depth.
 
-### Class Methods
+### Static Methods
 
-*Class methods*, or *class attributes*, are attributes that are set at the
+*Class attributes* are attributes that are set at the
 *class-level*, as opposed to the *instance-level*. Normal attributes are
 introduced in the `__init__` method, but some attributes of a class hold for
 *all* instances in all cases. For example, consider the following definition of
@@ -219,4 +219,301 @@ a `Car` object:
 
 A `Car` always has four `wheels`, regardless of the `make` or `model`. Instance
 methods can access these attributes in the same way they access regular
-attributes:
+attributes: through `self` (i.e. `self.wheels`).
+
+There is a class of methods, though, called *static methods*, that don't have
+access to `self`. Just like class attributes, they are methods that work without
+requiring an instance to be present. Since instances are always referenced
+through `self`, static methods have no `self` parameter.
+
+The following would be a valid static method on the `Car` class:
+
+    #!py
+
+    class Car(object):
+        ...
+        def make_car_sound():
+            print 'VRooooommmm!'
+
+No matter what kind of car we have, it always makes the same sound (or so I tell
+my ten month old daughter). To make it clear that this method should not recieve
+the instance as the first parameter (i.e. `self` on "normal" methods), the
+`@staticmethod` decorator is used, turning our definition into:
+
+    #!py
+
+    class Car(object):
+        ...
+        @staticmethod
+        def make_car_sound():
+            print 'VRooooommmm!'
+
+### Class methods
+
+A variant of the static method is the *class method*. Instead of receiving the
+*instance* as the first parameter, it is passed the *class*. It, too, is defined
+using a decorator:
+
+    #!py
+
+    class Vehicle(object):
+        ...
+        @classmethod
+        def is_motorcycle(cls):
+            return cls.wheels == 2
+
+Class methods may not make much sense right now, but that's because they're used most
+often in connection with our next topic: *inheritance*.
+
+## Inheritance
+
+While Object-oriented Programming is useful as a modeling tool, it truly gains
+power when the concept of *inheritance* is introduced. *Inherticance* is the
+process by which a "child" class *derives* the data and behavior of a "parent"
+class. An example will definitely help us here.
+
+Imagine we run a car dealership. We sell all types of vehicles, from motorcycles
+to trucks. We set ourselves apart from the competition by our prices.
+Specifically, how we determine the price of a vehicle on our lot: $5,000 x number
+of wheels a vehicle has. We love buying back our vehicles as well. We offer
+a flat rate - 10% of the miles driven on the vehicle. For trucks, that rate is
+$10,000. For cars, $8,000. For motorcycles, $4,000.
+
+If we wanted to create a sales system for our dealership using Object-oriented
+techniques, how would we do so? What would the objects be? We might have a
+`Sale` class, a `Customer` class, an `Inventory` class, and so forth, but
+we'd almost certainly have a `Car`, `Truck`, and `Motorcycle` class.
+
+What would these classes look like? Using what we've learned, here's a possible
+implementation of the `Car` class:
+
+    #!py
+    class Car(object):
+        """A car for sale by Jeffco Car Dealership.
+
+        Attributes:
+            wheels: An integer representing the number of wheels the car has.
+            miles: The integral number of miles driven on the car.
+            make: The make of the car as a string.
+            model: The model of the car as a string.
+            year: The integral year the car was built.
+            sold_on: The date the vehicle was sold.
+        """
+
+        def __init__(self, wheels, miles, make, model, year, sold_on):
+            """Return a new Car object."""
+            self.wheels = wheels
+            self.miles = miles
+            self.make = make
+            self.model = model
+            self.year = year
+            self.sold_on = sold_on
+
+        def sale_price(self, amount):
+            """Return the sale price for this car as a float amount."""
+            if sold_on is not None:
+                return 0.0  # Already sold
+            return 5000.0 * self.wheels
+
+        def purchase_price(self, amount):
+            """Return the price for which we would pay to purchase the car."""
+            if sold_on is None:
+                return 0.0  # Not yet sold
+            return 8000 - (.10 * self.miles)
+
+        ...
+
+OK, that looks pretty reasonable. Of course, we would likely have a number of
+other methods on the class, but I've shown two of particular interest to us:
+`sale_price` and `purchase_price`. We'll see why these are important in a bit.
+
+Now that we've got the `Car` class, perhaps we should crate a `Truck` class?
+Let's follow the same pattern we did for car:
+
+    #!py
+    class Truck(object):
+        """A truck for sale by Jeffco Car Dealership.
+
+        Attributes:
+            wheels: An integer representing the number of wheels the truck has.
+            miles: The integral number of miles driven on the truck.
+            make: The make of the truck as a string.
+            model: The model of the truck as a string.
+            year: The integral year the truck was built.
+            sold_on: The date the vehicle was sold.
+        """
+
+        def __init__(self, wheels, miles, make, model, year, sold_on):
+            """Return a new Truck object."""
+            self.wheels = wheels
+            self.miles = miles
+            self.make = make
+            self.model = model
+            self.year = year
+            self.sold_on = sold_on
+
+        def sale_price(self, amount):
+            """Return the sale price for this truck as a float amount."""
+            if sold_on is not None:
+                return 0.0  # Already sold
+            return 5000.0 * self.wheels
+
+        def purchase_price(self, amount):
+            """Return the price for which we would pay to purchase the truck."""
+            if sold_on is None:
+                return 0.0  # Not yet sold
+            return 10000 - (.10 * self.miles)
+
+        ...
+
+Wow. That's *almost identical* to the car class. One of the most important rules
+of programming (in general, not just when dealing with objects) is "DRY" or
+"**D**on't **R**epeat **Y**ourself. We've definitely repeated ourselves here. In
+fact, the `Car` and `Truck` classes differ only by *a single character* (aside
+from comments).
+
+So what gives? Where did we go wrong? Our main problem is that we raced straight
+to the concrete: `Car`s and `Truck`s are real things, tangible objects that make
+intuitive sense as classes. However, they share so much data and functionality
+in common that it seems there must be an *abstraction* we can introduce here.
+Indeed there is: the notion of `Vehicle`s.
+
+A `Vehicle` is not a real-world object. Rather, it is a *concept* that some
+real-world objects (like cars, trucks, and motorcycles) embody. We would like to
+use the fact that each of these objects can be considered a vehicle to remove
+repeated code. We can do that by creating a `Vehicle` class:
+
+    class Vehichle(object):
+        """A vehichle for sale by Jeffco Car Dealership.
+
+        Attributes:
+            wheels: An integer representing the number of wheels the vehicle has.
+            miles: The integral number of miles driven on the vehicle.
+            make: The make of the vehicle as a string.
+            model: The model of the vehicle as a string.
+            year: The integral year the vehicle was built.
+            sold_on: The date the vehicle was sold.
+        """
+
+        base_sale_price = 0
+
+        def __init__(self, wheels, miles, make, model, year, sold_on):
+            """Return a new Vehicle object."""
+            self.wheels = wheels
+            self.miles = miles
+            self.make = make
+            self.model = model
+            self.year = year
+            self.sold_on = sold_on
+
+
+        def sale_price(self, amount):
+            """Return the sale price for this vehicle as a float amount."""
+            if sold_on is not None:
+                return 0.0  # Already sold
+            return 5000.0 * self.wheels
+
+        def purchase_price(self, amount):
+            """Return the price for which we would pay to purchase the vehicle."""
+            if sold_on is None:
+                return 0.0  # Not yet sold
+            return self.base_sale_price - (.10 * self.miles)
+
+Now we can make the `Car` and `Truck` class *inherit* from the `Vehicle` class
+by replacing `object` in the line `class Car(object)`. The class in
+parenthesis is the class that is inherited from (`object` essentially means "no
+inheritance". We'll discuss exactly why we write that in a bit).
+
+We can now define `Car` and `Truck` in a very straightforward way:
+
+    #!py
+    class Car(Vehicle):
+
+        def __init__(self, wheels, miles, make, model, year, sold_on):
+            """Return a new Car object."""
+            self.wheels = wheels
+            self.miles = miles
+            self.make = make
+            self.model = model
+            self.year = year
+            self.sold_on = sold_on
+            self.base_sale_price = 8000
+
+
+    class Truck(Vehicle):
+
+        def __init__(self, wheels, miles, make, model, year, sold_on):
+            """Return a new Truck object."""
+            self.wheels = wheels
+            self.miles = miles
+            self.make = make
+            self.model = model
+            self.year = year
+            self.sold_on = sold_on
+            self.base_sale_price = 10000
+
+This works, but has a few problems. First, we're still repeating a lot of code.
+We'd ultimately like to get rid of **all** repitition. Second, and more
+problematically, we've introduced the `Vehicle` class, but should we really
+allow people to create `Vehicle` objects (as opposed to `Car`s or `Truck`s)?
+A `Vehicle` is just a concept, not a real thing, so what does it mean to say the
+following:
+
+    #!py
+    v = Vehicle(4, 0, 'Honda', 'Accord', 2014, None)
+    print v.purchase_price()
+
+A `Vehicle` doesn't have a `base_sale_price`, only the individual *child*
+classes like `Car` and `Truck` do. The issue is that `Vehicle` should really be
+an *Abstract Base Class*. Abstract Base Classes are classes that are only meant
+to be inherited from; you can't create *instance* of an ABC. That means that, if
+`Vehicle` is an ABC, the following is illegal:
+
+    #!py
+    v = Vehicle(4, 0, 'Honda', 'Accord', 2014, None)
+
+It makes sense to disallow this, as we never meant for vehicles to be used
+directly. We just wanted to use it to abstract away some common data and
+behavior. So how do we make a class an ABC? Simple! The `abc` module contains a
+metaclass called `ABCMeta` (metaclasses are a bit outside the scope of this
+article). Setting a class's metaclass to `ABCMeta` and making one of its methods
+*virtual* makes it an ABC. A *virtual* method is one that the ABC says must
+exist in child classes, but doesn't necessarily actually implememnt. For
+example, the Vehicle class may be defined as follows:
+
+    #!py
+    from abc import ABCMeta, abstractmethod
+    class Vehicle(object)
+        """A vehichle for sale by Jeffco Car Dealership.
+        
+
+        Attributes:
+            wheels: An integer representing the number of wheels the vehicle has.
+            miles: The integral number of miles driven on the vehicle.
+            make: The make of the vehicle as a string.
+            model: The model of the vehicle as a string.
+            year: The integral year the vehicle was built.
+            sold_on: The date the vehicle was sold.
+        """
+
+        __metaclass__ = ABCMeta
+
+        base_sale_price = 0
+
+        def sale_price(self, amount):
+            """Return the sale price for this vehicle as a float amount."""
+            if sold_on is not None:
+                return 0.0  # Already sold
+            return 5000.0 * self.wheels
+
+        def purchase_price(self, amount):
+            """Return the price for which we would pay to purchase the vehicle."""
+            if sold_on is None:
+                return 0.0  # Not yet sold
+            return self.base_sale_price - (.10 * self.miles)
+
+        @abstractmethod
+        def vehicle_type():
+            """"Return a string representing the type of vehicle this is."""
+            pass
+
