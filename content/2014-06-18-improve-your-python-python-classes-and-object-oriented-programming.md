@@ -58,7 +58,7 @@ objects. Let's look at the following example code:
         def withdraw(self, amount):
             """Return the balance remaining after withdrawing *amount*
             dollars."""
-            if amount > balance:
+            if amount > self.balance:
                 raise RuntimeError('Amount greater than available balance.')
             self.balance -= amount
             return self.balance
@@ -152,7 +152,7 @@ Imagine for a moment we had defined the `Customer` class slightly differently:
         def withdraw(self, amount):
             """Return the balance remaining after withdrawing *amount*
             dollars."""
-            if amount > balance:
+            if amount > self.balance:
                 raise RuntimeError('Amount greater than available balance.')
             self.balance -= amount
             return self.balance
@@ -311,15 +311,15 @@ implementation of the `Car` class:
             self.year = year
             self.sold_on = sold_on
 
-        def sale_price(self, amount):
+        def sale_price(self):
             """Return the sale price for this car as a float amount."""
-            if sold_on is not None:
+            if self.sold_on is not None:
                 return 0.0  # Already sold
             return 5000.0 * self.wheels
 
-        def purchase_price(self, amount):
+        def purchase_price(self):
             """Return the price for which we would pay to purchase the car."""
-            if sold_on is None:
+            if self.sold_on is None:
                 return 0.0  # Not yet sold
             return 8000 - (.10 * self.miles)
 
@@ -354,15 +354,15 @@ Let's follow the same pattern we did for car:
             self.year = year
             self.sold_on = sold_on
 
-        def sale_price(self, amount):
+        def sale_price(self):
             """Return the sale price for this truck as a float amount."""
-            if sold_on is not None:
+            if self.sold_on is not None:
                 return 0.0  # Already sold
             return 5000.0 * self.wheels
 
-        def purchase_price(self, amount):
+        def purchase_price(self):
             """Return the price for which we would pay to purchase the truck."""
-            if sold_on is None:
+            if self.sold_on is None:
                 return 0.0  # Not yet sold
             return 10000 - (.10 * self.miles)
 
@@ -411,15 +411,15 @@ repeated code. We can do that by creating a `Vehicle` class:
             self.sold_on = sold_on
 
 
-        def sale_price(self, amount):
+        def sale_price(self):
             """Return the sale price for this vehicle as a float amount."""
-            if sold_on is not None:
+            if self.sold_on is not None:
                 return 0.0  # Already sold
             return 5000.0 * self.wheels
 
-        def purchase_price(self, amount):
+        def purchase_price(self):
             """Return the price for which we would pay to purchase the vehicle."""
-            if sold_on is None:
+            if self.sold_on is None:
                 return 0.0  # Not yet sold
             return self.base_sale_price - (.10 * self.miles)
 
@@ -487,7 +487,7 @@ example, the Vehicle class may be defined as follows:
 
     #!py
     from abc import ABCMeta, abstractmethod
-    class Vehicle(object)
+    class Vehicle(object):
         """A vehicle for sale by Jeffco Car Dealership.
         
 
@@ -504,15 +504,15 @@ example, the Vehicle class may be defined as follows:
 
         base_sale_price = 0
 
-        def sale_price(self, amount):
+        def sale_price(self):
             """Return the sale price for this vehicle as a float amount."""
-            if sold_on is not None:
+            if self.sold_on is not None:
                 return 0.0  # Already sold
             return 5000.0 * self.wheels
 
-        def purchase_price(self, amount):
+        def purchase_price(self):
             """Return the price for which we would pay to purchase the vehicle."""
-            if sold_on is None:
+            if self.sold_on is None:
                 return 0.0  # Not yet sold
             return self.base_sale_price - (.10 * self.miles)
 
@@ -531,7 +531,7 @@ can't remove that by hoisting up common functionality to the base class,
 
     #!py
     from abc import ABCMeta, abstractmethod
-    class Vehicle(object)
+    class Vehicle(object):
         """A vehicle for sale by Jeffco Car Dealership.
         
 
@@ -556,15 +556,15 @@ can't remove that by hoisting up common functionality to the base class,
             self.year = year
             self.sold_on = sold_on
 
-        def sale_price(self, amount):
+        def sale_price(self):
             """Return the sale price for this vehicle as a float amount."""
-            if sold_on is not None:
+            if self.sold_on is not None:
                 return 0.0  # Already sold
             return 5000.0 * self.wheels
 
-        def purchase_price(self, amount):
+        def purchase_price(self):
             """Return the price for which we would pay to purchase the vehicle."""
-            if sold_on is None:
+            if self.sold_on is None:
                 return 0.0  # Not yet sold
             return self.base_sale_price - (.10 * self.miles)
 
