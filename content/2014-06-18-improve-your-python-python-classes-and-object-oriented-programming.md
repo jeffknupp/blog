@@ -8,7 +8,7 @@ well. Understanding what classes are, when to use them, and how the can be
 useful is essential, and the goal of this article. In the process, we'll explore
 what the term *Object-Oriented Programming* means and how it ties together with
 Python classes.
-
+<!--more-->
 ## Everything Is An Object...
 
 What is the `class` keyword used for, exactly? Like its function-based cousin
@@ -51,7 +51,7 @@ objects. Let's look at the following example code:
 
         def __init__(self, name, balance=0.0):
             """Return a Customer object whose name is *name* and starting
-            balance is *balance*.
+            balance is *balance*."""
             self.name = name
             self.balance = balance
 
@@ -141,7 +141,9 @@ Imagine for a moment we had defined the `Customer` class slightly differently:
 
         def __init__(self, name):
             """Return a Customer object whose name is *name* and starting
+            balance is 0."""
             self.name = name
+            self.balance = 0.0
 
         def set_balance(self, balance=0.0):
             """Set the customer's starting balance."""
