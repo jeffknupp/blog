@@ -9,7 +9,7 @@ adoption. But in terms of long-term effect on the software industry, these
 technologies are miles behind a relative newcomer.
 
 **That technology is *[docker](http://www.docker.com).**
-
+<!--more-->
 ## What's Docker?
 
 Docker is an application build and deployment management system. It is based on
