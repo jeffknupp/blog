@@ -82,4 +82,3 @@ going to get better/more stable as time goes by. The best part, of course, is
 you never need to do any work to REST-ify your models (aside from those two
 lines). Any upgrades will *just work* and shouldn't require any work on your
 side.
-
