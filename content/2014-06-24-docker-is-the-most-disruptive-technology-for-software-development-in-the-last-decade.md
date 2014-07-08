@@ -8,7 +8,7 @@ and NoSQL are just a few technologies that have seen reasonably quick growth and
 adoption. But in terms of long-term effect on the software industry, these
 technologies are miles behind a relative newcomer.
 
-**That technology is *[docker](http://www.docker.com).**
+**That technology is *[docker](http://www.docker.com)*.**
 <!--more-->
 ## What's Docker?
 
@@ -80,6 +80,7 @@ following two commands to build and run the container, respectively:
     #!bash
     $ sudo docker build -t jeffknupp/eavesdropper:devel .
 
+And...
 
     #!bash
     $ sudo docker run -d -P --name eaves --link db:db jeffknupp/eavesdropper:devel
