@@ -128,7 +128,68 @@ table *but not* the `Vehicle` table; it's the same car, after all.
 We can also issue queries that span the implicit relationship between `Vehicle` and `ServiceHistory`:
 
     #!sql
-    SELECT Vehicle.Model, Vehicle.Year FROM Vehicle, ServiceHistory WHERE Vehicle.VIN = ServiceHistory.VIN AND Price > 75.00;
+    SELECT Vehicle.Model, Vehicle.Year FROM Vehicle, ServiceHistory WHERE Vehicle.VIN = ServiceHistory.VIN AND ServiceHistory.Price > 75.00;
 
 This query seeks to determine the Model and Year for all cars where the repair costs were
 greater than $75.00.
+
+### Indexes
+
+If our database has no *indexes* (indices), the query above would need to
+perform a *table scan*, or an inspection of each row in the table in sequence,
+to locate rows that match our query. Table scans are notoriously slow. Indeed,
+they represent the slowest possible method of query execution.
+
+Table scans can be avoided through the use of an index on a column or column.
+Think of indices as data structures that allow us to find a particular value 
+(or range of values) in the indexed column very quickly by pre-sorting the
+values. That is, if we had an index on the Price column, instead of looking 
+through all rows one-at-a-time to determine if the price was greater 
+than `75.00`, we could simply use the information contained in the index 
+to "jump" to the first row with a price greater than `75.00` and return every
+subsequent row (which would have a price at least as high as `75.00`, since the
+index is ordered).
+
+When dealing with non-trivial amounts of data, indices become an indespensable
+tool for improving query speed. Like all things, however, they come at a cost:
+building the index's data structure takes memory that would otherwise be used to
+store more database data. It's a tradeoff that one must examine in each
+individual case, but it's *very* common to index frequently queried columns.
+
+### The Clear Box
+
+Advanced features like indices are possible due to the database's ability to
+inspect a table's *schema* (the description of what type of data each column
+holds) and make rational decisions based on the data. That is, to a database, a
+table is the opposite of a "black box" (a clear box?).
+
+Keep this fact in mind when we talk about NoSQL databases. It becomes an
+important part of the discussion regarding the ability to *query* different
+types of database engines.
+
+### Schemas
+
+A table's *schema*, we've learned, is a description of the names of the columns
+and the type of data they contain. It also contains information like which
+columns can be blank and which must be unique. A table may only have one schema at any given
+time and *all rows in the table must conform to the schema*.
+
+This is an important restriction. Imagine you have a database table with
+millions of rows of customer information. Your sales team would like to begin
+capturing an additional piece of data (say, the user's age) so their email marketing
+algorithm can be more precise. This requires you to *alter* the table by adding
+a column. You'll also need to decide if this column is required. Often times, it
+makes sense to make a column required, but doing so would require having
+information we simply don't have access to (like the age of every user already
+in the database). Therefore, tradeoffs are often made in this regard.
+
+In addition, making schema changes to very large database tables is rarely a
+simple matter. Having a rollback plan in case something goes wrong is important,
+but it's not always possible to undo a schema change once it's been made. Schema
+maintenance is probably one of the most difficult parts of the job of a DBA.
+
+## Key/Value Stores
+
+Far before the term "NoSQL" existed, *Key/Value Data Stores* like `memcached`
+provided storage for data without the overhead of a table schema. Indeed, in K/V
+stores, there are no "tables" at all. There are simply *keys* and *values*.
