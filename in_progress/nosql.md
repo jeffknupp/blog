@@ -30,22 +30,23 @@ A single entry in a table is called a *row*, or *record*. To distinguish one
 record from another, a *primary key* is usually defined. The *primary key* for a
 table is one of its columns (or a combination thereof) that uniquely identifies
 each row. In the `Car` table, VIN is a natural choice for primary key as it
-differentiaties between one car and another. Two rows may share the exact same
-values for Make, Model, Year, and Color but be different cars, meaning
+is guaranteed to be unique between one car and another. Two rows may share the exact same
+values for Make, Model, Year, and Color but refer to different cars, meaning
 they would have different VINs. If two rows have the same VIN, we don't even
 have to check the other columns, they must refer to the same car.
 
 ### Querying
 
-SQL lets us *query* this database to gain useful information. Imagine the database
-represents all vehicles registered in the US. To get *all* records, we could
-write the following *SQL query* against the database: 
+SQL lets us *query* this database to gain useful information. To *query* simply means
+to ask quentions of the RDBMS and interpret the rows it returns as the answer.
+Imagine the database represents all vehicles registered in the US. To get 
+*all* records, we could write the following *SQL query* against the database: 
 
     #!sql
     SELECT * FROM Car;
 
-What this says, in essence, is "select all columns from every row in `Car`".
-We'd get back a list of results, each with Make, Model, Year, Color, and VIN. If
+What this says, in essence, is "Show me every row in `Car`, with the values for all of the
+columns in the Car table". We'd get back a list of results, each with Make, Model, Year, Color, and VIN. If
 we cared only about the color of cars from 1994, we could say:
 
     #!sql
@@ -135,12 +136,12 @@ greater than $75.00.
 
 ### Indexes
 
-If our database has no *indexes* (indices), the query above would need to
-perform a *table scan*, or an inspection of each row in the table in sequence,
-to locate rows that match our query. Table scans are notoriously slow. Indeed,
+If our database has no *indexes* (or, more correctly, indices), the query above would need to
+perform a *table scan* to locate rows that match our query. Table scans are an inspection of
+each row in the table in sequence and are notoriously slow. Indeed,
 they represent the slowest possible method of query execution.
 
-Table scans can be avoided through the use of an index on a column or column.
+Table scans can be avoided through the use of an index on a column or set of columns.
 Think of indices as data structures that allow us to find a particular value 
 (or range of values) in the indexed column very quickly by pre-sorting the
 values. That is, if we had an index on the Price column, instead of looking 
@@ -152,7 +153,7 @@ index is ordered).
 
 When dealing with non-trivial amounts of data, indices become an indespensable
 tool for improving query speed. Like all things, however, they come at a cost:
-building the index's data structure takes memory that would otherwise be used to
+the index's data structure consumes memory that would otherwise be used to
 store more database data. It's a tradeoff that one must examine in each
 individual case, but it's *very* common to index frequently queried columns.
 
