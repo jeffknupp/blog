@@ -36,6 +36,7 @@ make `sandman`. As it seems to be the most used feature, I decided to focus just
 on the case where the user wants `sandman` to reflect all of their database
 tables and doesn't want to customize anything. How quickly, and in how many
 lines of code, could it be done?
+<!--more-->
 
 # Very Quickly, and Not Many
 
