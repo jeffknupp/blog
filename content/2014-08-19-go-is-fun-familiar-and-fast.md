@@ -9,7 +9,7 @@ a *much* nicer C and a bit stricter (in a good way) Python. After you get past
 all the language niceties, the ultimate trade-off versus an interpreted language
 like Python is static typing for speed and increased type safety. And that's
 something I'm at least willing to explore.
-
+<!--more-->
 ## Not Your Average Pythonista
 
 I should preface this by reminding you that I have 8+ years experience writing
