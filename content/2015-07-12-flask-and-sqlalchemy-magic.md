@@ -36,45 +36,46 @@ the import using some SQLAlchemy, erm, alchemy. It turns out, this is not just p
 actually rather easy. I'll post the code below; study it for a few minutes and try to determine
 how it works.
 
-    #!py
-    MAIN_DATABASE_MODEL_MAP = {
-      'artist_table': 'Artist',
-      'album_table': 'Album',
-    }
+```
+MAIN_DATABASE_MODEL_MAP = {
+    'artist_table': 'Artist',
+    'album_table': 'Album',
+}
 
-    # The `framework.models.main_database` module`...
+# The `framework.models.main_database` module`...
 
-    def name_for_scalar_relationship(base, local_cls, referred_cls, constraint):
-        name = referred_cls.__name__.lower()
-        local_table = local_cls.__table__
-        if name in local_table.columns:
-            newname = name + "_"
-            return newname
-        return name
+def name_for_scalar_relationship(base, local_cls, referred_cls, constraint):
+    name = referred_cls.__name__.lower()
+    local_table = local_cls.__table__
+    if name in local_table.columns:
+        newname = name + "_"
+        return newname
+    return name
 
-    def name_for_collection_relationship(base, local_cls, referred_cls, constraint):
-        name = referred_cls.__name__.lower() + '_collection'
-        for c in referred_cls.__table__.columns:
-            if c == name:
-                name += "_"
-        return name
+def name_for_collection_relationship(base, local_cls, referred_cls, constraint):
+    name = referred_cls.__name__.lower() + '_collection'
+    for c in referred_cls.__table__.columns:
+        if c == name:
+            name += "_"
+    return name
 
-    with app.app_context():
-        engine = create_engine(app.config['MAIN_DATABASE_URI'])
-        metadata = MetaData(engine)
-        session = Session(engine)
-        metadata.reflect(bind=engine, only=app.config['MAIN_DATABASE_MODEL_MAP'].keys())
-        Model = declarative_base(metadata=metadata, cls=(db.Model,), bind=engine)
-        Base = automap_base(metadata=metadata, declarative_base=Model)
-        Base.prepare(
-          name_for_scalar_relationship=name_for_scalar_relationship,
-          name_for_collection_relationship=name_for_collection_relationship
-          )
+with app.app_context():
+    engine = create_engine(app.config['MAIN_DATABASE_URI'])
+    metadata = MetaData(engine)
+    session = Session(engine)
+    metadata.reflect(bind=engine, only=app.config['MAIN_DATABASE_MODEL_MAP'].keys())
+    Model = declarative_base(metadata=metadata, cls=(db.Model,), bind=engine)
+    Base = automap_base(metadata=metadata, declarative_base=Model)
+    Base.prepare(
+        name_for_scalar_relationship=name_for_scalar_relationship,
+        name_for_collection_relationship=name_for_collection_relationship
+        )
 
-        for cls in Base.classes:
-            cls.__table__.info = {'bind_key': 'main'}
-            if cls.__table__.name in app.config['MAIN_DATABASE_MODEL_MAP']:
-                globals()[app.config['MAIN_DATABASE_MODEL_MAP'][cls.__table__.name]] = cls
+    for cls in Base.classes:
+        cls.__table__.info = {'bind_key': 'main'}
+        if cls.__table__.name in app.config['MAIN_DATABASE_MODEL_MAP']:
+            globals()[app.config['MAIN_DATABASE_MODEL_MAP'][cls.__table__.name]] = cls
+```
 
 *Note: `MAIN_DATABASE_MODEL_MAP` is used purely for the user's convenience, allowing them to name the Flask-SQLAlchemy class that will be created for a given table something other than the table's name. It's not strictly necessary.*
 
