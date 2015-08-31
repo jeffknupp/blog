@@ -223,13 +223,15 @@ def get(key, default=None):
 
 #### Raises
 
-`KeyError` if `default` is not provided and `key` is not in `d`.
+N/A
 
 #### Examples
 
 Get a key's value or `None` if the key isn't present
+
+
 ```
-for key in my_dictionary:
+{1: 'a', 2: 'b'}.get(3)
 ```
 
 ### `k in d`
