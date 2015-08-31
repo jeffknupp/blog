@@ -205,9 +205,9 @@ my_dictionary # {1: None, 2: None, 3: None}
 
 ### `d.get(key[, default)`
 
-Used to retrieve the value associated with key `key`. Optionally, a default
-value, `default` is returned if `key` is not in `d` (rather than raising a
-`KeyError`).
+Used to retrieve the value associated with key `key`. The value of `default`
+is returned if `key` is not in `d` (rather than raising a
+`KeyError`). The default value of `default` is `None`.
 
 #### Returns
 
@@ -217,10 +217,8 @@ Roughly equivalent to:
 def get(key, default=None):
     if key in d:
         return d[k]
-    elif default is not None:
-        return default
     else:
-        raise KeyError
+        return default
 ```
 
 #### Raises
