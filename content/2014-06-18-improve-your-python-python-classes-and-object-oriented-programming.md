@@ -50,8 +50,7 @@ objects. Let's look at the following example code:
         """
 
         def __init__(self, name, balance=0.0):
-            """Return a Customer object whose name is *name* and starting
-            balance is *balance*.
+            """Return a Customer object whose name is *name* and starting balance is *balance*."""
             self.name = name
             self.balance = balance
 
@@ -141,6 +140,7 @@ Imagine for a moment we had defined the `Customer` class slightly differently:
 
         def __init__(self, name):
             """Return a Customer object whose name is *name* and starting
+            balance is *balance*."""
             self.name = name
 
         def set_balance(self, balance=0.0):
@@ -485,7 +485,8 @@ example, the Vehicle class may be defined as follows:
 
     #!py
     from abc import ABCMeta, abstractmethod
-    class Vehicle(object)
+
+    class Vehicle(object):
         """A vehicle for sale by Jeffco Car Dealership.
         
 
@@ -529,7 +530,7 @@ can't remove that by hoisting up common functionality to the base class,
 
     #!py
     from abc import ABCMeta, abstractmethod
-    class Vehicle(object)
+    class Vehicle(object):
         """A vehicle for sale by Jeffco Car Dealership.
         
 
