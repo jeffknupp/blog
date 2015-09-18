@@ -140,10 +140,8 @@ Imagine for a moment we had defined the `Customer` class slightly differently:
         """
 
         def __init__(self, name):
-            """Return a Customer object whose name is *name* and starting
-            balance is 0."""
+            """Return a Customer object whose name is *name*.""" 
             self.name = name
-            self.balance = 0.0
 
         def set_balance(self, balance=0.0):
             """Set the customer's starting balance."""
