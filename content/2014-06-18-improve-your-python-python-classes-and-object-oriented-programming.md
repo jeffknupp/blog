@@ -487,6 +487,7 @@ example, the Vehicle class may be defined as follows:
 
     #!py
     from abc import ABCMeta, abstractmethod
+
     class Vehicle(object):
         """A vehicle for sale by Jeffco Car Dealership.
         
