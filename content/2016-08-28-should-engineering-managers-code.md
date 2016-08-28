@@ -21,7 +21,7 @@ And yet, despite all of the new responsibilities, fear of failure, and awareness
 
 **Write code.**
 
-## Why Do Engineering Managers Desperately Want to Write Code
+#### Why Do Engineering Managers Desperately Want to Write Code?
 
 Why was that the case? Why did I want to do the exact thing that I had just willingly left behind? Becoming a manager was a choice. Had I made the wrong one? *In what other industry does management immediately yearn to do the jobs of those they manage?*
 
@@ -37,7 +37,7 @@ justifications Engineering Managers give with regards to continuing to write cod
 
 You will come up with all sorts of other rationalizations for why it's OK for you to continue to code. Why you *must* write code. How it would be *negligent* not to... It's OK. I've been there. **Unfortunately, you're wrong.**
 
-## OK, But Really...WHY?
+#### OK, But Really...WHY?
 
 After a bit of introspection, I realized that there were two reasons I wanted so badly to write code:
 
@@ -60,7 +60,7 @@ to follow.
 
 And believe me, I'm *really* invested in writing code. I wrote a [book on Python](https://jeffknupp.com/writing-idiomatic-python-ebook/), speak at conferences, and privately tutor individuals in Python. If anyone should have a "get out of not-programming free" card, I submit myself as a candidate. But I don't deserve one. No one does. It's *harmful*.
 
-## What's the Harm?
+#### What's the Harm?
 
 Many managers ask "What's the harm in continuing to write code along with the team? I'd only be helping them..." Believe
 it or not, there is *actual* harm in coding at this point. Here are a few things to consider:
@@ -73,7 +73,7 @@ it or not, there is *actual* harm in coding at this point. Here are a few things
    front of "the boss". Realize and accept the fact that it would be an abuse of your power (or, at the very least, a
    conflict of interest) to assign yourself coding tasks.
 
-## So Now What?
+#### So Now What?
 
 The first point from the previous section is actually an opportunity in disguise. Try this: every time you feel the urge to write code, instead spend the time reading something related to management, even if only tangentially. *Everyone* who manages people will have favorite books, blogs, or speakers. Just ask a peer or two for some material to get started.
 
