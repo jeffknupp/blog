@@ -13,13 +13,9 @@ But let's assume you're in the same position I was:
 
 Congratulations! At least you're making this career change for the right reasons. That's the good news. The bad news? The next few months will likely be the most overwhelming of your career. Actually, in my case it was more than overwhelming. For the first time in my life, work was *hard*. Most of my professional experience has been intellectually stimulating, but I wouldn't describe very much of it as "hard". I almost always had a sense of what needed to be done to solve a problem. If I didn't, I knew I could research the problem and a way forward would almost always present itself. I spent the first eight years of my career building high-frequency trading systems in C++ for major investment banks (Goldman Sachs and, later, Wells Fargo), so the work wasn't trivial, but it also wasn't particularly hard.
 
-But managing people is different. Most of the skills I had aquired during my career were worthless. If I had suddenly
-become a lumberjack instead of a manager, I would have been just as prepared. I had (have) so much to learn, and my
-decisions now had a direct impact on people's livelihood. I was scared that my lack of knowledge would negatively affect
-my teams. "Screwing up" had taken on a whole new meaning.
+But managing people is different. I had (have) so much to learn, and my decisions now had a direct impact on people's livelihood. I was scared that my lack of knowledge would negatively affect my teams. "Screwing up" had taken on a whole new meaning.
 
-And yet, despite all of the new responsibilities, fear of failure, and awareness of a lack of a severe knowledge gap,
-more than anything I wanted to do one thing.
+And yet, despite all of the new responsibilities, fear of failure, and awareness of a severe knowledge gap, I wanted to do one thing above all else:
 
 **Write code.**
 
@@ -28,7 +24,7 @@ more than anything I wanted to do one thing.
 Why was that the case? Why did I want to do the exact thing that I had just willingly left behind? Becoming a
 manager was a choice. Had I made the wrong one? *In what other industry does management immediately yearn to do the jobs of those they manage?*
 
-It was easy to convince myself that it was neccessary (or at the very least, acceptable) to continue writing code. Here are some common
+It was easy to convince myself that it was necessary (or at the very least, acceptable) to continue writing code. Here are some common
 justifications Engineering Managers give with regards to continuing to write code:
 
 1. I need to keep my technical edge; I don't want to get left behind
@@ -79,7 +75,7 @@ to write code, instead spend the time reading something related to management, e
 manages people will have favorite books, blogs, or speakers. Just ask a peer or two for some material to get started.
 
 I know what you're thinking: *"That sounds like a trite platitude. Does it even work?"* Well, I hate to answer a
-question like that with an annecdote, but forgive me this one time. Using this method, I was asked to manage additional
+question like that with an anecdote, but forgive me this one time. Using this method, I was asked to manage additional
 people and teams over the months that followed. As of a few weeks ago, I'm the Head of Engineering at Enigma. So, in my
 case, it worked. I'll be the first to admit that probably 25% or less of my career advancement has been due to my own
 skills (and much more a factor of organizational needs and my genuine affection for and interest in the engineers at the
