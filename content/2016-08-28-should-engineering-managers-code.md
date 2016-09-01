@@ -2,6 +2,8 @@ title: Should Engineering Managers Code?
 date: 2016-08-28 14:03
 categories: python enigma management
 
+**Note: This post also appears on the blog of my employer, [Enigma (enigma.io)](http://blog.enigma.io/should-engineering-managers-code/)**
+
 Earlier this year I made a career change: I decided to stop being an Individual Contributor (or "IC", i.e. someone who codes) and became the Engineering Manager of the team I was a member of. I call it a "career change" because it's important to recognize the move for what it is. All too often, such a change is viewed as the logical progression of an engineer's career. That's a shame.
 
 It's a shame because being an engineer trains you to be a people manager about as well as it trains you to be a circus juggler. There are almost no transferable skills, save the domain knowledge you've acquired that will ostensibly help in managing projects. But (as every engineer will tell you), being a great engineer does not mean you'll be even a passable manager. Some companies (like my own) realize this and create parallel career paths for engineers that want to write code forever without mortgaging their advancement opportunities. Sadly, most companies are not so forward thinking.
