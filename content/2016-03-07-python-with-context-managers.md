@@ -14,7 +14,7 @@ with open('what_are_context_managers.txt', 'r') as infile:
 
 But how many of those who correctly handle file IO know *why* it's correct, or even that there's an *incorrect* way to
 do it? Hopefully a lot, or else this post won't get read much...
-
+<!--more-->
 ## Managing Resources
 
 Perhaps the most common (and important) use of context managers is to properly manage resources. In fact, that's the

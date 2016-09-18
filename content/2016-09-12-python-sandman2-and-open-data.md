@@ -8,7 +8,7 @@ line tool, through which you provide the connection details of a legacy database
 both a RESTful API service for your data, as well as a web-based UI that allows you to add, delete, and edit rows
 directly. For many (especially in the enterprise), interacting with legacy databases is a pain at best, and impossible
 at worst. The ability to access data via a simple REST API, then, is a godsend.
-
+<!--more-->
 But what about **outside** the enterprise? Given my position at [Enigma](http://enigma.io), how could an organization
 wanting to open its data make use of `sandman2`? At first, the answer seems obvious: just run `sandman2` as is, and let
 would-be consumers of the data access it via the API.
