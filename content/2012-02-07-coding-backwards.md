@@ -20,6 +20,7 @@ to use, __make it as natural as possible for them to do so__. I call
 this _coding backwards_. It directly influenced how I built my testing
 framework.
 
+<!--more-->
 I started with the finished product: a test script written in Python. I
 wrote valid Python code against a library that didn't exist yet. Without
 an existing API to get in my way, I was able to express my intentions

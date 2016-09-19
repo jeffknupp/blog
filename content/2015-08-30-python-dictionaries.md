@@ -8,6 +8,7 @@ One of the keys to becoming a better Python programmer is to have a solid grasp
 of Python's built-in data structures. Using the structured format below, today you'll learn what a `dict` is, when to use it, and see example code of
 *all* of its member functions. I have some other data structures in the works, so this may turn into a little series.
 
+<!--more-->
 # Dictionary
  
 ## AKA

@@ -9,6 +9,7 @@ When I got there, something caught my eye:
 
 {% img http://www.illestrhyme.com:8080/images/chat.jpg %}
 
+<!--more-->
 It's normal for me to be talking to users, and normal for me to be
 responding to requests from users. __If this isn't normal for you, it should be__.
 Part of the reason IllestRhyme has a community feel is that the users

@@ -26,6 +26,7 @@ the `.gitignore` file, we add _everything_ to the repository, using `git
 add .` This stages all of our files for commit to git. At this point, we
 can run `git commit` to actually commit our files for the first time.
 
+<!--more-->
 At this point, we have our Django project in a (local) git repository. I
 use Bitbucket as a "backup" git repo in case I lose my web server. As
 you might have guessed, I do all my work on the web server directly

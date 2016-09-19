@@ -11,6 +11,7 @@ and such on the topics covered in the book. The book has proven to be an effecti
 for novice and intermediate programmers to take their Python coding skills to the next level.
 I couldn't be happier...
 
+<!--more-->
 But I want even more developers to benefit from the book's ideas. That's why I want to turn "Writing Idiomatic Python" into a series of recorded screencasts.
 The format will be as follows: I'll take real-word code of questionable quality and refactor it into beautiful, Idiomatic Python.
 I'll narrate my thought process as I do so and will refer to specific idioms mentioned in the book.

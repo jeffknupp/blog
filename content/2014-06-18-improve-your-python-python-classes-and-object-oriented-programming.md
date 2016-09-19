@@ -9,6 +9,7 @@ useful is essential, and the goal of this article. In the process, we'll explore
 what the term *Object-Oriented Programming* means and how it ties together with
 Python classes.
 
+<!--more-->
 ## Everything Is An Object...
 
 What is the `class` keyword used for, exactly? Like its function-based cousin

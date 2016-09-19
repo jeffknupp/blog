@@ -8,6 +8,7 @@ email, so he thought, "what the heck, I'll include links to my projects for
 him to check out. Can't hurt." Not only did I read and respond to the email, I
 checked out the projects as well. *They were awesome.*
 
+<!--more-->
 The author was hesitant to release them , among other reasons, out of fear the
 reception would be negative. It made me wonder if other readers of the blog had open 
 source Python projects just waiting to be discovered as well. 

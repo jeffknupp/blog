@@ -13,6 +13,7 @@ service like didn't exist. Or when to find out
 what friends and family were doing we had to call them and ask. Or when a centralized place to share
 videos didn't exist on the Internet.
 
+<!--more-->
 Dropbox, Facebook, and YouTube all share the same quality: *in retrospect, they seem obvious.*
 In fact, some would say that they didn't actually *do* all that much. Personal
 profile sites already existed. Wasn't it just a matter of time before someone made them pretty

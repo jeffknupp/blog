@@ -13,6 +13,7 @@ site went live I would start at the Google Analytics page and __hope__ to
 see users in the Live View. I wasn't really using the data for anything.
 I was using Google Analytics as a virtual scoreboard.
 
+<!--more-->
 It wasn't until I signed up for [Clicky](http://getclicky.com/66528953)
 that I started to take analytics seriously. In fact, more specifically,
 it was when I combined Clicky and

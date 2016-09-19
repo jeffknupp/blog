@@ -14,6 +14,7 @@ weeks ahead. If you asked for a free copy of the book, you'll get one. It's
 going to take me a bit of time to catch up with everything, but it will get
 done.
 
+<!--more-->
 For those who supported my Kickstarter campaign, I'll be making more videos
 soon. My goal is to get the next one out in the next two weeks. I sincerely
 apologize for what must seem like a case of promising something and not

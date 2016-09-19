@@ -8,6 +8,7 @@ After launching the campaign, I threw up a quick blog post, sent out an email
 and a tweet, and went home. When I woke up the next morning, over $1000 had
 already been raised. As of this morning, over $2,400 has been raised of the
 $5,000 goal. With 27 days left, we're almost half way there.
+<!--more-->
 
 But there's another, perhaps more important, goal: if I raise $10,000, I'll make
 the videos *free to view for everyone, forever*. I'll release the videos under

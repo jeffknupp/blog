@@ -6,6 +6,7 @@ The first open-source Python project review [is now up](http://reviews.jeffknupp
 a project I very much enjoyed reviewing. More reviews are on the way, so don't
 worry if you emailed me and I haven't responded yet.
 
+<!--more-->
 ## In other news
 
 Interestingly, this was the first time I made use of the `review` application

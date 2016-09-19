@@ -5,6 +5,7 @@ categories: django git python programming deployment branching
 
 When I started [IllestRhyme](http://www.illestrhyme.com), I had never before managed a web application. Much was similar to enterprise development. Much wasn't. One of the things I had no idea about was how to manage production deployment of a web app. I settled on some common Django trickery and Git, and it has worked like a charm.
 
+<!--more-->
 I knew going in that I would use Git for source control. I wanted a distributed version control system to give me an opportunity to work anywhere git was installed. I didn't suspect I would use git for deployment, also. 
 
 When the site began, I didn't even have a "deployment" strategy. There were so few visitors to the site that I could work on it live. Within two weeks, it was clear I couldn't be showing users HTML 500 errors as frequently as I had been. I needed to start acting like I was working on a "real" project.

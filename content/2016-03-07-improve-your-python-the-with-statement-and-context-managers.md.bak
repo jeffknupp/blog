@@ -1,6 +1,6 @@
-title: Python with Context Managers
-date: 2016-03-07 14:46
-categories: python iyp with contextmanager
+title: Improve Your Python: the with Statement and Context Managers
+date: 2016-03-07 12:24
+categories: python iyp with context manager
 
 Of all of the most commonly used Python constructs, `context managers` are neck-and-neck with `decorators` in a "Things
 I use but don't really understand how they work" contest. As every schoolchild will tell you, the canonical way to open
@@ -68,12 +68,12 @@ type of resource that needs to be closed, like sockets or database connections).
 simple way to make sure all resources we use are properly cleaned up, regardless of if the code returns or an exception
 is thrown: *context managers*.
 
-By now, the premise should be obvious. We need a convenient method for indicating a particular variable has some cleanup
+By now, the premise should be obvious. We need a convient method for indicating a particular variable has some cleanup
 associated with it, and to guarantee that cleanup happens, no matter what. Given that requirement, the syntax for using context managers 
 makes a lot of sense:
 
 ```py
-with something_that_returns_a_context_manager() as my_resource:
+with something_that_retuns_a_context_manager() as my_resource:
     do_something(my_resource)
     ...
     print('done using my_resource')
