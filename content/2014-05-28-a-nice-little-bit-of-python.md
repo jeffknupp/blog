@@ -7,6 +7,7 @@ all that, but I did want to take a second and post a simple bit of code which
 really appeals to me. It solves a common problem in a reasonably elegant way and
 is straightforward enough for Python programmers of any level to use.
 
+<!--more-->
 The best way to show it is to show an example of the type of problem it solves.
 Say we have a string and want to make sure it ends with one of four sub-strings.
 Here is the usual method of checking this:

@@ -9,6 +9,7 @@ are basically two options: use a service that takes care of everything for you
 After begrudgingly suggesting he use a service like Heroku, I wondered why there
 wasn't some sort of middle ground.
 
+<!--more-->
 ## The Problem
 
 My client's situation is an extremely common one: "I finished my web app and

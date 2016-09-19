@@ -6,6 +6,7 @@ A long awaited announcement was finally [made Saturday by the PyPy team](http://
 PyPy-STM has reached a reasonable level of maturity and usefulness to begin
 comparison to PyPy and cPython. We can consider the first (C-based) GIL-less
 Python (disregarding that old "no GIL" patch from years ago which went nowhere).
+<!--more-->
 
 The implications are important: Armin and team have proven that Software
 Transactional Memory is a viable approach to GIL-less multi-threaded Python.

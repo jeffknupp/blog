@@ -4,6 +4,7 @@ categories: apache octopress jekyll git linode illestrhyme
 
 So now that I got my "Hello World" post out of the way, I think it would be instructive to describe the setup process for this blog. Octopress is exactly what I've been looking for: a well styled, static page based blogging engine that doesn't get in my way. The fact that Jekyll (on which Octopress is based) is so closely integrated with git is a definite plus. So how did the install go? First some background.
 
+<!--more-->
 I'm the founder of [IllestRhyme.com](http://www.illestrhyme.com), a site where users post rap verses they wrote and other users comment/vote on them. There's a ton of other features, but that's the gist of it. Anyway, I run IllestRhyme on a [Linode](http://www.linode.com/?r=ae1808f234f8e219de24842336fada09ef81d52f) server running Ubuntu. I use Apache for dynamic content and Lighttpd for static content. Since I already have a Linux machine on the Interwebs, I followed the [instructions](http://octopress.org/docs/setup/) on my Linode machine... which is to say I basically copy and pasted the instructions:
 
     :::bash

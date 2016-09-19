@@ -1,6 +1,6 @@
-title: Python with Context Managers
-date: 2016-03-07 14:46
-categories: python iyp with contextmanager
+title: Improve Your Python: the with Statement and Context Managers
+date: 2016-03-07 12:24
+categories: python iyp with context manager
 
 Of all of the most commonly used Python constructs, `context managers` are neck-and-neck with `decorators` in a "Things
 I use but don't really understand how they work" contest. As every schoolchild will tell you, the canonical way to open

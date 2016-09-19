@@ -8,6 +8,7 @@ well. Understanding what classes are, when to use them, and how they can be
 useful is essential, and the goal of this article. In the process, we'll explore
 what the term *Object-Oriented Programming* means and how it ties together with
 Python classes.
+
 <!--more-->
 ## Everything Is An Object...
 

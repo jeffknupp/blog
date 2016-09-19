@@ -11,6 +11,7 @@ I've decided I'm not comfortable using the products of the company of such a
 CEO. Intentional or not, his appointment sends the message: "Mozilla is against
 gay marriage at its highest levels." As such, I'm boycotting all Mozilla
 products until Eich steps down or is removed as CEO.
+<!--more-->
 
 We are at a critical juncture in the fight for the basic rights of the LGBT community.
 Though there is a long way to go, one can feel the tide turning (thank

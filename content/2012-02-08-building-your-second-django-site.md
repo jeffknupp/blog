@@ -15,6 +15,7 @@ though I know I need to. The new site has unit tests for
 everything, and though it's somewhat of a pain to do, it will most
 certainly pay dividends in the long run.
 
+<!--more-->
 In the production environment, everything is running
 under [virtualenv](http://pypi.python.org/pypi/virtualenv), Python's unofficial answer to the problem of running multiple
 Python environments. It effectively does a clean Python install to a local

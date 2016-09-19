@@ -4,6 +4,7 @@ categories: django python illestrhyme
 
 I developed [IllestRhyme](http://www.illestrhyme.com) using Django, having never touched it before. I chose it because it's Python based, and a quick search showed there were a lot of third-party applications available. In two weeks, I had a fully functional site. The site has come a long way since it launched in the beginning of January (looking at the git commit comments is especially fun), but what let me add features so quickly was the third party apps.
 
+<!--more-->
 First off, some best practices. When I began installing applications I did so using pip, which downloads packages (by default) from [PyPi](http://pypi.python.org), the Python Package Index. This seemed reasonable, as I wanted stable versions of packages and an easy way to re-install everything in case of emergency. The packages on PyPI, however, usually trail the main branch of a project, sometimes significantly so. So I went back and removed all of the pip-installed packages and checked everything out from source. 
 
 I can still rebuild everything in an emergency since (a) my entire site is under source control and (b) setting up a Python dependencies file to download the packages I require was a breeze. OK, enough meta-discussion. The real question is, "what applications am I using?" Here's the current list:

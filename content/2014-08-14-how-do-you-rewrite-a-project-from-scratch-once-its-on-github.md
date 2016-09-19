@@ -10,6 +10,7 @@ project from scratch. It shares no git history with the original project. How do
 I make the new project the official version (without offending those who
 contributed to the original one)?
 
+<!--more-->
 ## My Choices
 
 As I see it, I have three choices. The first is just to delete the old repo,
