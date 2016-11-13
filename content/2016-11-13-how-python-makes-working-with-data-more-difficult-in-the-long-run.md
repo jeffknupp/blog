@@ -144,7 +144,7 @@ What happens when we need to make a change to the Python version? Perhaps we wan
 directory was just created, not for every response with a directory?" 
 
 It's pretty clear how to do that in the Go
-version. Compared to the Python version, the Go version is like the Library at Alexandria of `etcd` `Response`s. For the
+version. Compared to the Python version, the Go version is like the Library of Alexandria of `etcd` `Response`s. For the
 Python version, *we have nothing local to refer to in order to figure out the structure of `result` and the change we
 need to make.* We'll have to go look up the `etcd` HTTP API documentation. Let's hope that:
 
