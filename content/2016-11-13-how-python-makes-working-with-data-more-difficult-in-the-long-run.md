@@ -10,7 +10,7 @@ development I could mean one of two things:
 
 **In short: Python is awesome for interactive data analysis but terrible for writing long-lived programs dealing with
 complicated data structures.**
-
+<!--more-->
 The second definition is perhaps overly broad, but I'll clarify in a minute. Before that, let me be the first to say
 that Python is an **incredible** language for interactively working with, or *exploring*, data. The ecosystem of third-party packages and
 tools that have sprung up around data manipulation, visualization, and data science in general has been nothing short of
