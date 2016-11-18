@@ -126,12 +126,12 @@ If we're using the first definition, the Python version is "better". If we're us
 The Go version, despite containing a boatload of boilerplate-ish definition code, *makes clear the exact structure of the
 data we can expect in `result`*. 
 
-Boss: "What can you tell me about the Python version, just by looking at our code above?"
-Me: "Uh, it's JSON and has a 'node' object which probably has a 'dir' field."
-Boss: "What type of value is in `dir`? Is it a boolean, a string, a nested object?
-Me: "Uh, I dunno. It's truthy, though!"
-Boss: "So is everything else in Python. Is `dir` guaranteed to be part of the `node` object in the response?"
-Me: "Uh...."
+> Boss: "What can you tell me about the Python version, just by looking at our code above?"
+> Me: "Uh, it's JSON and has a 'node' object which probably has a 'dir' field."
+> Boss: "What type of value is in `dir`? Is it a boolean, a string, a nested object?
+> Me: "Uh, I dunno. It's truthy, though!"
+> Boss: "So is everything else in Python. Is `dir` guaranteed to be part of the `node` object in the response?"
+> Me: "Uh...."
 
 And I've met my "3-Uh" limit for describing what a portion of code does. If you refer to the Go version, you can answer
 those questions and sound like a damned genius in comparison. But these are *exactly the sort of questions your peers
