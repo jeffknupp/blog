@@ -16,6 +16,12 @@ keyword even after making a concerted effort to teach themselves the topic.
 I want to change that. In this post, I'll explain *what* the `yield` 
 keyword does, *why* it's useful, and *how* to use it.
 
+## What is a Python Generator (Textbook Definition)
+
+A *generator* is a function which returns a *generator iterator* (just an object we can iterate over) by calling `yield`. If `yield` is called with a value, that value is returned from the call. The *next time* `next()` is called on the *generator iterator*, the generator resumes execution *from where it called `yield`*, not from the beginning of the function. All of the state, like the values of local variables, is recovered and the generator contiues to execute until the next call to `yield`.
+
+**If this doesn't make *any* sense to you, don't worry. I wanted to get the textbook definition out of the way so I can explain to you what all that nonsense actually means.**
+
 <!--more-->
 
 *Note: In recent years, generators have grown more powerful as features have been added through PEPs. In my next post, I'll explore the true power of `yield` with respect to coroutines, cooperative multitasking and asynchronous I/O (especially their use in the ["tulip"](https://code.google.com/p/tulip/) prototype implementation GvR has been working on). Before we get there, however, we need a solid understanding of how the `yield` keyword and `generators` work.* 
