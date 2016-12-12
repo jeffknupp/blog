@@ -2,7 +2,7 @@ title: How Python Linters Will Save Your Large Python Project
 date: 2016-12-09 08:53
 categories: python lint pep8 pep257
 
-A Python project I'm working on at [Enigma](https://enigma.io) is starting to grow rather large. I spent a good deal of
+A Python project I'm working on at [Enigma](http://enigma.io) is starting to grow rather large. I spent a good deal of
 effort yesterday getting a five line change added to our `Makefile` (which is run as part of our CI and CD pipeline on
 every pull request and merge). After the PR was merged, I gloated to others how awesome my team's project was. Here are
 the five lines:
@@ -280,7 +280,7 @@ As one might expect, `pycodestyle` handles [PEP-8](https://www.python.org/dev/pe
 
 ## Automate All The Things
 
-In all seriousness, [Enigma](https://www.enigma.io) is a startup. We have limited resources. If we want to keep a large
+In all seriousness, [Enigma](http://www.enigma.io) is a startup. We have limited resources. If we want to keep a large
 project sane, the only way to do that is through automation (because we're too busy building [awesome](http://enigma.io/labs/healthcare-data/) [stuff](http://bit.ly/boomtobust) with public data). I would go so far as to argue that, between our testing suite (unit tests and E2E browser tests), continuous integration pipeline (Jenkins + GitHub + Codecov + a lot of homegrown glue), our continuous deployment pipeline (10% Jenkins/GitHub, 90% Ansible), and tools like the linters mentioned above, **we are saving the cost of two full-time engineers to manage our development and deployment processes while making our code base more readable, more testable, and more maintainable.**
 
 All of that from a couple of automated tools you can install in the next five minutes... What are you waiting for!?
