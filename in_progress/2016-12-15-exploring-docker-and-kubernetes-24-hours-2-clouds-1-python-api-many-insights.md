@@ -2,7 +2,9 @@ title: Exploring Docker and Kubernetes: 24 Hours, 2 Clouds, 1 Python API, Many I
 date: 2016-12-15 17:33
 categories: python kubernetes docker aws gce
 
-For a project I'm working on, we're looking to (eventually) move away from [terraform](https://www.terraform.io/) and [ansible](https://www.ansible.com) for machine provisioning and deployment towards something more flexible. The application is relatively straightforward from a technology stack standpoint:
+For a project I'm working on, we're looking to (eventually) move away from [terraform](https://www.terraform.io/) and [ansible](https://www.ansible.com) for machine provisioning and deployment towards something more flexible. In addition, as the application is meant to be deployed on-prem, we'll need *something* to do orchestration, service discovery, secret management, etc. So, having played around with [kubernetes](http://k8s.io) before and watched its progress closely, I decided it was time to take a deeper dive and get a real feel for its maturity and usefulness. 
+
+The application's technology stack is *very* common:
 
 * Python (Flask) API Service
 * React-based front end
@@ -10,10 +12,11 @@ For a project I'm working on, we're looking to (eventually) move away from [terr
 * Elasticsearch for advanced search capabilities
 * Redis for various caching needs
 
-I decided to spend a single day (_all_ of a single day) seeing what it would take to get the application fully
+I decided to spend a single week (_all_ of a single week) seeing what it would take to get the application fully
 [Docker-ized](https://www.docker.com) and deployed to a cluster managed by [kubernetes](http://kubernetes.io/). Not only
 that, I would deploy on two totally different cloud providers: AWS, which we use for 90% of our infrastructure, and
-Google Cloud Platform (specifically Google Container Engine), with which I have no prior experience.
+Google Cloud Platform (specifically Google Container Engine), with which I have no prior experience. To do so would
+prove that our application is cloud-provider agnostic. It would also be a good chance to compare the kubernetes experience on both platforms.
 
 **tl;dr I learned a metric ton about the current state of orchestration and deployment tools for distributed systems.**
 
