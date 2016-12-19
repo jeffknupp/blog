@@ -2,41 +2,37 @@ title: Exploring Docker and Kubernetes: 24 Hours, 2 Clouds, 1 Python API, Many I
 date: 2016-12-15 17:33
 categories: python kubernetes docker aws gce
 
-I've been a software developer for almost 15 years. While I'm best known for my Python book, articles, and projects, I
-wrote high-frequency trading servers in C++ on Linux for the first 8 years of my career. I'm very familiar with both the
-administration of Linux systems as well as deployment of distributed systems. Back then, if you told me I'd eventually
-need to write a system that could be deployed "on-prem" (using a client's own hardware without being given direct access to *any* of it)
-I probably would have started crying.
+**tl;dr After a week dedicated to deploying and managing a system using kubernetes, I'm convinced that the ecosystem in general and kubernetes in particular is not mature enough to run large-scale production systems. To do so would require an investment of manpower and time with "negative ROI" for at least 2-4 years.**
 
-Then Docker and Kubernetes turned everything on its head.
+I've been a software developer for almost 15 years. While I'm best known for my [Python
+book](https://jeffknupp.com/writing-idiomatic-python-ebook), articles, and projects, I
+wrote high-frequency trading servers in C++ on Linux for the first 8 years of my career. I'm very familiar with both 
+Linux systems administration as well as deployment of distributed systems. Back then, if you told me I'd eventually
+need to write a complex, distributed system that could be deployed "on-prem" (using a client's own hardware without being given direct access to *any* of it) I probably would have started crying.  
 
-Docker solved the longstanding problem of deploying applications to hetergeneous systems. Today, Docker
-is entrenched as the de-facto way to bundle and distribute applications. The key benefit it provides is abstraction
-of the underlying hardware, OS, and system configuration from developers. As long as a machine can run the Docker
-daemon, it can run your Docker-ized application.
+<!--more-->
 
-Kubernetes is trying to solve the same meta-problem: how do we abstract away the notion of machines as individual
-resources? If we're to scale out rather than up as an industry, keeping close tabs on hundreds or thousands of machines can't be
+Then Docker and Kubernetes set out to turn everything on its head.
+
+Docker solved the longstanding problem of deploying applications to hetergeneous systems. Today, Docker is entrenched as the de-facto way to bundle and distribute applications. It provides abstraction of the underlying hardware, OS, and system configuration from developers. As long as a machine can run the Docker daemon, it can run your Docker-ized application.
+
+[Kubernetes](http://k8s.io) is trying to solve the same meta-problem: how do we abstract away the notion of machines as individual
+resources? If we're to scale out rather than up as an industry, the administration of hundreds or thousands of machines can't be
 a requirement. In the kubernetes vision, you don't care about (or even know, most likely) individual machines. You don't
-give them cute names. You don't `ssh` to them by name. You don't worry if they catch fire. 
+give them cute names. You don't have them in your `.ssh/config`. You don't worry if they catch fire. 
 
-The high-availability systems folks often talk about the "pets vs cattle" mindset (and, until version 1.5, kubernetes even had a type of resource called a PetSet). If you
-have individual machines that can't go down and, if one does, all hell breaks loose, it's a "pet". It must be cared for and watched.
+To see why this is useful, an analogy is helpful. The high-availability systems folks often talk about the "pets vs cattle" mindset (and, until version 1.5, kubernetes even had a type of resource called a `PetSet`). If you have individual machines that *can't* go down or else all hell breaks loose, it's a "pet". It must be cared for and watched.
 
-If you have a "herd" of machines where you can (and routinely *do*) solve individual machine health problems by "taking it out back and shooting it"
-and letting another take its place, you've got "cattle". Your goal is to keep your systems running in the face of
-network issues and hardware failures. Back when you had 8 machines, that was doable by administering them individually. With dozens or hundreds of physical machines,
-you probably want your application powered by a herd of cattle rather than Socks the Redis Cat, Peanuts the Postgres elephant, and your twin `nginx` wolverines.
+If you have a "herd" of machines where you can (and routinely *do*) solve individual machine health problems by "taking it out back and shooting it", you've got "cattle". After all, another machine can just take its place and one less cow doesn't cause the herd to go crazy. Your goal is to keep your systems running in the face of network issues and hardware failures. Back when you had 8 machines, that was doable by administering them individually. With dozens or hundreds of physical machines, you probably want your application powered by a herd of cattle rather than Socks the Redis Cat, Peanuts the Postgres elephant, and your twin `nginx` wolverines.
 
-But how realistic is this vision, and how far has the technology to support it come? For a project I'm working on, we're looking to (eventually) move away from [terraform](https://www.terraform.io/) and [ansible](https://www.ansible.com) for machine provisioning and deployment towards something more flexible. In addition, as the application is meant to be deployed on-prem at customer sites, we'll need *something* to do orchestration, service discovery, secret management, etc. So, having played around with [kubernetes](http://k8s.io) before and watched its progress closely, I decided it was time to take a deeper dive and get a real feel for its maturity and usefulness.
+But how realistic is this vision, and how far has the technology to support it come? For a project I'm working on, we're looking to (eventually) move away from [terraform](https://www.terraform.io/) and [ansible](https://www.ansible.com) for machine provisioning and deployment as the application is meant to be deployed on-prem at customer sites. We'll also need *something* to do orchestration, service discovery, secret management, etc. So, having played around with [kubernetes](http://k8s.io) before and watched its progress closely, I decided it was time to take a deeper dive and get a real feel for its maturity and usefulness.
 
-I decided to spend a single week (_all_ of a single week) to see what it would take to get the application fully
+I dedicated a single week (_all_ of a single week) to see what it would take to get the application fully
 [Docker-ized](https://www.docker.com) and deployed to a cluster managed by [kubernetes](http://kubernetes.io/). Not only
-that, I would deploy on two totally different cloud providers: AWS, which we use for 90% of our infrastructure, and
-Google Cloud Platform (specifically Google Container Engine), with which I had no prior experience. To do so would
-prove that the application is cloud-provider agnostic. It would also show as many of the warts of kubernetes as possible
+that, I would deploy on two totally different cloud providers: AWS, which we use for 98% of our infrastructure, and
+Google Cloud Platform (specifically Google Container Engine), with which I had no prior experience. If sucessful, I
+could be confident that the application is cloud-provider agnostic. It would also show as many of the warts of kubernetes as possible
 in a week of use.
-
 
 Luckily, the application's technology stack is *very* common:
 
@@ -46,17 +42,13 @@ Luckily, the application's technology stack is *very* common:
 * Elasticsearch for advanced search capabilities
 * Redis for various caching needs
 
-So getting all of this up and running should be no problem, right? Well, yes and no. I won't spoil the details, **but I'm
-convinced that the ecosystem in general and kubernetes in particular are not mature enough to run large-scale production
-systems on without a substantial investment in manpower and time.**
-
-<!--more-->
+So getting all of this up and running should be no problem, right? Well, yes and no. I won't spoil the details.
 
 # Docker Is Growing Up
 
 I've used Docker before a number of times, but it's been a while since I used it in a serious capacity. It's gained a
-lot of functionality over the past year and Docker has _seriously_ grown the tooling ecosystem (e.g. Docker Machine,
-Docker Swarm, Docker Datacenter, Docker Cloud...). Still, at its heart, it's still the Linux container system we've all
+lot of functionality over the past year and Docker has _seriously_ grown its ecosystem (e.g. Docker Machine,
+Docker Swarm, Docker Datacenter, Docker Cloud...). At its heart, though, it's still the Linux container system we've all
 grown to love.
 
 The first decision was how to "properly" Docker-ize the first-party components in the system, namely the Flask API
@@ -67,9 +59,10 @@ service and React front end. In our current deployments, these live on a single 
 * [supervisord](http://supervisord.org)
 
 A request for the root page arrives, the 10-line HTML page requests the required javascript files to bootstrap itself,
-and from then on, the front end is driving. The Flask API is run by `uwsgi` under the watchful eye of `supervisor`.
+and from then on, the front end is driving. The Flask API is run by `uwsgi` under the watchful eye of `supervisord`.
 When the front end makes an API request, `nginx` communicates with `uwsgi` over a Unix domain socket using the `uwsgi`
-binary protocol.
+binary protocol. If one of the Python process spawned by `uwsgi` (or `uwsgi` itself) goes down, `supervisord` restarts
+it.
 
 This is about as vanilla a deployment one could have for a web-based Python application. And I figured (correctly) that
 this would work in my favor. We weren't doing anything crazy in terms of the setup of the machine. Creating a Docker
@@ -104,11 +97,19 @@ Everything worked fine... as long as they could connect to our existing Postgre,
 It was now time to switch gears. I wasn't looking to build any sort of bespoke Docker images for any of those
 components, so I'd just use some "off the shelf" images avaiable from one of the half-dozen or so public container registries.
 
-The kubernetes documentation is, in short, a mess. Here are some gripes:
+To determine the best practices for deploying both my system and the third-party components, I turned to the 
+kubernetes documentation. It is, in short, a mess. Here are some gripes:
 
 * Different portions were clearly written at different times. There's no way to tell what information is out-of-date.
 * Concepts that are now deprecated are used in the tutorials.
 * The same concepts are half-described in multiple places. It takes a lot of clicking around to develop a complete picture of any one concept. Understanding how *everything* works together takes marathon-runner persistence.
-* New tools are being developed at a breakneck pace, often building on and/or replacing older tools that did the same thing. The AWS cluster-creation tool ecosystem is particularly hillarious.
-* Support for *obvious* usage patterns (like, say, a database that needs to have persisent storage and can't just be killed at will) is all over the map. The fact that kubernetes was designed for long-running, stateless processes is still pinfully obvious.
+* New tools are being developed at a breakneck pace, often building on and/or replacing older tools that did similar things. The AWS cluster-creation tool ecosystem is particularly hillarious.
+* Support for *obvious* usage patterns (like, say, a database that needs to have persisent storage and can't just be killed at will) is all over the map. The fact that kubernetes was designed for long-running, stateless processes is still painfully obvious.
 * Many *very* important caveats are mentioned in passing and alternative approaches are rarely given (see the documentation for the admittedly alpha version of [`kubeadm`](http://kubernetes.io/docs/getting-started-guides/kubeadm/) for some examples)
+
+## Pressing Onward
+
+To be fair, the documentation for most projects is pretty bad. I decided the best way to determine how to deploy *my*
+application on kubernetes would be to see how the *other* components were deployed. This proved... confusing.
+
+
