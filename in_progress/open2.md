@@ -20,17 +20,17 @@ set. The goal is to make the entire process clear and simple.
 1. [git](http://www.git-scm.com) for version control
 1. [GitHub](http://www.github.com) for project management
     1. GitHub's "Issues" for the following:
-        1. bug tracking
-        1. feature requests
-        1. planned features
-        1. release/version management
+        1. Bug Reporting
+        1. Feature Requests
+        1. Feature Planning
+        1. Release Management
 1. [git-flow](http://nvie.com/posts/a-successful-git-branching-model/) for git workflow
 1. [semangtic versioning](http://www.semver.org/) for a versioning strategy that doesn't break users of older versions
    when you release a change
 1. [py.test](http://www.pytest.org) for unit testing
 1. [tox](http://tox.readthedocs.org/en/latest/) for testing standardization
 1. [Sphinx](http://www.sphinx-doc.org) for auto-generated HTML documentation
-1. [TravisCI](https://travis-ci.org/) for continuous testing integration
+1. [TravisCI](https://travis-ci.org/) for continuous testing integration (with a list of perfectly acceptable alternative CI services)
 1. [ReadTheDocs](https://readthedocs.org) for continuous documentation integration
 1. [Cookiecutter](https://github.com/audreyr/cookiecutter-pypackage) to automate these steps when starting your next project
 
@@ -224,40 +224,31 @@ If your package is more complex than the simple one discussed here, take a look 
 
 ## Source Control With Git, Project Management with GitHub
 
-For a project meant to be both shared and contributed to, there's really only one choice for version control: git. In fact, I'll go so far as to say that not only is the use of git necessary, you'll also need to use [GitHub](http://www.github.com) to maintain your project if you want people to actually use and contribute to it. 
+For a project meant to be both shared and contributed to, there's really only one choice for version control: [git](https://git-scm.com). In fact, I'll go so far as to say that not only is the use of git necessary, you'll also need to use [GitHub](http://www.github.com) to maintain your project if you want people to actually use and contribute to it. 
 
-It's not meant to be an inflammatory statement (though no doubt many will take issue with it). Rather, for better or worse, git and [GitHub](http://www.github.com) have become the de-facto standard for Open Source projects. GitHub is the site potential contributors are most likely to be registered on and familiar with. That, I believe, is not a point to be taken lightly.
+I no longer think this statement is as contentious as it was when I published the first version of this four years ago. Rather, for better or worse, git and [GitHub](http://www.github.com) have become the de-facto standard for Open Source projects. GitHub is the site potential contributors are most likely to be registered on and familiar with. That, I still believe, is not a point to be taken lightly.
 
 #### Create a `README.md` File
 
-The project description for repos on GitHub is taken from a file in the project's
-root directory: `README.md`. This file should contain the following
-pieces of information:
+The project description for repos on GitHub is taken from a file in the project's root directory: `README.md`. This file should contain the following pieces of information:
 
 * A description of your project
-* Links to the project's documentation (i.e. the ReadTheDocs page)
-* A TravisCI badge showing the state of the build
+* A link to the project's *hosted* documentation (i.e. the ReadTheDocs page)
+* A "badge" from your Continuous Integration service showing the current state of the build, along with code coverage
 * "Quickstart" documentation (how to quickly install and use your project)
 * A list of non-Python dependencies (if any) and how to install them
 
-It may sound silly, but this is an important file. It's quite likely to be the first thing both prospective users *and* contributors read about your project. Take some time to write a clear description and make use of GFM (**G**itHub**F**lavored**M**arkdown) to make it look somewhat attractive. You can actually create/edit this file right on GitHub with a live-preview editor if you're not comfortable writing documents in raw Markdown.
+It may sound silly, but this may be the most important file in your project. It's likely to be the first thing both prospective users *and* contributors see. Take some time to write a clear description and make use of GFM (**G**itHub**F**lavored**M**arkdown) to make it look somewhat attractive. You can actually create/edit this file right on GitHub with a live-preview editor if you're not comfortable writing documents in raw Markdown.
 
-We haven't yet covered the second and third items in the list yet (ReadTheDocs
-and TravisCI). You'll find these discussed below.
+We haven't yet covered the second and third items in the list yet (ReadTheDocs and Continuous Integration). You'll find these discussed below.
 
 #### Using the "Issues" Page
 
-Like most things in life, the more you put into GitHub, the more you get out of
-it. Since users will be using it to file bug reports anyway, making use of 
-GitHub's "Issues" page to track feature requests and enhancements just makes
-sense. 
+Like most things in life, the more you put into GitHub, the more you get out of it. Since users will be using it to file bug reports anyway, taking full advantage of GitHub Issues' capabilities is going to be important, especially as your project grows.
 
-More importantly, it allows potential contributors to both see a list of
-things they might implement and automatically manages the pull request workflow in
-a reasonably elegant manner. GitHub issues and their comments can be cross-linked
-with commits, other issues in your project, issues in *other* projects, etc.
-This makes the "Issues" page a good place to keep all of the information related
-to bug fixes, enhancements, and feature requests.
+More importantly, it allows potential contributors to both see a list of things they might implement and automatically manages the pull request workflow in a reasonably elegant manner. GitHub issues and their comments can be cross-linked with commits, other issues in your project, issues in *other* projects, etc.  This makes the "Issues" page a good place to keep all of the information related to bug fixes, enhancements, and feature requests. You should do so through liberal use of labels. How *exactly* you use them is up to you. Don't go crazy with them if you're only getting 2 issues a month. If you're getting 20 they become a bit more important.
+
+A common method for attracting new contributors is to create an `Easy`/`Beginner`/`Simple Fix` type of label meant to indicate an issue is suitable for first-time contributors. Issues of this type really _should_ be described in so much detail that the potential contributor is hardly doing more than typing in your instructions, but it's a good confidence boost. Contributing to an open source project can be daunting. You want to make the process as painless as possible. You'll be paid back in spades by help and support on future issues from a greatful developer. 
 
 Make sure to keep "Issues" up to date and to at least briefly respond to new
 issues in a timely manner. As a contributor, there's nothing more 
