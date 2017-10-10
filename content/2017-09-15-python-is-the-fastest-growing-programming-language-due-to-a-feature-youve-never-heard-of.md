@@ -10,6 +10,8 @@ past five years. That's great news for people who have long used and enjoyed the
 ask *why* Python usage has exploded. And the primary, if not *sole* facilitator of this growth is a feature of the
 language you've probably *never even heard of*.
 
+<!--more-->
+
 ## Big Data And The Reluctant Programmer
 
 With the rise of Big Data, most industries found themselves in a scary situation: they had spent an enormous amount of
