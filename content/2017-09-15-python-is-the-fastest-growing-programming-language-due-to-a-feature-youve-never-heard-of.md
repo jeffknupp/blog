@@ -36,9 +36,9 @@ programming."
 
 Rewind a bit further, before Big Data was a real "thing", and you would have seen a heated battle between Ruby and Python to 
 become "the language of the web". Both proved well suited for developing web applications. Ruby's popularity was
-intimately tied to the [Rails]() framework. Few would argue that most programmers who self-identified as "Ruby
+intimately tied to the [Rails](http://rubyonrails.org/) framework. Few would argue that most programmers who self-identified as "Ruby
 programmers" around this time might as well have just said "Rails programmers". Python was already reasonably well
-entrenched in academia and a handful of disparate industries. The closest Python equivalent to Rails was [Django]().
+entrenched in academia and a handful of disparate industries. The closest Python equivalent to Rails was [Django](https://www.djangoproject.com/).
 Despite being released slightly ahead of Rails, it seemed to lag in popularity by a wide margin.
 
 Many felt that the languages were similar enough in expressiveness and approachability that one would ultimately "win"
