@@ -1,5 +1,5 @@
 title: Improve Your Python: Python Classes and Object Oriented Programming
-date: 2017-03-37 16:40
+date: 2017-03-27 16:40
 categories: python iyp oop classes
 
 **Note: Each day this week I'm going to republish one of my most popular posts. My hope is that people who missed them the first time might find them useful now. This post, on "classes" and Object Oriented Programming remains my most popular post of all time. I've gotten hundreds of emails about this post alone. Many have found it an accessible introduction to classes and OOP, both in Python and in general.**
