@@ -32,45 +32,44 @@ Probably most difficult is controlling one's emotions and, yes, boredom. Getting
 
 But remember, we're now playing in an environment where the distractions of the casino fall away and they can't tell what we're doing while we play. Counting is made much simpler. I wrote the following program in about 10 minutes. The idea is simple: allow the user to input the cards as they're being dealt (you can enter more than one card at a time, so I can enter `06K` for the Ten-Six vs. King described earlier and hit enter rather than having to enter each card one-at-a-time.
 
-```
-CARD_VALUES = {
-        '2': 1,
-        '3': 1,
-        '4': 1,
-        '5': 1,
-        '6': 1,
-        '7': 0,
-        '8': 0,
-        '9': 0,
-        '0': -1, # use '0' for 10 to keep everything a single character
-        'J': -1,
-        'Q': -1,
-        'K': -1,
-        'A': -1,
-        '*': -1, # use '*' as an alias for 'A' to make using the number pad easier
-        }
+    #!py
+    CARD_VALUES = {
+            '2': 1,
+            '3': 1,
+            '4': 1,
+            '5': 1,
+            '6': 1,
+            '7': 0,
+            '8': 0,
+            '9': 0,
+            '0': -1, # use '0' for 10 to keep everything a single character
+            'J': -1,
+            'Q': -1,
+            'K': -1,
+            'A': -1,
+            '*': -1, # use '*' as an alias for 'A' to make using the number pad easier
+            }
 
-DECKS = 8
+    DECKS = 8
 
-def main():
-    count = 0
-    cards = 0
-    user_input = True
-    decks_played = 0
-    while user_input:
-        user_input = raw_input('>> ')
-        cards += len(user_input)
-        for card in user_input:
-            count += CARD_VALUES[card.upper()]
-        decks_played = cards / 52.0
-        true_count = count / (DECKS - decks_played)
-        print('Count: {}'.format(count))
-        print('True Count: {}'.format(true_count))
-    print('Decks played: {}'.format(decks_played))
+    def main():
+        count = 0
+        cards = 0
+        user_input = True
+        decks_played = 0
+        while user_input:
+            user_input = raw_input('>> ')
+            cards += len(user_input)
+            for card in user_input:
+                count += CARD_VALUES[card.upper()]
+            decks_played = cards / 52.0
+            true_count = count / (DECKS - decks_played)
+            print('Count: {}'.format(count))
+            print('True Count: {}'.format(true_count))
+        print('Decks played: {}'.format(decks_played))
 
-if __name__ == '__main__':
-    main()
-```
+    if __name__ == '__main__':
+        main()
 
 That's it. A few points to go over. You may have noticed the `DECKS` value and the `decks_played` and `true_count` variables. We need these to determine the "true count". The count alone is helpful, but a count of `9` has a much different meaning after a single hand versus one of the last hands in the shoe. The fewer cards there are remaining, the more impactful the count is. The "true count" is simply the current count divided by the number of decks remaining. While at a casino one would have to eyeball the size of the burn pile and estimate the number of decks remaining, we can calculate it precisely since every card is counted. When the true count climbs above 1.0, the odds move in favor of the player. This is when we increase the size of our bet.
 
