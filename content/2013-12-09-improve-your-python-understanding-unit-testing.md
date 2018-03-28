@@ -480,7 +480,7 @@ the following should be preferred:
         return True
 
 In the latter, we recognize that the two `if` statements can be merged into a
-single statement that returns `False` if the argument is less than 1. This is
+single statement that returns `False` if the argument is less than 2. This is
 both more succinct and properly aligned with the definition of a prime number (a
 number *greater than one* wholly divisible only by one and itself).
 
