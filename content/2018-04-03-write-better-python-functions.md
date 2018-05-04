@@ -19,13 +19,14 @@ Functions have long existed in math, but have far more power in computer science
 
 ## Keys To A Good Function
 
-What differentiates a "good" Python function from a crappy one? You'd be surprised at how many definitions of "good" one can use. For our purposes, I'll consider a Python function "good" if it can tick off the items on this checklist: 
+What differentiates a "good" Python function from a crappy one? You'd be surprised at how many definitions of "good" one can use. For our purposes, I'll consider a Python function "good" if it can tick off *most* of the items on this checklist (some are not always possible): 
 
 * Sensibly named
 * Has a single responsibility
 * Includes a docstring
 * Returns a value
 * Is *idempotent*
+* Is *pure*
 * Is no longer than 50 lines
 
 For many of you, this list may seem overly draconian. I promise you, though, if
@@ -89,8 +90,23 @@ An example will help. Here's a function that does more than one "thing":
 
     ```
 
-This function does *two* things: it calculates a set of statistics about a list of numbers *and* prints them to the terminal. In violation of the rule that there should be only one reason to change a function, there are two obvious reasons this function would need to change: new or different statistics might need to be calculated or the format of the output might need to be changed. This function is better written as two separate functions: one which performs and returns the results of the calculations and another that takes those results and prints them. *One dead giveaway that 
+This function does *two* things: it calculates a set of statistics about a list of numbers *and* prints them to the terminal. In violation of the rule that there should be only one reason to change a function, there are two obvious reasons this function would need to change: new or different statistics might need to be calculated or the format of the output might need to be changed. This function is better written as two separate functions: one which performs and returns the results of the calculations and another that takes those results and prints them. *One dead giveaway that a function has multiple responsibilties is the word **and** in the functions name.*
 
 This separation also allows for much easier testing of the function's behavior and also allows the two parts to be separated not just into two functions in the same module, but possibly live in different modules altogether if appropriate. This, too, leads to cleaner testing and easier maintenance.
 
-Finding a function that only does *two* things is actually rare. Much more often, you'll find functions that do many, many more things.
+Finding a function that only does *two* things is actually rare. Much more often, you'll find functions that do many, many more things. Again, for readability and testability purposes, these jack-of-all-trade functions should be broken up into smaller functions that each encapsulate a single unit of work.
+
+### Docstrings
+
+While everyone seems to be aware of [PEP-8](https://www.python.org/dev/peps/pep-0008/), defining the style guide for Python, far fewer seem to be aware of [PEP-257](https://www.python.org/dev/peps/pep-0257/), which does the same for docstrings. Rather than simply rehash the contents of PEP-257, feel free to read it at your leisure. The main takeaways, however, are:
+
+* *Every* function requires a docstring
+* Use proper grammar and punctuation; write in complete sentences
+* Begins with a one-sentence summary of what the function does
+* Uses prescriptive rather than descriptive language
+
+This is an easy one to tick off when writing functions. Just get in the habit of always writing docstrings, and try to write them *before* you write the code for the function. If you can't write a clear docstring describing what the function will do, it's a good indication you need to think more about why you're writing the function in the first place.
+
+### Return Values
+
+
