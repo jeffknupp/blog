@@ -34,7 +34,7 @@ To shed some light on why this behavior is occurring, let's review `yield`. Any 
 `$ python yield.py` 
 `<generator object func at 0x10e968a50>`
 
-When `x = func()` is executed, *we are not actually executing any of the code within `func()`. Rather, since `func()` is a *generator*, a *generator iterator* is returned. So while that may look like a function call, it's actually giving us the *generator iterator* we would use to generate values yielded by the *generator*.
+When `x = func()` is executed, *we are not actually executing any of the code within `func()`*. Rather, since `func()` is a *generator*, a *generator iterator* is returned. So while that may look like a function call, it's actually giving us the *generator iterator* we would use to generate values yielded by the *generator*.
 
 So how do we actually "call" a *generator*? *By calling `next()` on a generator iterator*. In the code above, this would execute the "next" call to the *generator iterator* returned by `func()` and bound to `x`.
 
