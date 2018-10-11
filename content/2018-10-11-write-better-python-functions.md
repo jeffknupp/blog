@@ -1,5 +1,5 @@
 title: Write Better Python Functions
-date: 2018-04-03 09:34
+date: 2018-10-11 19:10
 categories: python function
 
 In Python, like most modern programming languages, the *function* is a primary method of abstraction and encapsulation. You've probably written hundreds of functions in your time as a developer. But not all functions are created equal. And writing "bad" functions directly affects the readability and maintainability of your code. So what, then, is a "bad" function and, more importantly, what makes a "good" function?
