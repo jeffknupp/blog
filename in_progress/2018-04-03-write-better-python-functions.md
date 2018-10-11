@@ -181,16 +181,7 @@ def add_three():
 
 This admitedly contrived example is not idempotent because the return value of the function depends on I/O, namely the number entered by the user. It's clearly not true that every call to `add_three()` will return the same value. If it is called twice, the user could enter `3` the first time and `7` the second, making the call to `add_three()` return `6` and `10`, respectively.
 
-The HTTP `PUT` method is a common example of an *operation* that is supposed to be idempotent. No matter how many times you call `PUT` on the same resource, the response should be exactly the same (the response should contain exactly the values specified in the request, and no others). By way of comparison, `PATCH` is not idempotent, and the reason is enlightening. Recall that an HTTP `PATCH` request is meant to send only the *changes* one wants to make on a resource. Imagine a `/user` endpoint for creating users. Updating the first user's email address might very well be done by sending a `PATCH` request to `/user/1` with `{"email": "jeff@jeffknupp.com"}`. The response from this endpoint should be the *entire* resource, so we might see the following response:
-
-    {
-        "user_id": 1,
-        "email": "jeff@jeffknupp.com",
-        "first_name": "Jeff",
-        "last_name": "Knupp"
-    }
-
-One might argue that the `PATCH` call should *always* result in that response, but that's clearly not true. Someone may have changed the `first_name` or `last_name` values in the meantime, resulting in a very different response (albeit one where `email` is set to `jeff@jeffknupp.com`). So `PATCH` is not idempotent.
+A real-world example of idempotency is hitting the "up" button in front of an elevator. The first time it's pushed, the elevator is "notified" that you want to go up. Because the pressing the button is idempotent, pressing it over and over again is harmless. The result is always the same.
 
 ##### Why is idempotency important
 
