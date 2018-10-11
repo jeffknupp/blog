@@ -155,3 +155,43 @@ Two points, here. First, do your best to avoid this practice. For others, provid
 This is a bit of a strawman argument, but I *have* heard it. The answer, of course, is to do exactly what the author wanted to do but didn't know how to do: *use a tuple to return more than one value.*
 
 And perhaps the most compelling argument for always returning a useful value is that callers are always free to ignore them. In short, returning a value from a function is almost certainly a good idea and very unlikely to break anything, even in existing codebases.
+
+### Idempotency and Functional Purity
+
+The title of this subsection may sound a bit intimidating, but the concepts are simple. An *idempotent* function always returns the same value given the same set of arguments, regardless of how many times it is called. The result does not depend on non-local variables, the mutability of arguments, or any I/O streams. The following `add_three(number)` function is idempotent:
+
+```
+
+def add_three(number):
+    """Return *number* + 3."""
+    return number + 3
+
+```
+
+No matter how many times one calls `add_three(7)`, the answer will always be `10`. Here's a different take on the function that **is not** idempotent:
+
+```
+
+def add_three():
+    """Return 3 + the number entered by the user."""
+    number = int(input('Enter a number: '))
+    return number + 3
+
+```
+
+This admitedly contrived example is not idempotent because the return value of the function depends on I/O, namely the number entered by the user. It's clearly not true that every call to `add_three()` will return the same value. If it is called twice, the user could enter `3` the first time and `7` the second, making the call to `add_three()` return `6` and `10`, respectively.
+
+The HTTP `PUT` method is a common example of an *operation* that is supposed to be idempotent. No matter how many times you call `PUT` on the same resource, the response should be exactly the same (the response should contain exactly the values specified in the request, and no others). By way of comparison, `PATCH` is not idempotent, and the reason is enlightening. Recall that an HTTP `PATCH` request is meant to send only the *changes* one wants to make on a resource. Imagine a `/user` endpoint for creating users. Updating the first user's email address might very well be done by sending a `PATCH` request to `/user/1` with `{"email": "jeff@jeffknupp.com"}`. The response from this endpoint should be the *entire* resource, so we might see the following response:
+
+    {
+        "user_id": 1,
+        "email": "jeff@jeffknupp.com",
+        "first_name": "Jeff",
+        "last_name": "Knupp"
+    }
+
+One might argue that the `PATCH` call should *always* result in that response, but that's clearly not true. Someone may have changed the `first_name` or `last_name` values in the meantime, resulting in a very different response (albeit one where `email` is set to `jeff@jeffknupp.com`). So `PATCH` is not idempotent.
+
+##### Why is idempotency important
+
+**Testability and maintainability.** Idempotent functions are
