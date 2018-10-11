@@ -25,20 +25,17 @@ What differentiates a "good" Python function from a crappy one? You'd be surpris
 * Has a single responsibility
 * Includes a docstring
 * Returns a value
-* Is *idempotent*
-* Is *pure*
+* Is *idempotent* and, if possible, *pure*
 * Is no longer than 50 lines
 
-For many of you, this list may seem overly draconian. I promise you, though, if
-your functions follow these rules, your code will be so beautiful it will make
+For many of you, this list may seem overly draconian. I promise you, though, if your functions follow these rules, your code will be so beautiful it will make
 unicorns weep.
 
-Below, I'll devote a section to each of the items, then wrap things up with how
-they work in harmony to create "good" functions.
+Below, I'll devote a section to each of the items, then wrap things up with how they work in harmony to create "good" functions.
 
 ### Naming
 
-There's a favorite saying of mine on the subject, often misatributed to Donald Knuth, but which actually belongs to [Phil Karlton](https://martinfowler.com/bliki/TwoHardThings.html):
+There's a favorite saying of mine on the subject, often misatributed to Donald Knuth, but which actually came from [Phil Karlton](https://martinfowler.com/bliki/TwoHardThings.html):
 
     There are only two hard things in Computer Science: cache invalidation and naming things.
 
@@ -70,7 +67,7 @@ It is now clear even to the lay person what this function calculates, and the pa
 
 ### Single Responsibility
 
-Straight from "Uncle" Bob Martin, the [Single Responsibility Principle](https://en.wikipedia.org/wiki/Single_responsibility_principle) applies just as much to functions as it does classes and modules (Mr. Martin's original targets). It states that (in our case) a function should have a *single responsibility*. That is, it should do one thing and *only* one thing. One great reason is that if every function only does one thing, there is only one reason ever to change it: if the way in which it does that thing must change. It also becomes clear when a function is no longer neeeded if, when making changes elsewhere, it becomes clear the function's single responsibility is no longer needed.
+Straight from "Uncle" Bob Martin, the [Single Responsibility Principle](https://en.wikipedia.org/wiki/Single_responsibility_principle) applies just as much to functions as it does classes and modules (Mr. Martin's original targets). It states that (in our case) a function should have a *single responsibility*. That is, it should do one thing and *only* one thing. One great reason is that if every function only does one thing, there is only one reason ever to change it: if the way in which it does that thing must change. It also becomes clear when a function can be deleted: if, when making changes elsewhere, it becomes clear the function's single responsibility is no longer needed, simply remove it.
 
 An example will help. Here's a function that does more than one "thing":
 
@@ -90,7 +87,7 @@ An example will help. Here's a function that does more than one "thing":
 
     ```
 
-This function does *two* things: it calculates a set of statistics about a list of numbers *and* prints them to the terminal. In violation of the rule that there should be only one reason to change a function, there are two obvious reasons this function would need to change: new or different statistics might need to be calculated or the format of the output might need to be changed. This function is better written as two separate functions: one which performs and returns the results of the calculations and another that takes those results and prints them. *One dead giveaway that a function has multiple responsibilties is the word **and** in the functions name.*
+This function does *two* things: it calculates a set of statistics about a list of numbers *and* prints them to `STDOUT`. The function is in violation of the rule that there should be only one reason to change a function. There are two obvious reasons this function would need to change: new or different statistics might need to be calculated or the format of the output might need to be changed. This function is better written as two separate functions: one which performs and returns the results of the calculations and another that takes those results and prints them. *One dead giveaway that a function has multiple responsibilties is the word **and** in the functions name.*
 
 This separation also allows for much easier testing of the function's behavior and also allows the two parts to be separated not just into two functions in the same module, but possibly live in different modules altogether if appropriate. This, too, leads to cleaner testing and easier maintenance.
 
@@ -109,4 +106,52 @@ This is an easy one to tick off when writing functions. Just get in the habit of
 
 ### Return Values
 
+Functions can (and *should*) be thought of as little self-contained programs. They take some input in the form of parameters and return some result. Parameters are, of course, optional. *Return values, however, are not optional, from a Python internals perspective.* Even if you *try* to create a function that doesn't return a value, you can't. If a function would otherwise not return a value, the Python interpreter "forces it" to return `None`. Don't believe me? Test out the following yourself:
 
+```
+
+❯ python3
+Python 3.7.0 (default, Jul 23 2018, 20:22:55)
+[Clang 9.1.0 (clang-902.0.39.2)] on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+>>> def add(a, b):
+...   print(a + b)
+...
+>>> b = add(1, 2)
+3
+>>> b
+>>> b is None
+True
+
+```
+
+You'll see that the value of `b` really is `None`. So, even if you write a function with no `return` statement, it's still going to return *something*. And it *should* return something. After all, it's a little program, right. How useful are programs that produce no output, including whether or not they executed correctly? But most importantly, how would you *test* such a program?
+
+I'll even go so far as to make the following statement: every function should return a useful value, even if only for testability purposes. Code that you write should be tested (that's not up for debate). Just think of how gnarly testing the `add` function above would be (hint: you'd have to redirect I/O and things go south from there quickly). Also, returning a value allows for method chaining, a concept that allows us to write code like this:
+
+```
+
+with open('foo.txt', 'r') as input_file:
+    for line in input_file:
+        if line.strip().lower().endswith('cat'):
+            # ... do something useful with these lines
+
+```
+
+The line `if line.strip().lower().endswith('cat'):` works because each of the string methods (`strip(), lower(), endswith()`) *return a string as the result of calling the function.*
+
+Here are some common reasons people give when asked why a given function they wrote doesn't return a value:
+
+##### "All it does is [some I/O related thing like saving a value to a database]. I can't return anything useful."
+
+I disagree. The function can return `True` if the operation completed successfully.
+
+##### "We modify one of the parameters in place, using it like a reference parameter."""
+
+Two points, here. First, do your best to avoid this practice. For others, providing something as an argument to your function only to find that it has been changed can be surprising in the best case and downright dangerous in the worst. Instead, much like the string methods, prefer returning a new instance of the parameter with the changes applied to it. Even when this isn't feasible because making a copy of some parameter is prohibitively expensive, you can still fall back to the old "Return `True` if the operation completed successfully" suggestion.
+
+##### "I need to return multiple values. There is no single value I could return that would make sense."
+
+This is a bit of a strawman argument, but I *have* heard it. The answer, of course, is to do exactly what the author wanted to do but didn't know how to do: *use a tuple to return more than one value.*
+
+And perhaps the most compelling argument for always returning a useful value is that callers are always free to ignore them. In short, returning a value from a function is almost certainly a good idea and very unlikely to break anything, even in existing codebases.
