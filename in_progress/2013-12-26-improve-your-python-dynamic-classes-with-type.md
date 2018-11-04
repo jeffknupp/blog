@@ -15,7 +15,7 @@ type of an object. Here, Python novices commonly interrupt and say, "But I
 thought Python didn't have types!" On the contrary, *everything* in Python has a
 type (even the types!) because *everything is an object*. Let's look at a few examples:
 
-    #!python
+    #!py
     >>> type(1)
     <class 'int'>
     >>> type('foo')
@@ -35,7 +35,7 @@ What is that? Well, odd, but let's continue:
     >>> type(Foo)
     <class 'type'>
 
-Ah! `<class 'type'>` again. Aparently the type of all classes themselves is
+Ah! `<class 'type'>` again. Aparently the type of a *class itself* (not the instances of it we create) is
 `type` (regarless of if they're built-in or user-defined). What about the type
 of `type` itself?
 
@@ -44,8 +44,8 @@ of `type` itself?
     <class 'type'>
 
 Well, it had to end somewhere. `type` is the type of all types, including
-itself. In actuallity, `type` is a `metaclass`, or "the things that build
-classes". Classes, like `list()`, build instances of that class, as 
+itself. Actually, `type` is a `metaclass`, or "a thing that builds
+classes". Classes, like `list`, build instances of that class, as 
 in `my_list = list()`. In the same way, `metaclasses` build types, like `list`.
 
 Just like regular classes, `metaclasses` can be user-defined. To use it, you set
