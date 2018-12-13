@@ -41,7 +41,7 @@ In that example, we passed the `key` parameter a lambda function which accepted 
     In [26]: sorted(readings, key=lambda reading: reading[1], reverse=True)
     Out[26]: [('1202', 45.0, 28.1), ('1130', 45.0, 32.6), ('1201', 44.0, 33.0)]
 
-Accessing elements of a tuple or class is such a common task that Python provides a set of convenience functions in the `operator` built-in module. To access a specfic field in the tuple (as we did above for daily high as `reading[1]` and daily low as `reading[2]`), use the field's index in the tuple as an argument to `operator.itemgetter`:
+Accessing elements of a tuple or class is such a common task that Python provides a set of convenience functions in the `operator` built-in module. To access a specific field in the tuple (as we did above for daily high as `reading[1]` and daily low as `reading[2]`), use the field's index in the tuple as an argument to `operator.itemgetter`:
 
     #!py
     In [29]: sorted(readings, key=itemgetter(1), reverse=True)
@@ -117,7 +117,15 @@ So six different ways to insert into a list in Python. That doesn't seem very Py
 
 ## Python "List Index Out Of Range" Error Message
 
-This entry is less a "how-to" and more of a "what to do when things go wrong" type of entry, but it's nonetheless searched for very often in conjuction with Python lists (for obvious reasons). The message "list index out of range" is brought to you by a specific type of built-in Exception, namely the [`IndexError`](https://docs.python.org/3/library/exceptions.html#IndexError). It is simply saying that you tried to access a list, perhaps using code like `third_value = some_list[2]`, but `2` is not a valid value because `some_list` does not have three values (we don't know how many it *does* have, just less than 3 in this case).
+This entry is less a "how-to" and more of a "what to do when things go wrong" type of entry, but it's nonetheless searched for very often in conjunction with Python lists (for obvious reasons). The message "list index out of range" is brought to you by a specific type of built-in Exception, namely the [`IndexError`](https://docs.python.org/3/library/exceptions.html#IndexError). It is simply saying that you tried to access a list, perhaps using code like the following:
+
+    #!py
+    def my_function(some_list):
+        """Return something really interesting..."""
+        third_value = some_list[2]
+        # ... possibly more code following
+
+`2` is not a valid index to use because `some_list` does not have three values (we don't know how many it *does* have, just less than 3 in this case).
 
 Want to know how many values `some_list` has? The Python built-in [`len(s)`](https://docs.python.org/3/library/functions.html#len) function will give you exactly that.
 
@@ -141,7 +149,6 @@ Here we put our code in a `try...except` block and catch any `IndexError` except
         ...:             print(f'some_list only has {len(some_list)} entries')
         ...:             raise
         ...:
-        ...:
 
     In [51]: my_function([1,2])
     some_list only has 2 entries
@@ -158,3 +165,40 @@ Here we put our code in a `try...except` block and catch any `IndexError` except
         5             print(f'some_list only has {len(some_list)} entries')
 
     IndexError: list index out of range
+
+## How To Make A List In Python
+
+The section topic is taken directly from search query volume, so rest assured this isn't me just throwing random facts about Python lists at you. There are a few ways to create a list in Python, but the two you'll use the most is using the "square-brace" syntax:
+
+* `x = []` sets `x` to an empty list
+* `x = [1, 2, 3]` sets `x` to a list with the values `1, 2, 3`
+* `x = [x for x in iterable]` is the simplest example of *list comprehension* syntax (list comprehensions can be thought of syntactic sugar when creating a new list from an existing sequence and are very powerful tools, but probably outside the scope of this article).
+* `x = list()` or `x = list((1,2,3))` to use the `list` type constructor
+
+Generally speaking, prefer the use of the first two methods unless you can think of a very good reason not to.
+
+## Apply A Function To A List In Python
+
+Remember when I said list comprehensions were out of scope for this article. I lied. Even though they're a little trickier to grasp, they're very powerful and applying a function to each element in a list in Python is basically their bread and butter. Imagine we have a list of the numbers one through five and want to create a second list whose elements exactly each element in the original list multiplied by two. To construct such a list using a `for` loop, we'd need the following code:
+
+    #!py
+    original_list = [1,2,3,4,5]
+    double_list = []
+    for element in original_list:
+        double_list.append(element * 2)
+
+The need to do this occurs so frequently that (especially for performance-sensitive applications) a highly optimized general form of the above as part of the Python language in list comprehensions. Rather than go over the topic in great detail here, I'll simply [link to the Python documentation on list comprehensions](https://docs.python.org/3/tutorial/datastructures.html?highlight=comprehension#list-comprehensions) and note that we could achieve the same as code above using a list comprehension, like so:
+
+    #!py
+    original_list = [1,2,3,4,5]
+    double_list = [element * 2 for element in original_list]
+
+I've grown to appreciate the precision of the grammar when reading it aloud, but it definitely takes some getting used to (and this is only the simplest use of a list comprehension).
+
+Of course, there's always the Python built-in function [`map()`](https://docs.python.org/3/library/functions.html#map), which will do much the same thing in a slightly easier to grok way, but there is an important difference between the two: `map()` yields the values back one-at-a-time (it's a generator) whereas a list comprehension will always create a new list from the existing list given as an argument.
+
+It may seem difficult, but try to get to a place where you're using list comprehensions rather than `map()` as the former are both more powerful and more Pythonic.
+
+# Summary
+
+This article was a quick hit, but it's good to go back to basics occasionally and see if there's anything you might have missed your first time through (I'll wager that very few Python developers know and use the itertools module as well and often as they should). I tentatively plan on adding to this article over time (a change log would be provided). Let me know if you think there's a common "Python list" Google query I missed or with suggestions on the other parts of Python lists that often trip up newcomers.
