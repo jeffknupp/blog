@@ -3,6 +3,7 @@ date: 2018-10-06 18:35
 categories: python braze ruby rails
 
 For those who have been keeping score, I've been on somewhat of an extended absence, especially since October of last year. Much of it was the result of events in my personal life which I'll not discuss here. Regardless, consider this my "comeback" announcement. I plan to return to writing regularly, hoping to match the pace of 2014 or so, which already seems so long ago. Heck, [Writing Idiomatic Python](https://jeffknupp.com/writing-idiomatic-python-ebook) is three months older than my older daughter and she just started Kindergarten this a few weeks ago. This blog is older than most startups, but it's been a while since I've been producing (I think) useful or interesting content at a reliable pace. I'm going to change that.
+<!--more-->
 
 ## Slightly Less Personal News
 
