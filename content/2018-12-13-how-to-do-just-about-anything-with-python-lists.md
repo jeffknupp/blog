@@ -6,7 +6,10 @@ Python's `list` is one of the built-in *sequence types* (i.e. "it holds a sequen
 
 ## Reverse/Sort A List In Python
 
-There are two ways to reverse a list in Python, and which one you use depends on what you want to do with the resulting reversed data. If you're only going *iterate over* the items in the reversed list (say, to print them out), use the Python built-in function [`reversed(seq)`](https://docs.python.org/3/library/functions.html#reversed). Here's an example of `reversed` in action:
+There are two ways to reverse a list in Python, and which one you use depends on what you want to do with the resulting reversed data. If you're only going *iterate over* the items in the reversed list (say, to print them out), use the Python built-in function [`reversed(seq)`](https://docs.python.org/3/library/functions.html#reversed). 
+<!--more-->
+Here's an example of `reversed` in action:
+
 
     #!py
     original_list = [1, 2, 3, 4, 5]
